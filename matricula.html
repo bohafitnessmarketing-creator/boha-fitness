@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrícula — Boha Fitness</title>
+<meta name="description" content="Matricule-se na Boha Fitness com 1ª mensalidade por R$9,99. Escolha a unidade e fale direto no WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="boha-header">
+  <div class="inner">
+    <a class="logo" href="index.html">
+      <div class="logo-mark">B</div>
+      <div>
+        <div class="logo-text">BOHA <span>FITNESS</span></div>
+        <span class="logo-sub">ACADEMIA</span>
+      </div>
+    </a>
+    <nav class="boha-nav" id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="planos.html">Planos</a>
+      <a href="estrutura.html">Estrutura</a>
+      <a href="unidades.html">Unidades</a>
+      <a href="modalidades.html">Modalidades</a>
+      <a href="duvidas.html">Dúvidas</a>
+      <a href="matricula.html" class="active">Matrícula</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-amarelo btn-sm" href="matricula.html">Quero treinar</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">☰</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Matrícula</div>
+    <span class="eyebrow">Comece hoje</span>
+    <h1>Garanta a 1ª mensalidade por R$9,99</h1>
+    <p>Preencha seus dados, escolha a unidade e a gente confirma sua matrícula direto no WhatsApp.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap matricula-page">
+    <div class="form-card" style="border-radius:18px;border:1px solid var(--card-border);">
+      <h3>Quero treinar na Boha</h3>
+      <form id="formMatricula" novalidate>
+        <div class="campo">
+          <label for="nome">Nome completo</label>
+          <input id="nome" name="nome" maxlength="100" placeholder="Seu nome" required>
+        </div>
+        <div class="campo">
+          <label for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" name="whatsapp" maxlength="20" placeholder="(11) 90000-0000" required>
+        </div>
+        <div class="form-row">
+          <div class="campo">
+            <label for="unidade">Unidade preferida</label>
+            <select id="unidade" name="unidade">
+              <option value="" selected>Selecione</option>
+              <option>Jardim Santa Tereza</option>
+              <option>Jardim Casa Branca</option>
+              <option>Jardim Macedônia</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="plano">Plano de interesse</label>
+            <select id="plano" name="plano">
+              <option value="" selected>Selecione</option>
+              <option>Boha VIP Anual</option>
+              <option>Boha Simples</option>
+              <option>Boha Recorrente</option>
+              <option>Ainda não sei</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-amarelo" type="submit">Quero me matricular</button>
+        <p class="form-nota">Ao enviar, você será direcionado para o WhatsApp da unidade escolhida para confirmar os dados e fechar a matrícula.</p>
+      </form>
+    </div>
+
+    <div class="matricula-side">
+      <h3>Fale direto com a sua unidade</h3>
+      <div class="unidade-mini">
+        <span>Jardim Santa Tereza</span>
+        <a href="https://wa.me/5511976976483" target="_blank" rel="noopener noreferrer">WhatsApp →</a>
+      </div>
+      <div class="unidade-mini">
+        <span>Jardim Casa Branca</span>
+        <a href="https://wa.me/5511918526915" target="_blank" rel="noopener noreferrer">WhatsApp →</a>
+      </div>
+      <div class="unidade-mini">
+        <span>Jardim Macedônia</span>
+        <a href="https://wa.me/5511969186057" target="_blank" rel="noopener noreferrer">WhatsApp →</a>
+      </div>
+      <ul class="cadastro-beneficios" style="margin-top:20px;color:var(--muted);">
+        <li style="color:inherit;">→ Resposta em poucos minutos</li>
+        <li style="color:inherit;">→ Avaliação física gratuita incluída</li>
+        <li style="color:inherit;">→ Sem taxa de adesão</li>
+        <li style="color:inherit;">→ Aceita Pix, cartão, Wellhub e TotalPass</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<footer class="boha-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <a class="logo" href="index.html" style="margin-bottom:14px;">
+          <div class="logo-mark">B</div>
+          <div>
+            <div class="logo-text">BOHA <span>FITNESS</span></div>
+            <span class="logo-sub">ACADEMIA</span>
+          </div>
+        </a>
+        <p style="color:var(--muted);font-size:14px;max-width:280px;">3 unidades em Embu das Artes / São Paulo. Musculação, coletivas e lutas — treino sem limite.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/bohafitness" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.7 0 3.05.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.9 1.11 1.15 1.77.25.64.42 1.37.47 2.43.05 1.07.06 1.42.06 4.12s-.01 3.05-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47-1.07.05-1.42.06-4.12.06s-3.05-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.05 2 14.7 2 12s.01-3.05.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77A4.9 4.9 0 0 1 5.45.53C6.09.28 6.82.11 7.88.06 8.95.01 9.3 0 12 0Zm0 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9Zm7.25-11.7a1.63 1.63 0 1 1-3.26 0 1.63 1.63 0 0 1 3.26 0Z"></path></svg>
+          </a>
+          <a href="https://facebook.com/BOHAFITNESSEMBU" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Site</h4>
+          <a href="planos.html">Planos</a>
+          <a href="estrutura.html">Estrutura</a>
+          <a href="unidades.html">Unidades</a>
+          <a href="modalidades.html">Modalidades</a>
+          <a href="duvidas.html">Dúvidas</a>
+          <a href="matricula.html">Matrícula</a>
+        </div>
+        <div class="footer-col">
+          <h4>Unidades</h4>
+          <a href="unidades.html#santa-tereza">Jardim Santa Tereza</a>
+          <a href="unidades.html#casa-branca">Jardim Casa Branca</a>
+          <a href="unidades.html#macedonia">Jardim Macedônia</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contato</h4>
+          <a href="https://wa.me/5511976976483" target="_blank" rel="noopener noreferrer">WhatsApp Santa Tereza</a>
+          <a href="https://wa.me/5511918526915" target="_blank" rel="noopener noreferrer">WhatsApp Casa Branca</a>
+          <a href="https://wa.me/5511969186057" target="_blank" rel="noopener noreferrer">WhatsApp Macedônia</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© Boha Fitness — Luangels Fitness Academia LTDA · CNPJ 34.963.651/0001-07</span>
+      <span>Embu das Artes / São Paulo — SP</span>
+    </div>
+  </div>
+</footer>
+
+<a class="whats-float" href="https://wa.me/5511976976483" target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.1 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"></path></svg>
+</a>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
