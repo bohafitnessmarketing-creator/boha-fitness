@@ -154,19 +154,19 @@ var DIAS_SEMANA = [
 
   var LINKS = {
     simples: {
-      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/Zn50Krsk1XkTW8YXGf83Gw==',
-      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/IDbtKb0QXWZKu391NeSogQ==',
-      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/YTpDSxG4gAW4qSUq%7C%7CRLnA=='
+      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/Zn50Krsk1XkTW8YXGf83Gw%5BEQUAL%5D%5BEQUAL%5D',
+      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/IDbtKb0QXWZKu391NeSogQ%5BEQUAL%5D%5BEQUAL%5D',
+      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/YTpDSxG4gAW4qSUq%5BBAR%5D%5BBAR%5DRLnA%5BEQUAL%5D%5BEQUAL%5D'
     },
     vip: {
-      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/CGbxAebAzMiJYOfbgbIphg==',
-      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/oxT8H5JG1%7CWI%7CzZmqsBlmA==',
-      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/Il5lCjpqOYYzTOIhlMhp0Q=='
+      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/CGbxAebAzMiJYOfbgbIphg%5BEQUAL%5D%5BEQUAL%5D',
+      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/oxT8H5JG1%5BBAR%5DWI%5BBAR%5DzZmqsBlmA%5BEQUAL%5D%5BEQUAL%5D',
+      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/Il5lCjpqOYYzTOIhlMhp0Q%5BEQUAL%5D%5BEQUAL%5D'
     },
     basico: {
-      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/VttOYx2IIwwdLrg2y7lZag==',
-      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/AcgBZ%7CDIrTCSpo1ymbAWlA==',
-      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/UJkekf+5sgjzZKuW2hhaUQ=='
+      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/VttOYx2IIwwdLrg2y7lZag%5BEQUAL%5D%5BEQUAL%5D',
+      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/AcgBZ%5BBAR%5DDIrTCSpo1ymbAWlA%5BEQUAL%5D%5BEQUAL%5D',
+      'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/UJkekf%5BPLUS%5D5sgjzZKuW2hhaUQ%5BEQUAL%5D%5BEQUAL%5D'
     }
   };
   var PLANO_NOMES = { simples: 'Boha Simples', vip: 'Boha VIP Anual', basico: 'Boha Recorrente' };
