@@ -184,7 +184,7 @@ var DIAS_SEMANA = [
       'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/UJkekf%5BPLUS%5D5sgjzZKuW2hhaUQ%5BEQUAL%5D%5BEQUAL%5D'
     }
   };
-  var PLANO_NOMES = { simples: 'Boha Simples', vip: 'Boha VIP Anual', basico: 'Boha Recorrente' };
+  var PLANO_NOMES = { simples: 'Boha Simples', vip: 'Boha VIP Anual', basico: 'Boha Básico' };
 
   var overlay, planoAtual, lastFocused;
 
