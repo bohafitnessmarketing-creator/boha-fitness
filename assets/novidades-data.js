@@ -28,7 +28,7 @@ const POSTS = [
       "A Boha Jardim Santa Tereza vai passar a oferecer aulas de Spinning, pedalada indoor em ritmo intenso, ótima opção de cardio para todos os níveis.",
       "Em breve divulgamos os horários das turmas. Acompanhe as novidades por aqui ou fale com a equipe da unidade para mais informações."
     ],
-    whatsapp: { numero: "5511976976483", texto: "Garantir pré-venda" }
+    whatsapp: { numero: "5511991195832", texto: "Garantir pré-venda" }
   },
   {
     titulo: "Chegaram novos aparelhos de puxada e cabo na Casa Branca",
