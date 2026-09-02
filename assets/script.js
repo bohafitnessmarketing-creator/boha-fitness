@@ -308,7 +308,24 @@ var DIAS_SEMANA = [
     return card;
   }
 
-  POSTS.forEach(function(post){ grid.appendChild(criarCard(post)); });
+  // Na home (carrossel), intercala os posts pelas unidades em vez de só ordem cronológica
+  function intercalarPorUnidade(posts){
+    var grupos = {}, ordem = [];
+    posts.forEach(function(p){
+      if (!grupos[p.unidade]) { grupos[p.unidade] = []; ordem.push(p.unidade); }
+      grupos[p.unidade].push(p);
+    });
+    var resultado = [], i = 0;
+    while (resultado.length < posts.length) {
+      ordem.forEach(function(u){ if (grupos[u][i]) resultado.push(grupos[u][i]); });
+      i++;
+    }
+    return resultado;
+  }
+
+  var emCarrossel = !!grid.closest('.novidades-carrossel');
+  var postsOrdenados = emCarrossel ? intercalarPorUnidade(POSTS) : POSTS;
+  postsOrdenados.forEach(function(post){ grid.appendChild(criarCard(post)); });
 
   var overlay, lastFocused;
 
@@ -326,6 +343,7 @@ var DIAS_SEMANA = [
           '<h3></h3>' +
           '<span class="novidade-data"></span>' +
           '<div class="post-modal-conteudo"></div>' +
+          '<a class="btn btn-amarelo post-modal-whats" hidden target="_blank" rel="noopener noreferrer"></a>' +
         '</div>' +
       '</div>';
     document.body.appendChild(overlay);
@@ -353,6 +371,15 @@ var DIAS_SEMANA = [
       p.textContent = paragrafo;
       conteudo.appendChild(p);
     });
+    var whatsBtn = overlay.querySelector('.post-modal-whats');
+    if (post.whatsapp) {
+      whatsBtn.href = 'https://wa.me/' + post.whatsapp.numero;
+      whatsBtn.textContent = post.whatsapp.texto;
+      whatsBtn.hidden = false;
+    } else {
+      whatsBtn.hidden = true;
+      whatsBtn.removeAttribute('href');
+    }
     overlay.classList.add('is-open');
     document.body.style.overflow = 'hidden';
     overlay.querySelector('.post-modal-close').focus();
@@ -364,6 +391,96 @@ var DIAS_SEMANA = [
     document.body.style.overflow = '';
     if (lastFocused) lastFocused.focus();
   }
+})();
+
+// Carrossel de novidades (home) — autoplay, troca sozinho
+(function(){
+  var carrossel = document.querySelector('.novidades-carrossel');
+  if (!carrossel) return;
+  var track = carrossel.querySelector('.novidades-carrossel-track');
+  var itens = track ? Array.prototype.slice.call(track.children) : [];
+  if (!track || itens.length < 2) return;
+
+  var intervaloMs = parseInt(carrossel.getAttribute('data-autoplay'), 10) || 4500;
+  var timer = null;
+
+  var dotsWrap = document.createElement('div');
+  dotsWrap.className = 'novidades-carrossel-dots';
+  itens.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', 'Ir para novidade ' + (i + 1));
+    dot.addEventListener('click', function(){ irPara(i); reiniciarAutoplay(); });
+    dotsWrap.appendChild(dot);
+  });
+
+  var prev = document.createElement('button');
+  prev.type = 'button';
+  prev.className = 'carrossel-prev';
+  prev.setAttribute('aria-label', 'Novidade anterior');
+  prev.innerHTML = '‹';
+  var next = document.createElement('button');
+  next.type = 'button';
+  next.className = 'carrossel-next';
+  next.setAttribute('aria-label', 'Próxima novidade');
+  next.innerHTML = '›';
+
+  carrossel.appendChild(prev);
+  carrossel.appendChild(next);
+  carrossel.appendChild(dotsWrap);
+
+  function posicaoDoItem(item){
+    return item.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+  }
+
+  function indiceAtual(){
+    var meio = track.scrollLeft + track.clientWidth / 2;
+    var maisPerto = 0, menorDist = Infinity;
+    itens.forEach(function(item, i){
+      var centro = posicaoDoItem(item) + item.offsetWidth / 2;
+      var dist = Math.abs(centro - meio);
+      if (dist < menorDist) { menorDist = dist; maisPerto = i; }
+    });
+    return maisPerto;
+  }
+
+  function atualizarDots(){
+    var atual = indiceAtual();
+    Array.prototype.forEach.call(dotsWrap.children, function(dot, i){
+      dot.classList.toggle('active', i === atual);
+    });
+  }
+
+  function irPara(i){
+    i = (i + itens.length) % itens.length;
+    track.scrollTo({ left: posicaoDoItem(itens[i]), behavior: 'smooth' });
+  }
+
+  function iniciarAutoplay(){
+    pararAutoplay();
+    timer = setInterval(function(){ irPara(indiceAtual() + 1); }, intervaloMs);
+  }
+  function pararAutoplay(){
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+  function reiniciarAutoplay(){ iniciarAutoplay(); }
+
+  next.addEventListener('click', function(){ irPara(indiceAtual() + 1); reiniciarAutoplay(); });
+  prev.addEventListener('click', function(){ irPara(indiceAtual() - 1); reiniciarAutoplay(); });
+  carrossel.addEventListener('mouseenter', pararAutoplay);
+  carrossel.addEventListener('mouseleave', iniciarAutoplay);
+  carrossel.addEventListener('touchstart', pararAutoplay, { passive: true });
+  carrossel.addEventListener('touchend', function(){ setTimeout(iniciarAutoplay, 3000); }, { passive: true });
+
+  var scrollTimer;
+  track.addEventListener('scroll', function(){
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(atualizarDots, 100);
+  });
+
+  atualizarDots();
+  iniciarAutoplay();
 })();
 
 // Carrossel de fotos (autoplay, pausa no hover/toque, arraste nativo no celular)

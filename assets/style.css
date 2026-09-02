@@ -238,6 +238,21 @@ h1,h2,h3,.display{
 .novidade-leia-mais{color:var(--yellow);font-size:13px;font-weight:700;margin-top:4px;}
 @media (max-width:900px){.novidades-grid{grid-template-columns:1fr;}}
 
+/* Novidades em carrossel (home) */
+.novidades-carrossel{position:relative;}
+.novidades-carrossel-track{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;padding:4px 2px 8px;}
+.novidades-carrossel-track::-webkit-scrollbar{display:none;}
+.novidades-carrossel-track .novidade-card{flex:0 0 calc((100% - 48px)/3);scroll-snap-align:start;}
+.novidades-carrossel .carrossel-prev{left:-14px;}
+.novidades-carrossel .carrossel-next{right:-14px;}
+.novidades-carrossel-dots{display:flex;justify-content:center;gap:8px;margin-top:14px;}
+.novidades-carrossel-dots button{width:8px;height:8px;border-radius:50%;background:var(--card-border);border:none;cursor:pointer;padding:0;transition:background .15s,width .15s;}
+.novidades-carrossel-dots button.active{background:var(--yellow);width:22px;border-radius:4px;}
+@media (max-width:900px){
+  .novidades-carrossel-track .novidade-card{flex:0 0 82%;}
+  .novidades-carrossel .carrossel-prev,.novidades-carrossel .carrossel-next{display:none;}
+}
+
 /* Modal de post (Novidades) */
 .post-modal{position:fixed;inset:0;background:rgba(10,10,10,.82);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
 .post-modal.is-open{display:flex;}
@@ -256,6 +271,7 @@ h1,h2,h3,.display{
 .post-modal-body .novidade-data{display:block;margin-bottom:18px;}
 .post-modal-conteudo p{color:var(--muted);font-size:14.5px;line-height:1.7;margin-bottom:14px;}
 .post-modal-conteudo p:last-child{margin-bottom:0;}
+.post-modal-whats{margin-top:18px;}
 
 /* Aplicativo */
 .app-badges{display:flex;gap:16px;flex-wrap:wrap;margin-top:28px;}
