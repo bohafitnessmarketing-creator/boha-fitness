@@ -134,6 +134,21 @@ var DIAS_SEMANA = [
   });
 })();
 
+// Dropdown "Mais" do menu (desktop: clique ou hover; fecha ao clicar fora)
+(function(){
+  document.querySelectorAll('.nav-dropdown').forEach(function(dropdown){
+    var btn = dropdown.querySelector('.nav-dropdown-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+    });
+  });
+  document.addEventListener('click', function(){
+    document.querySelectorAll('.nav-dropdown.open').forEach(function(d){ d.classList.remove('open'); });
+  });
+})();
+
 // FAQ accordion
 (function(){
   document.querySelectorAll('.faq-item').forEach(function(item){
@@ -240,6 +255,115 @@ var DIAS_SEMANA = [
   triggers.forEach(function(t){
     t.addEventListener('click', function(){ open(t.getAttribute('data-plano'), t); });
   });
+})();
+
+// Novidades (blog) — monta os cards a partir de assets/novidades-data.js e abre o post num modal
+(function(){
+  var grid = document.getElementById('novidadesGrid');
+  if (!grid || typeof POSTS === 'undefined') return;
+
+  function criarCard(post){
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'novidade-card';
+
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'novidade-card-img';
+    var img = document.createElement('img');
+    img.src = post.imagem;
+    img.alt = post.titulo;
+    img.loading = 'lazy';
+    imgWrap.appendChild(img);
+
+    var body = document.createElement('div');
+    body.className = 'novidade-card-body';
+
+    var tag = document.createElement('span');
+    tag.className = 'novidade-tag';
+    tag.textContent = post.unidade;
+
+    var h3 = document.createElement('h3');
+    h3.textContent = post.titulo;
+
+    var data = document.createElement('span');
+    data.className = 'novidade-data';
+    data.textContent = post.data;
+
+    var resumo = document.createElement('p');
+    resumo.textContent = post.resumo;
+
+    var leiaMais = document.createElement('span');
+    leiaMais.className = 'novidade-leia-mais';
+    leiaMais.textContent = 'Ler mais →';
+
+    body.appendChild(tag);
+    body.appendChild(h3);
+    body.appendChild(data);
+    body.appendChild(resumo);
+    body.appendChild(leiaMais);
+    card.appendChild(imgWrap);
+    card.appendChild(body);
+
+    card.addEventListener('click', function(){ openPost(post, card); });
+    return card;
+  }
+
+  POSTS.forEach(function(post){ grid.appendChild(criarCard(post)); });
+
+  var overlay, lastFocused;
+
+  function build(){
+    overlay = document.createElement('div');
+    overlay.className = 'post-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.innerHTML =
+      '<div class="post-modal-panel">' +
+        '<button type="button" class="post-modal-close" aria-label="Fechar">✕</button>' +
+        '<div class="post-modal-img"><img alt=""></div>' +
+        '<div class="post-modal-body">' +
+          '<span class="novidade-tag"></span>' +
+          '<h3></h3>' +
+          '<span class="novidade-data"></span>' +
+          '<div class="post-modal-conteudo"></div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('.post-modal-close').addEventListener('click', closePost);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closePost(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) closePost();
+    });
+  }
+
+  function openPost(post, trigger){
+    if (!overlay) build();
+    lastFocused = trigger;
+    var img = overlay.querySelector('.post-modal-img img');
+    img.src = post.imagem;
+    img.alt = post.titulo;
+    overlay.querySelector('.post-modal-body .novidade-tag').textContent = post.unidade;
+    overlay.querySelector('.post-modal-body h3').textContent = post.titulo;
+    overlay.querySelector('.post-modal-body .novidade-data').textContent = post.data;
+    var conteudo = overlay.querySelector('.post-modal-conteudo');
+    conteudo.innerHTML = '';
+    (post.conteudo || []).forEach(function(paragrafo){
+      var p = document.createElement('p');
+      p.textContent = paragrafo;
+      conteudo.appendChild(p);
+    });
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    overlay.querySelector('.post-modal-close').focus();
+  }
+
+  function closePost(){
+    if (!overlay) return;
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
+  }
 })();
 
 // Carrossel de fotos (autoplay, pausa no hover/toque, arraste nativo no celular)
