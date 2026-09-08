@@ -5,15 +5,14 @@
 var HORARIOS_POR_UNIDADE = {
   'casa-branca': {
     segunda: [
-      { hora: '07h00', aula: 'Zumba' },
-      { hora: '08h00', aula: 'H.I.T' },
+      { hora: '07h00', aula: 'Fit Dance' },
+      { hora: '08h00', aula: 'Funcional' },
       { hora: '18h00', aula: 'Funcional' },
       { hora: '19h00', aula: 'Zumba' },
       { hora: '20h00', aula: 'Jump' },
       { hora: '21h00', aula: 'Jiu-Jitsu' }
     ],
     terca: [
-      { hora: '06h00', aula: 'Pilates' },
       { hora: '07h00', aula: 'Pilates' },
       { hora: '08h00', aula: 'Jump' },
       { hora: '18h00', aula: 'Pilates' },
@@ -22,9 +21,10 @@ var HORARIOS_POR_UNIDADE = {
       { hora: '21h00', aula: 'Muay-Thai' }
     ],
     quarta: [
+      { hora: '06h00', aula: 'Pilates' },
       { hora: '07h00', aula: 'Step' },
-      { hora: '08h00', aula: 'Funcional' },
-      { hora: '18h00', aula: 'Funcional' },
+      { hora: '08h00', aula: 'H.I.T' },
+      { hora: '18h00', aula: 'H.I.T' },
       { hora: '19h00', aula: 'Jump' },
       { hora: '20h00', aula: 'Sertanejo' },
       { hora: '21h00', aula: 'Jiu-Jitsu' }
@@ -65,7 +65,7 @@ var HORARIOS_POR_UNIDADE = {
     quarta: [
       { hora: '06h00', aula: 'Pilates' },
       { hora: '07h00', aula: 'Pilates' },
-      { hora: '08h15', aula: 'Zumba' },
+      { hora: '08h15', aula: 'Fit Dance' },
       { hora: '18h00', aula: 'Pilates' },
       { hora: '19h15', aula: 'Pilates' },
       { hora: '20h15', aula: 'Jump' }
