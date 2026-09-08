@@ -30,16 +30,12 @@ const POSTS = [
     ]
   },
   {
-    titulo: "Em breve, aulas de Spinning na Boha Santa Tereza",
+    titulo: "Spinning chegou na Boha Santa Tereza",
     data: "2 de setembro de 2026",
     unidade: "Jardim Santa Tereza",
     imagem: "imagens/novidades/nov-spninnig.PNG",
-    resumo: "Chegando a nova modalidade Spinning na unidade Santa Tereza — fique de olho na agenda!",
-    conteudo: [
-      "A Boha Jardim Santa Tereza vai passar a oferecer aulas de Spinning, pedalada indoor em ritmo intenso, ótima opção de cardio para todos os níveis.",
-      "Em breve divulgamos os horários das turmas. Acompanhe as novidades por aqui ou fale com a equipe da unidade para mais informações."
-    ],
-    whatsapp: { numero: "5511991195832", texto: "Garantir pré-venda" }
+    resumo: "Garanta sua vaga na nova modalidade Spinning — 1º mês grátis para alunos Boha. Vagas limitadas por turma!",
+    link: "spinning.html"
   },
   {
     titulo: "Nova turma de FitDance na Santa Tereza",
