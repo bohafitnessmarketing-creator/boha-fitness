@@ -42,26 +42,12 @@ const POSTS = [
     whatsapp: { numero: "5511991195832", texto: "Garantir pré-venda" }
   },
   {
-    titulo: "Chegaram novos aparelhos de puxada e cabo na Casa Branca",
-    data: "20 de agosto de 2026",
-    unidade: "Jardim Casa Branca",
-    imagem: "imagens/boha-casabranca/musculacao-06.png",
-    resumo: "Ampliamos a área de musculação com uma nova estação de puxadas — já pode usar!",
-    conteudo: [
-      "A unidade Jardim Casa Branca ganhou uma nova estação de puxadas e cabos, ampliando as opções de treino de costas e braços.",
-      "O equipamento já está disponível para uso e os professores estão passando as orientações durante os treinos. Qualquer dúvida, é só chamar a equipe na unidade."
-    ]
-  },
-  {
-    titulo: "Nova turma de aula funcional na Santa Tereza",
+    titulo: "Nova turma de FitDance na Santa Tereza",
     data: "10 de agosto de 2026",
     unidade: "Jardim Santa Tereza",
     imagem: "imagens/boha-tereza/sala-coletiva-01.png",
-    resumo: "Abrimos uma nova turma de treino funcional na sala de aulas coletivas — vagas limitadas.",
-    conteudo: [
-      "A partir desse mês, a Boha Jardim Santa Tereza abriu uma nova turma de treino funcional, com foco em condicionamento e resistência.",
-      "As vagas são limitadas. Quem tiver interesse pode confirmar o horário direto na recepção ou pelo WhatsApp da unidade."
-    ]
+    resumo: "Abrimos uma nova turma de FitDance na sala de aulas coletivas, às quartas-feiras às 08h15 — vagas limitadas.",
+    link: "modalidades.html"
   },
   {
     titulo: "Reforma nos vestiários da Macedônia está pronta",

@@ -263,8 +263,12 @@ var DIAS_SEMANA = [
   if (!grid || typeof POSTS === 'undefined') return;
 
   function criarCard(post){
-    var card = document.createElement('button');
-    card.type = 'button';
+    var card = document.createElement(post.link ? 'a' : 'button');
+    if (post.link) {
+      card.href = post.link;
+    } else {
+      card.type = 'button';
+    }
     card.className = 'novidade-card';
 
     var imgWrap = document.createElement('div');
@@ -304,7 +308,9 @@ var DIAS_SEMANA = [
     card.appendChild(imgWrap);
     card.appendChild(body);
 
-    card.addEventListener('click', function(){ openPost(post, card); });
+    if (!post.link) {
+      card.addEventListener('click', function(){ openPost(post, card); });
+    }
     return card;
   }
 
