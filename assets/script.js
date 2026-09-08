@@ -667,6 +667,6 @@ var DIAS_SEMANA = [
     erro.hidden = true;
 
     var mensagem = 'Olá! Me chamo ' + nome + ', sou ' + perfilEscolhido + ' e quero garantir minha vaga na aula de Spinning na unidade ' + UNIDADE_FIXA + '. Vi a promoção no site!';
-    window.open('https://wa.me/5511978200834?text=' + encodeURIComponent(mensagem), '_blank', 'noopener');
+    window.open('https://wa.me/5511991195832?text=' + encodeURIComponent(mensagem), '_blank', 'noopener');
   });
 })();
