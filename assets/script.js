@@ -643,36 +643,30 @@ var DIAS_SEMANA = [
   var form = document.getElementById('spinForm');
   if (!form) return;
 
-  var unidadeGrupo = document.getElementById('spinUnidade');
+  var UNIDADE_FIXA = 'Jardim Santa Tereza';
   var perfilGrupo = document.getElementById('spinPerfil');
   var nomeInput = document.getElementById('spinNome');
   var erro = document.getElementById('spinErro');
-  var unidadeEscolhida = null;
   var perfilEscolhido = null;
 
-  function ligarGrupo(grupo, aoEscolher){
-    grupo.querySelectorAll('button').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        grupo.querySelectorAll('button').forEach(function(b){ b.classList.toggle('selected', b === btn); });
-        aoEscolher(btn.getAttribute('data-valor'));
-      });
+  perfilGrupo.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      perfilGrupo.querySelectorAll('button').forEach(function(b){ b.classList.toggle('selected', b === btn); });
+      perfilEscolhido = btn.getAttribute('data-valor');
     });
-  }
-
-  ligarGrupo(unidadeGrupo, function(valor){ unidadeEscolhida = valor; });
-  ligarGrupo(perfilGrupo, function(valor){ perfilEscolhido = valor; });
+  });
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var nome = nomeInput.value.trim();
 
-    if (!nome || !unidadeEscolhida || !perfilEscolhido) {
+    if (!nome || !perfilEscolhido) {
       erro.hidden = false;
       return;
     }
     erro.hidden = true;
 
-    var mensagem = 'Olá! Me chamo ' + nome + ', sou ' + perfilEscolhido + ' e quero garantir minha vaga na aula de Spinning na unidade ' + unidadeEscolhida + '. Vi a promoção no site!';
+    var mensagem = 'Olá! Me chamo ' + nome + ', sou ' + perfilEscolhido + ' e quero garantir minha vaga na aula de Spinning na unidade ' + UNIDADE_FIXA + '. Vi a promoção no site!';
     window.open('https://wa.me/5511978200834?text=' + encodeURIComponent(mensagem), '_blank', 'noopener');
   });
 })();
