@@ -86,6 +86,17 @@ var DIAS_SEMANA = [
   ];
 
   function horariosDaAula(unidadeKey, aula){
+    // Spinning tem sala própria e fica fora do HORARIOS_POR_UNIDADE (ver horarios-data.js)
+    if (aula === 'Spinning') {
+      if (unidadeKey !== 'santa-tereza' || typeof HORARIOS_SPINNING_SANTA_TEREZA === 'undefined') return [];
+      var diasSpinning = HORARIOS_SPINNING_SANTA_TEREZA;
+      var linhasSpinning = [];
+      DIAS_SEMANA.forEach(function(d){
+        (diasSpinning[d.key] || []).forEach(function(hora){ linhasSpinning.push(d.abrev + ' · ' + hora); });
+      });
+      return linhasSpinning;
+    }
+
     var dados = HORARIOS_POR_UNIDADE[unidadeKey] || {};
     var linhas = [];
     DIAS_SEMANA.forEach(function(d){
