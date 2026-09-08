@@ -19,6 +19,17 @@
 
 const POSTS = [
   {
+    titulo: "Site novo no ar",
+    data: "2 de setembro de 2026",
+    unidade: "Todas as unidades",
+    imagem: "imagens/novidades/sitenovo.png",
+    resumo: "A Boha Fitness lançou seu site oficial, mostrando de verdade a estrutura, unidades, planos e modalidades da academia.",
+    conteudo: [
+      "Já está no ar o site oficial da Boha Fitness! Agora dá pra conhecer de verdade a estrutura das unidades, os planos disponíveis e todas as modalidades oferecidas, tudo em um só lugar.",
+      "O site vai continuar recebendo atualizações constantes, com novas fotos, novidades e melhorias. Fique de olho por aqui!"
+    ]
+  },
+  {
     titulo: "Em breve, aulas de Spinning na Boha Santa Tereza",
     data: "2 de setembro de 2026",
     unidade: "Jardim Santa Tereza",
