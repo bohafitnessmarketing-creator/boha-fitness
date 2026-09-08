@@ -86,3 +86,16 @@ var HORARIOS_POR_UNIDADE = {
     ]
   }
 };
+
+// Spinning (Jardim Santa Tereza) — fica de fora do HORARIOS_POR_UNIDADE de propósito:
+// acontece numa sala própria (bike), em paralelo com a sala coletiva principal, então
+// os horários se sobrepõem aos da grade acima. Misturar os dois quebraria a grade
+// principal (ela assume só uma aula por horário/dia). Usado pelo card "Spinning" em
+// Modalidades e na Home.
+var HORARIOS_SPINNING_SANTA_TEREZA = {
+  segunda: ['07h00', '19h00', '20h00'],
+  terca: ['06h00', '07h00', '18h00', '20h00'],
+  quarta: ['07h00', '08h00', '18h00', '19h00'],
+  quinta: ['06h00', '07h00', '18h00', '19h00', '20h00'],
+  sexta: ['07h00', '20h00']
+};
