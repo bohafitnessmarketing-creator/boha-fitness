@@ -501,3 +501,17 @@ a.unidade-info-item:hover{color:var(--white);}
   .modalidades-carrossel-track .modalidade-item{flex:0 0 78%;}
   .modalidades-carrossel .carrossel-prev,.modalidades-carrossel .carrossel-next{display:none;}
 }
+
+/* Oferta em 2 colunas (páginas de pré-venda, ex. Spinning) */
+.oferta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+@media (max-width:900px){.oferta-grid{grid-template-columns:1fr;}}
+
+/* Formulário simples client-side (ex. captura de vaga na Spinning) */
+.form-field{margin-bottom:20px;}
+.form-field:last-of-type{margin-bottom:0;}
+.form-field>span{display:block;font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted-2);margin-bottom:10px;}
+.form-input{width:100%;background:transparent;border:2px solid #3a3a3a;border-radius:10px;padding:14px 16px;font-size:14px;color:var(--white);font-family:'Inter',sans-serif;transition:border-color .15s;}
+.form-input:focus{outline:none;border-color:var(--yellow);}
+.form-input::placeholder{color:var(--muted-2);}
+.form-opcoes{display:flex;flex-direction:column;gap:10px;}
+.form-erro{color:#ff6b6b;font-size:13px;font-weight:700;margin-top:16px;}
