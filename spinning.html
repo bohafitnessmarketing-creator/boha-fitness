@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="assets/favicon/favicon-oficial.png">
 <link rel="apple-touch-icon" href="assets/favicon/favicon-oficial.png">
-<link rel="stylesheet" href="assets/style.css?v=20260910d">
+<link rel="stylesheet" href="assets/style.css?v=20260910e">
 </head>
 <body>
 <header class="boha-header">
@@ -62,22 +62,37 @@
     <div class="section-head center">
       <span class="eyebrow">Oferta de lançamento</span>
       <h2>Escolha como você treina</h2>
-      <p>As duas formas de entrar na primeira turma de Spinning da Boha.</p>
-    </div>
-    <div style="max-width:640px;margin:0 auto 28px;text-align:center;background:rgba(245,230,10,0.08);border:1px solid var(--yellow);border-radius:14px;padding:18px 24px;">
-      <p style="color:var(--yellow);font-weight:800;font-size:14.5px;">🎉 Já é aluno(a) do plano VIP Anual?</p>
-      <p style="color:var(--muted);font-size:14px;margin-top:6px;">O Spinning já está incluso no seu plano, sem custo extra nenhum — nem no 1º mês, nem depois. Não precisa de upgrade: só preencher o formulário abaixo pra garantir sua vaga na turma.</p>
+      <p>O valor do adicional muda conforme seu plano atual — confira abaixo.</p>
     </div>
     <div class="oferta-grid">
-      <article class="plano-card destaque">
-        <span class="tag-destaque">1º mês grátis</span>
-        <span class="plano-nome">Aluno Simples ou Básico</span>
+      <article class="plano-card">
+        <span class="plano-nome">Aluno Básico</span>
+        <div class="plano-preco"><span class="valor">Grátis</span><span class="periodo">no 1º mês</span></div>
+        <p class="plano-promo">Depois R$59,99/mês</p>
+        <ul class="plano-lista">
+          <li><span class="check">✓</span>8 aulas de Spinning por mês</li>
+        </ul>
+        <p style="color:var(--muted);font-size:14px;">Já é aluno(a) do plano Básico? Esse é o adicional pra incluir o Spinning no seu plano, na unidade Jardim Santa Tereza.</p>
+      </article>
+      <article class="plano-card">
+        <span class="plano-nome">Aluno Simples</span>
         <div class="plano-preco"><span class="valor">Grátis</span><span class="periodo">no 1º mês</span></div>
         <p class="plano-promo">Depois R$39,99/mês</p>
         <ul class="plano-lista">
           <li><span class="check">✓</span>8 aulas de Spinning por mês</li>
         </ul>
-        <p style="color:var(--muted);font-size:14px;">Já é aluno(a) do plano Simples ou Básico? Isso é um upgrade do seu plano atual — adiciona o Spinning sem custo no primeiro mês, na unidade Jardim Santa Tereza.</p>
+        <p style="color:var(--muted);font-size:14px;">Já é aluno(a) do plano Simples? Esse é o adicional pra incluir o Spinning no seu plano, na unidade Jardim Santa Tereza.</p>
+      </article>
+      <article class="plano-card destaque">
+        <span class="tag-destaque">Já incluso</span>
+        <span class="plano-nome">Aluno VIP Anual</span>
+        <div class="plano-preco"><span class="valor">4 aulas</span><span class="periodo">grátis por mês</span></div>
+        <p class="plano-promo">Quer o pacote completo? +R$29,99/mês</p>
+        <ul class="plano-lista">
+          <li><span class="check">✓</span>4 aulas de Spinning por mês já inclusas no plano</li>
+          <li><span class="check">✓</span>Completa pra 8 aulas por mês pagando o adicional</li>
+        </ul>
+        <p style="color:var(--muted);font-size:14px;">Já é aluno(a) do plano VIP Anual? Você já treina Spinning sem pagar nada a mais — quer mais aulas, é só completar o pacote.</p>
       </article>
       <article class="plano-card">
         <span class="plano-nome">Gym Pass / TotalPass</span>
@@ -225,8 +240,8 @@
           <p>Preenche seus dados abaixo — a gente já te leva direto pro WhatsApp pra confirmar sua vaga.</p>
           <ul class="cadastro-beneficios">
             <li>📍 Av. João Paulo II, 1042 — Jardim Santa Tereza</li>
-            <li>🎉 Incluso, sem custo, pra quem é aluno VIP Anual</li>
-            <li>🚴 1º mês grátis pra quem é aluno Simples/Básico</li>
+            <li>🎉 VIP Anual já treina 4x/mês sem pagar nada a mais</li>
+            <li>🚴 1º mês grátis no adicional de Simples e Básico</li>
             <li>🔥 Turmas limitadas — garanta antes que lote</li>
           </ul>
         </div>
@@ -249,8 +264,10 @@
             <div class="form-field">
               <span>Perfil</span>
               <div class="form-opcoes" id="spinPerfil">
-                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano VIP Anual (Spinning já incluso, sem upgrade)">Sou aluno(a) VIP Anual</button>
-                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano Simples ou Básico e quero fazer upgrade de plano">Sou aluno(a) Simples/Básico — upgrade de plano</button>
+                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano Básico e quero incluir o Spinning (adicional de R$59,99/mês)">Sou aluno(a) Básico</button>
+                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano Simples e quero incluir o Spinning (adicional de R$39,99/mês)">Sou aluno(a) Simples</button>
+                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano VIP Anual e quero usar minhas 4 aulas grátis já inclusas">Sou aluno(a) VIP Anual (4 aulas grátis)</button>
+                <button type="button" class="plano-modal-unidade" data-valor="aluno(a) do plano VIP Anual e quero completar pra 8 aulas (adicional de R$29,99/mês)">Sou aluno(a) VIP Anual (quero completar pra 8 aulas)</button>
                 <button type="button" class="plano-modal-unidade" data-valor="usuário(a) de Gym Pass">Uso Gym Pass</button>
                 <button type="button" class="plano-modal-unidade" data-valor="usuário(a) de TotalPass">Uso TotalPass</button>
               </div>
@@ -321,6 +338,6 @@
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.1 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"></path></svg>
 </a>
 
-<script src="assets/script.js?v=20260910d"></script>
+<script src="assets/script.js?v=20260910e"></script>
 </body>
 </html>
