@@ -6,11 +6,14 @@
 <title>Teste iframe EVO</title>
 <style>
   body{background:#0a0a0a;color:#f7f7f5;font-family:sans-serif;padding:24px;text-align:center;}
-  iframe{border:1px solid #333;max-width:100%;}
+  .frame-wrap{max-width:640px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid #333;background:#111;}
+  iframe{width:100%;height:820px;border:0;display:block;}
 </style>
 </head>
 <body>
-<h3>Teste — iframe do totem EVO (Casa Branca / Simples)</h3>
-<iframe width="560" height="315" src="https://evo-totem.w12app.com.br/bohafitness/1/site/Zn50Krsk1XkTW8YXGf83Gw%5BEQUAL%5D%5BEQUAL%5D" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h3>Teste — iframe do totem EVO (Casa Branca / Simples), quadro maior</h3>
+<div class="frame-wrap">
+  <iframe src="https://evo-totem.w12app.com.br/bohafitness/1/site/Zn50Krsk1XkTW8YXGf83Gw%5BEQUAL%5D%5BEQUAL%5D" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 </body>
 </html>
