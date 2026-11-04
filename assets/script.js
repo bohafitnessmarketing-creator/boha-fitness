@@ -187,13 +187,9 @@ var DIAS_SEMANA = [
     // AJUSTE TEMPORÁRIO: os links VIP de Casa Branca e Santa Tereza estão com
     // problema no totem EVO (pagamento não abre). Enquanto isso não é
     // corrigido, os dois apontam pro link da Macedônia (que funciona) — o
-    // VIP dá acesso a qualquer unidade, então não afeta a matrícula. Os
-    // links originais estão comentados abaixo pra restaurar depois.
-    // 'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/CGbxAebAzMiJYOfbgbIphg%5BEQUAL%5D%5BEQUAL%5D',
-    // 'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/oxT8H5JG1%5BBAR%5DWI%5BBAR%5DzZmqsBlmA%5BEQUAL%5D%5BEQUAL%5D',
     vip: {
-      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/3/site/Il5lCjpqOYYzTOIhlMhp0Q%5BEQUAL%5D%5BEQUAL%5D',
-      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/3/site/Il5lCjpqOYYzTOIhlMhp0Q%5BEQUAL%5D%5BEQUAL%5D',
+      'casa-branca': 'https://evo-totem.w12app.com.br/bohafitness/1/site/CGbxAebAzMiJYOfbgbIphg%5BEQUAL%5D%5BEQUAL%5D',
+      'santa-tereza': 'https://evo-totem.w12app.com.br/bohafitness/2/site/oxT8H5JG1%5BBAR%5DWI%5BBAR%5DzZmqsBlmA%5BEQUAL%5D%5BEQUAL%5D',
       'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/Il5lCjpqOYYzTOIhlMhp0Q%5BEQUAL%5D%5BEQUAL%5D'
     },
     basico: {
