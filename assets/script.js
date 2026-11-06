@@ -198,7 +198,7 @@ var DIAS_SEMANA = [
       'macedonia': 'https://evo-totem.w12app.com.br/bohafitness/3/site/UJkekf%5BPLUS%5D5sgjzZKuW2hhaUQ%5BEQUAL%5D%5BEQUAL%5D'
     }
   };
-  var PLANO_NOMES = { simples: 'Boha Black', vip: 'Boha VIP Anual', basico: 'Boha Básico' };
+  var PLANO_NOMES = { simples: 'Boha Fit', vip: 'Boha VIP Anual', basico: 'Boha Básico' };
 
   var overlay, planoAtual, lastFocused;
 
