@@ -40,7 +40,7 @@ async function showSession(session){
  message('Carregando sua área...');
  const {data,error}=await client.from('boha_content').select('data').eq('id','dashboard').single();
  if(error||!data?.data?.html){message('Seu acesso ainda não foi liberado ou o painel está em configuração.');return}
- currentUser=session.user.id;el('identity').textContent=session.user.email;el('dashboard').srcdoc=data.data.html;el('login').hidden=true;el('workspace').hidden=false;message('');
+ currentUser=session.user.id;el('identity').textContent=session.user.email;el('dashboard').srcdoc=data.data.html.replaceAll("fetch('/api/","parent.bohaAPI('/api/");el('login').hidden=true;el('workspace').hidden=false;message('');
 }
 el('form').onsubmit=async event=>{event.preventDefault();busy(true);try{const {data,error}=await client.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error){message('Não foi possível entrar. Confira e-mail, senha e confirmação do e-mail.');return}el('password').value='';await showSession(data.session)}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
 el('register').onclick=async()=>{if(!el('form').reportValidity())return;busy(true);try{const {data,error}=await client.auth.signUp({email:el('email').value.trim(),password:el('password').value,options:{emailRedirectTo:location.origin+location.pathname}});if(error){message('Não foi possível criar o acesso. Confira os dados ou procure a gestão.');return}el('password').value='';if(data.session)await showSession(data.session);else message('Confira seu e-mail e confirme o cadastro. Depois volte e clique em Entrar.')}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
