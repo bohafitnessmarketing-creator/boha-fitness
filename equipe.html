@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Área da equipe</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#0b0b0b;color:#eee;font:16px/1.5 Arial,sans-serif}.login{max-width:440px;margin:8vh auto;padding:32px;background:#181818;border:1px solid #333;border-radius:18px}h1{color:#fff000;margin-bottom:4px}p{color:#aaa}label{display:block;margin:18px 0 6px}input,button{font:inherit;border-radius:8px;padding:12px;width:100%}input{background:#222;border:1px solid #555;color:#fff}button{cursor:pointer;border:1px solid #444;background:#222;color:#fff;margin-top:16px}button.primary{background:#fff000;color:#111;font-weight:bold}button:disabled{opacity:.5;cursor:wait}#message{min-height:28px;color:#fff000}#appbar{padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;background:#161616}#appbar button{width:auto;margin:0;padding:6px 12px}iframe{display:block;width:100%;height:calc(100vh - 49px);border:0}[hidden]{display:none!important}.hint{font-size:12px}</style></head>
+<body><main id="login" class="login"><h1>boha FITNESS</h1><p>Área interna da equipe</p><form id="form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main><section id="workspace" hidden><div id="appbar"><span id="identity"></span><button id="logout">Sair</button></div><iframe id="dashboard" title="Organograma e rotinas BOHA" referrerpolicy="no-referrer"></iframe></section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+const URL_SUPABASE='https://rgevjxpruqstctquxzoc.supabase.co';
+const PUBLIC_KEY='sb_publishable_7ZJQJfv5Bts-NgDR4rSXmg_wFgAYBC4';
+const client=supabase.createClient(URL_SUPABASE,PUBLIC_KEY);
+const el=id=>document.getElementById(id);
+function message(text){el('message').textContent=text}
+function busy(value){el('enter').disabled=value;el('register').disabled=value}
+function reply(body,status=200){return new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json'}})}
+function dataURL(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)})}
+window.bohaAPI=async function(path,options={}){
+ try{
+ const method=(options.method||'GET').toUpperCase();
+ if(path==='/api/state'&&method==='GET'){
+ const {data,error}=await client.from('boha_members').select('id,data');if(error)throw error;
+ const state={};await Promise.all(data.map(async row=>{state[row.id]={...row.data};if(row.data.photo){const result=await client.storage.from('boha-photos').download(row.id+'.jpg');state[row.id].photo=result.error?'':await dataURL(result.data)}}));return reply(state);
+ }
+ if(path==='/api/state'&&method==='PUT'){
+ const body=JSON.parse(options.body);if(!/^[a-z0-9-]{1,80}$/i.test(body.id))return reply({},400);
+ const value={};for(const k of ['name','shift','notes']){if(body.data[k]!==undefined){if(typeof body.data[k]!=='string'||body.data[k].length>12000)return reply({},400);value[k]=body.data[k]}}
+ value.photo=body.data.photo?body.id+'.jpg':'';
+ const {error}=await client.from('boha_members').upsert({id:body.id,data:value,updated_at:new Date().toISOString()});if(error)throw error;return reply({ok:true});
+ }
+ if(path.startsWith('/api/photos/')){
+ const id=decodeURIComponent(path.split('/').pop());if(!/^[a-z0-9-]{1,80}$/i.test(id))return reply({},400);
+ if(method==='PUT'){const {error}=await client.storage.from('boha-photos').upload(id+'.jpg',options.body,{contentType:'image/jpeg',upsert:true});if(error)throw error;return reply({photo:await dataURL(options.body)})}
+ if(method==='DELETE'){const {error}=await client.storage.from('boha-photos').remove([id+'.jpg']);if(error)throw error;return new Response(null,{status:204})}
+ }return reply({},404);
+ }catch{return reply({error:'Acesso negado ou falha de conexão.'},403)}
+};
+let currentUser=null;
+async function showSession(session){
+ if(!session){currentUser=null;el('workspace').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return}
+ if(currentUser===session.user.id)return;
+ message('Carregando sua área...');
+ const {data,error}=await client.from('boha_content').select('data').eq('id','dashboard').single();
+ if(error||!data?.data?.html){message('Seu acesso ainda não foi liberado ou o painel está em configuração.');return}
+ currentUser=session.user.id;el('identity').textContent=session.user.email;el('dashboard').srcdoc=data.data.html;el('login').hidden=true;el('workspace').hidden=false;message('');
+}
+el('form').onsubmit=async event=>{event.preventDefault();busy(true);try{const {data,error}=await client.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error){message('Não foi possível entrar. Confira e-mail, senha e confirmação do e-mail.');return}el('password').value='';await showSession(data.session)}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
+el('register').onclick=async()=>{if(!el('form').reportValidity())return;busy(true);try{const {data,error}=await client.auth.signUp({email:el('email').value.trim(),password:el('password').value,options:{emailRedirectTo:location.origin+location.pathname}});if(error){message('Não foi possível criar o acesso. Confira os dados ou procure a gestão.');return}el('password').value='';if(data.session)await showSession(data.session);else message('Confira seu e-mail e confirme o cadastro. Depois volte e clique em Entrar.')}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
+el('logout').onclick=async()=>{await client.auth.signOut();await showSession(null)};
+client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')showSession(null)});
+client.auth.getSession().then(({data})=>showSession(data.session)).catch(()=>message('Não foi possível restaurar sua sessão.'));
+</script></body></html>
