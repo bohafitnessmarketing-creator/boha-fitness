@@ -130,6 +130,49 @@ button{font:inherit;cursor:pointer}
 #identity{color:var(--muted)}
 iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 
+.card.wide{grid-column:1/-1;min-height:0}
+.bar2{position:sticky;top:0;z-index:5;height:56px;padding:0 20px;display:flex;align-items:center;gap:14px;background:#111;border-bottom:1px solid var(--line);font-size:13px}
+.bar2 .logo-img{height:24px;display:block}
+.bar2 .sep{width:1px;height:22px;background:var(--line2)}
+.bar2 .spacer{flex:1}
+.bar2 .mtitle{font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:18px;color:var(--y);letter-spacing:.4px}
+.acc-wrap{max-width:1100px;margin:0 auto;padding:40px 28px 70px}
+.acc-head h1{font-size:clamp(40px,5.5vw,64px);line-height:1;margin:12px 0 10px}
+.acc-head .sub{color:var(--muted);margin:0;max-width:600px}
+.acc-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:22px;animation:fadeUp .45s var(--ease) backwards}
+.acc-card h2{font-size:24px;line-height:1;margin:0}
+.acc-card.req{border-color:rgba(255,159,46,.4);background:linear-gradient(120deg,#1d160c,#141414 55%)}
+.acc-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:16px}
+.acc-top span{font-size:13px;color:var(--muted)}
+.acc-fields{display:grid;grid-template-columns:1fr 1.4fr 1fr auto;gap:12px;align-items:end}
+.acc-fields label{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.acc-fields input,.acc-fields select,.acc-row select{background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:11px 12px;color:var(--text);font:inherit;font-size:14px;letter-spacing:0;text-transform:none;outline:none;width:100%}
+.acc-fields input:focus,.acc-fields select:focus,.acc-row select:focus{border-color:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border:0;border-radius:10px;padding:12px 18px;white-space:nowrap;transition:filter .2s}
+.btn-y:hover{filter:brightness(1.08)}
+.btn-y:disabled{opacity:.5;cursor:wait}
+.acc-hint{font-size:12.5px;color:var(--muted);margin:14px 0 0}
+.invite{margin-top:16px;border:1px solid rgba(255,240,0,.35);background:rgba(255,240,0,.05);border-radius:14px;padding:16px;animation:fadeUp .4s var(--ease) backwards}
+.invite b{color:var(--y)}
+.invite pre{white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.55;color:#ddd;margin:10px 0 12px;background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:12px}
+.invite .row{display:flex;gap:8px;flex-wrap:wrap}
+.acc-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto 180px auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.acc-row:first-child{border-top:0;padding-top:0}
+.acc-row .avatar{width:40px;height:40px}
+.acc-who{min-width:0}
+.acc-who b{display:block;font-size:15px}
+.acc-who span{display:block;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.acc-who small{display:block;font-size:12px;color:#777}
+.chip.wait{color:var(--y);border-color:rgba(255,240,0,.35);background:rgba(255,240,0,.06)}
+.chip.warn{color:var(--orange);border-color:rgba(255,159,46,.4);background:rgba(255,159,46,.08)}
+.acc-actions{display:flex;gap:8px;justify-content:flex-end}
+.ghost.sm{padding:7px 12px;font-size:12px}
+.ghost.danger:hover{border-color:var(--red);color:var(--red)}
+.you{font-size:12px;color:var(--muted);text-align:right}
+.acc-empty{color:var(--muted);margin:0}
+.acc-row.req-row{grid-template-columns:auto minmax(0,1fr) auto}
+a.ghost{text-decoration:none;display:inline-flex;align-items:center}
+
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.4);color:var(--text);padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:20;box-shadow:0 12px 30px rgba(0,0,0,.5);max-width:calc(100vw - 32px)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -147,6 +190,13 @@ iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
  .modules{grid-template-columns:1fr}
  .row-head{margin-top:32px}
  #appbar{padding:0 12px;gap:10px}#appbar .logo-img,#appbar .sep,#identity{display:none}
+ .bar2{padding:0 12px;gap:10px}.bar2 .logo-img,.bar2 .sep{display:none}
+ .acc-wrap{padding:28px 16px 56px}
+ .acc-fields{grid-template-columns:1fr}
+ .acc-row{grid-template-columns:auto minmax(0,1fr)}
+ .acc-row>.chip{justify-self:start}
+ .acc-row>.chip,.acc-row>select,.acc-row>.acc-actions,.acc-row>.you{grid-column:1/-1}
+ .acc-actions{justify-content:flex-start}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head>
@@ -176,6 +226,25 @@ iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 </section>
 
 <section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><span id="identity"></span><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
+<section id="accessView" hidden>
+ <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="ghost" id="logout3">Sair</button></div>
+ <div class="acc-wrap">
+  <div class="acc-head"><p class="eyebrow">Somente administradores</p><h1 class="display">Gestão de <span class="accent">acessos</span></h1><p class="sub">Libere o e-mail da pessoa aqui, mande o convite pelo WhatsApp e ela mesma cria a senha no primeiro acesso. Você nunca precisa saber a senha de ninguém.</p></div>
+  <form class="acc-card" id="accForm" autocomplete="off">
+   <div class="acc-top"><h2 class="display">Liberar novo acesso</h2></div>
+   <div class="acc-fields">
+    <label>Nome<input id="accName" maxlength="60" required placeholder="Ex.: Vitória"></label>
+    <label>E-mail<input id="accEmail" type="email" required placeholder="email@exemplo.com"></label>
+    <label>Perfil<select id="accRole"></select></label>
+    <button type="submit" class="btn-y" id="accSubmit">Liberar acesso</button>
+   </div>
+   <p class="acc-hint" id="accRoleHint"></p>
+   <div id="accInvite"></div>
+  </form>
+  <div id="accRequests"></div>
+  <div class="acc-card"><div class="acc-top"><h2 class="display">Pessoas com acesso</h2><span id="accCount"></span></div><div id="accList"></div></div>
+ </div>
+</section>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -218,7 +287,8 @@ const ICONS={
  mkt:svg('<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/>'),
  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>',16),
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',16),
- cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26)
+ cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26),
+ key:svg('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M18 5l2 2"/>')
 };
 const MODULES=[
  {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
@@ -232,11 +302,17 @@ const MODULES=[
   features:['Pedidos por área: musculação, cardio, vestiário…','Status: pendente, comprado ou feito','Histórico de manutenção de cada área']},
  {key:'marketing',status:'soon',icon:'mkt',tag:'Conteúdo',title:'Marketing',visual:'mkt',
   desc:'Termômetro de gravações: qual aula está há mais tempo sem conteúdo.',
-  features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']}
+  features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']},
+ {key:'acessos',status:'live',adminOnly:true,wide:true,icon:'key',tag:'Administração',title:'Gestão de acessos',visual:'access',
+  desc:'Libere, ajuste ou remova o acesso de cada pessoa da equipe — só administradores veem esta área.',
+  features:['Liberar acesso com nome, e-mail e perfil','Convite pronto pra mandar no WhatsApp','Trocar perfil ou remover acesso na hora']}
 ];
-const ROLE_LABEL={admin:'Administrador',editor:'Editor'};
+const ROLE_LABEL={admin:'Administrador',editor:'Editor',viewer:'Visualizador'};
+const ROLES=[['viewer','Visualizador','só visualiza os módulos'],['editor','Editor','vê e edita os módulos'],['admin','Administrador','vê e edita tudo e gerencia acessos']];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const visibleModules=()=>MODULES.filter(m=>!m.adminOnly||profile?.role==='admin');
 const TZ='America/Sao_Paulo';
-let profile=null,currentView=null,activeKey=null,cache={},stats={members:null},clockTimer=null;
+let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null},clockTimer=null,accData=[];
 
 function toast(text){const t=el('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
 function tick(){
@@ -249,6 +325,11 @@ function tick(){
 }
 
 const VISUALS={
+ access(){
+  const a=stats.access;
+  const box=(v,l,c)=>`<div style="flex:1;background:#151515;border:1px solid #232323;border-radius:12px;padding:12px"><b style="display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;color:${c}">${a?v:'—'}</b><span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700">${l}</span></div>`;
+  return `<div class="vz-head"><span>Situação dos acessos</span><b>${a?a.total+' liberados':'carregando…'}</b></div><div style="display:flex;gap:8px">${box(a?.active,'Ativos','#3ddc84')}${box(a?.pending,'Aguardando','#fff000')}${box(a?.requests,'Pediram acesso','#ff9f2e')}</div>`;
+ },
  org(){
   const n=stats.members;
   const node=(x,y,w,h,top,delay)=>`<g class="nd" style="animation-delay:${delay}ms"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${top?'#fff000':'#1c1c1c'}" stroke="${top?'#fff000':'#3a3a3a'}"/><circle cx="${x+h/2}" cy="${y+h/2}" r="${h/4.4}" fill="${top?'#111':'#444'}"/>${w>40?`<rect x="${x+h}" y="${y+h/2-2}" width="${w-h-9}" height="4" rx="2" fill="${top?'#111':'#333'}"/>`:''}</g>`;
@@ -296,31 +377,48 @@ function showPreview(m){
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
 function renderModules(){
  const wrap=el('modules');wrap.innerHTML='';
- MODULES.forEach((m,i)=>{
+ visibleModules().forEach((m,i)=>{
   const live=m.status==='live';
   const b=document.createElement('button');
-  b.type='button';b.className='card'+(live?'':' soon');b.dataset.key=m.key;b.style.animationDelay=(140+i*80)+'ms';
+  b.type='button';b.className='card'+(live?'':' soon')+(m.wide?' wide':'');b.dataset.key=m.key;b.style.animationDelay=(140+i*80)+'ms';
   b.innerHTML=`<div class="card-top"><span class="card-icon">${ICONS[m.icon]}</span><span class="chip ${live?'live':''}">${live?'Disponível':'Em breve'}</span></div>
    <div><span class="card-tag">${m.tag}</span><h2 class="display">${m.title}</h2></div>
    <p>${m.desc}</p>
    <ul class="card-features">${m.features.map(f=>`<li>${f}</li>`).join('')}</ul>
-   <div class="card-foot"><span data-meta="${m.key}">${live?(stats.members===null?'Abrir módulo':memberLabel(stats.members)):'Em construção'}</span><span class="card-arrow">${live?ICONS.arrow:ICONS.clock}</span></div>`;
+   <div class="card-foot"><span data-meta="${m.key}">${metaText(m)}</span><span class="card-arrow">${live?ICONS.arrow:ICONS.clock}</span></div>`;
   b.addEventListener('mouseenter',()=>showPreview(m));
   b.addEventListener('focus',()=>showPreview(m));
   b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')});
   b.addEventListener('click',()=>openModule(m));
   wrap.appendChild(b);
  });
- const live=MODULES.filter(m=>m.status==='live').length;
- el('liveCount').innerHTML=`<b>${live}</b> de ${MODULES.length} disponíve${live===1?'l':'is'}`;
+ const mods=visibleModules(),live=mods.filter(m=>m.status==='live').length;
+ el('liveCount').innerHTML=`<b>${live}</b> de ${mods.length} disponíve${live===1?'l':'is'}`;
+}
+function metaText(m){
+ if(m.status!=='live')return 'Em construção';
+ if(m.key==='hierarquia')return stats.members===null?'Abrir módulo':memberLabel(stats.members);
+ if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
+ return 'Abrir módulo';
+}
+function refreshMeta(key){
+ const m=MODULES.find(x=>x.key===key),meta=document.querySelector(`[data-meta="${key}"]`);
+ if(m&&meta)meta.textContent=metaText(m);
+ if(activeKey===key&&m){activeKey=null;showPreview(m)}
+}
+function accessSummary(rows){
+ const people=rows.filter(r=>r.role);
+ return {total:people.length,active:people.filter(r=>r.confirmed).length,pending:people.filter(r=>!r.confirmed).length,requests:rows.filter(r=>!r.role).length};
 }
 async function loadStats(){
  try{
   const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
-  if(error||typeof count!=='number')return;
-  stats.members=count;
-  const meta=document.querySelector('[data-meta="hierarquia"]');if(meta)meta.textContent=memberLabel(count);
-  if(activeKey==='hierarquia'){activeKey=null;showPreview(MODULES[0])}
+  if(!error&&typeof count==='number'){stats.members=count;refreshMeta('hierarquia')}
+ }catch{}
+ if(profile?.role!=='admin')return;
+ try{
+  const {data,error}=await client.rpc('boha_access_list');
+  if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
 function openModule(m){
@@ -331,10 +429,12 @@ function goHome(){history.pushState(null,'',location.pathname+location.search);r
 async function route(){
  if(!profile)return;
  const key=location.hash.slice(1);
- const m=MODULES.find(x=>x.key===key&&x.status==='live');
- if(!m){currentView=null;el('workspace').hidden=true;el('dashboard').srcdoc='';el('hub').hidden=false;tick();return}
+ const m=visibleModules().find(x=>x.key===key&&x.status==='live');
+ if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;el('dashboard').srcdoc='';el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}return}
  if(currentView===key)return;
  currentView=key;
+ if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;el('dashboard').srcdoc='';el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
+ el('accessView').hidden=true;
  let html=cache[m.content];
  if(!html){
   toast(`Abrindo ${m.title}…`);
@@ -363,8 +463,9 @@ function enterHub(me,session){
 }
 async function showSession(session){
  if(!session){
-  profile=null;currentView=null;activeKey=null;cache={};stats={members:null};clearInterval(clockTimer);
-  el('hub').hidden=true;el('workspace').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return;
+  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null};clearInterval(clockTimer);
+  accData=[];el('accInvite').innerHTML='';
+  el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return;
  }
  if(profile&&profile.uid===session.user.id)return;
  message('Carregando sua área...');
@@ -387,6 +488,72 @@ el('logout2').onclick=logout;
 el('back').onclick=goHome;
 window.addEventListener('hashchange',route);
 window.addEventListener('popstate',route);
+const firstName=s=>String(s||'').trim().split(/\s+/)[0]||'';
+const dateBR=d=>d?new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',timeZone:TZ}).format(new Date(d)):'';
+const roleOptions=sel=>ROLES.map(([v,l])=>`<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('');
+function inviteText(name,email){const n=firstName(name);return `Oi${n?', '+n:''}! Seu acesso ao sistema interno da Boha Fitness foi liberado 💪\n\n1. Entra em ${location.origin+location.pathname}\n2. Toca em "Criar meu primeiro acesso"\n3. Coloca seu nome, este e-mail: ${email}\n   e crie uma senha só sua (mínimo 10 caracteres)\n4. Confirma o cadastro pelo link que chega no seu e-mail\n5. Volta na página e clica em Entrar 😉`}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch{}a.remove();return ok}}
+function showInvite(name,email){const t=inviteText(name,email);el('accInvite').innerHTML=`<div class="invite"><b>Acesso liberado para ${esc(name||email)}.</b> Agora é só mandar o convite — a pessoa cria a própria senha:<pre>${esc(t)}</pre><div class="row"><button type="button" class="btn-y" data-act="copy" data-email="${esc(email)}" data-name="${esc(name)}">Copiar convite</button><a class="ghost" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener noreferrer">Abrir no WhatsApp</a></div></div>`}
+function statusChip(r){if(!r.has_account)return '<span class="chip wait">Aguardando cadastro</span>';if(!r.confirmed)return '<span class="chip warn">Falta confirmar e-mail</span>';return '<span class="chip live">Ativo</span>'}
+function renderAccess(){
+ const me=(profile?.email||'').toLowerCase(),label=r=>r.name||r.email.split('@')[0];
+ const people=accData.filter(r=>r.role).sort((a,b)=>a.email===me?-1:b.email===me?1:label(a).localeCompare(label(b),'pt-BR'));
+ const reqs=accData.filter(r=>!r.role).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+ stats.access=accessSummary(accData);
+ el('accCount').textContent=`${people.length} ${people.length===1?'pessoa':'pessoas'}`;
+ el('accList').innerHTML=people.length?people.map(r=>{
+  const isMe=r.email===me,nm=label(r);
+  const sub=r.confirmed?(r.last_sign_in?`Último acesso em ${dateBR(r.last_sign_in)}`:'Conta ativa'):r.has_account?'Criou a conta, falta confirmar pelo link do e-mail':'Ainda não criou a conta';
+  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
+ }).join(''):'<p class="acc-empty">Ninguém com acesso ainda.</p>';
+ el('accRequests').innerHTML=reqs.length?`<div class="acc-card req"><div class="acc-top"><h2 class="display">Pediram acesso</h2><span>Criaram conta, mas ainda não foram liberados</span></div>${reqs.map(r=>{const nm=label(r);return `<div class="acc-row req-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}</b><span>${esc(r.email)}</span><small>Conta criada em ${dateBR(r.created_at)}</small></div><div class="acc-actions"><button type="button" class="btn-y" data-act="prefill" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Liberar</button></div></div>`}).join('')}</div>`:'';
+}
+async function loadAccess(){
+ if(!accData.length)el('accList').innerHTML='<p class="acc-empty">Carregando…</p>';
+ try{const {data,error}=await client.rpc('boha_access_list');if(error)throw error;accData=data||[];renderAccess()}
+ catch{el('accList').innerHTML='<p class="acc-empty">Não foi possível carregar os acessos. Atualize a página.</p>'}
+}
+function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=`${r[1]}: ${r[2]}. Os perfis por área (Gerência, Marketing, Recepção, Professor) entram nesta lista assim que forem definidos.`}
+el('accRole').innerHTML=roleOptions('viewer');el('accRole').onchange=roleHint;roleHint();
+el('accForm').onsubmit=async e=>{
+ e.preventDefault();
+ const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value;
+ if(accData.some(r=>r.role&&r.email===email)&&!confirm(`${email} já tem acesso. Atualizar nome e perfil?`))return;
+ el('accSubmit').disabled=true;
+ try{
+  const {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role});
+  if(error){toast(error.message||'Não foi possível liberar o acesso.');return}
+  el('accForm').reset();roleHint();
+  await loadAccess();
+  const r=accData.find(x=>x.email===email);
+  if(r&&r.confirmed){el('accInvite').innerHTML='';toast(`${name} já tinha conta — acesso liberado, já pode entrar.`)}else showInvite(name,email);
+ }catch{toast('Falha de conexão. Tente novamente.')}finally{el('accSubmit').disabled=false}
+};
+el('accessView').addEventListener('click',async e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const {act,email,name}=b.dataset;
+ if(act==='copy')toast(await copyText(inviteText(name,email))?'Convite copiado — cola no WhatsApp da pessoa.':'Não deu pra copiar. Selecione o texto e copie.');
+ else if(act==='invite'){showInvite(name,email);el('accForm').scrollIntoView({behavior:'smooth',block:'start'})}
+ else if(act==='prefill'){el('accName').value=name;el('accEmail').value=email;el('accForm').scrollIntoView({behavior:'smooth',block:'start'});el('accRole').focus();toast('Confira o perfil e clique em Liberar acesso.')}
+ else if(act==='remove'){
+  if(!confirm(`Remover o acesso de ${name}? A pessoa não vai mais conseguir ver o sistema.`))return;
+  b.disabled=true;
+  const {error}=await client.rpc('boha_access_remove',{p_email:email});
+  if(error){toast(error.message||'Não foi possível remover.');b.disabled=false;return}
+  el('accInvite').innerHTML='';toast(`Acesso de ${name} removido.`);loadAccess();
+ }
+});
+el('accessView').addEventListener('change',async e=>{
+ const s=e.target.closest('select[data-role]');if(!s)return;
+ const r=accData.find(x=>x.email===s.dataset.role);if(!r)return;
+ const prev=r.role;s.disabled=true;
+ const {error}=await client.rpc('boha_access_save',{p_email:r.email,p_name:'',p_role:s.value});
+ s.disabled=false;
+ if(error){toast(error.message||'Não foi possível alterar o perfil.');s.value=prev;return}
+ r.role=s.value;toast(`Perfil de ${r.name||r.email} agora é ${ROLE_LABEL[s.value]}.`);
+});
+el('back2').onclick=goHome;
+el('logout3').onclick=logout;
 client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')showSession(null)});
 client.auth.getSession().then(({data})=>showSession(data.session)).catch(()=>message('Não foi possível restaurar sua sessão.'));
 </script></body></html>
