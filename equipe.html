@@ -1,7 +1,181 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Área da equipe</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#0b0b0b;color:#eee;font:16px/1.5 Arial,sans-serif}.login{max-width:440px;margin:8vh auto;padding:32px;background:#181818;border:1px solid #333;border-radius:18px}h1{color:#fff000;margin-bottom:4px}p{color:#aaa}label{display:block;margin:18px 0 6px}input,button{font:inherit;border-radius:8px;padding:12px;width:100%}input{background:#222;border:1px solid #555;color:#fff}button{cursor:pointer;border:1px solid #444;background:#222;color:#fff;margin-top:16px}button.primary{background:#fff000;color:#111;font-weight:bold}button:disabled{opacity:.5;cursor:wait}#message{min-height:28px;color:#fff000}#appbar{padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;background:#161616}#appbar button{width:auto;margin:0;padding:6px 12px}iframe{display:block;width:100%;height:calc(100vh - 49px);border:0}[hidden]{display:none!important}.hint{font-size:12px}.logo-img{height:40px;display:block;margin-bottom:14px}#appbar .logo-img{height:26px;margin:0}</style></head>
-<body><main id="login" class="login"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><p>Área interna da equipe</p><form id="form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main><section id="workspace" hidden><div id="appbar"><div style="display:flex;align-items:center;gap:12px"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="identity"></span></div><button id="logout">Sair</button></div><iframe id="dashboard" title="Organograma e rotinas BOHA" referrerpolicy="no-referrer"></iframe></section>
+<link rel="icon" type="image/png" href="assets/favicon/favicon-oficial.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--green:#3ddc84;--red:#ff5a4f;--orange:#ff9f2e;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+
+.login{max-width:440px;margin:8vh auto;padding:32px;background:#161616;border:1px solid #2a2a2a;border-radius:20px}
+.login p{color:#aaa}
+.login label{display:block;margin:18px 0 6px;font-size:14px}
+.login input,.login button{font:inherit;border-radius:10px;padding:12px 14px;width:100%}
+.login input{background:#1f1f1f;border:1px solid #3a3a3a;color:#fff}
+.login input:focus{outline:none;border-color:var(--y)}
+.login button{border:1px solid #3a3a3a;background:#1f1f1f;color:#fff;margin-top:14px}
+.login button.primary{background:var(--y);color:#111;font-weight:800;border-color:var(--y)}
+.login button:disabled{opacity:.5;cursor:wait}
+.login .logo-img{height:40px;display:block;margin-bottom:14px}
+#message{min-height:28px;color:var(--y)}
+.hint{font-size:12px}
+
+#hub{min-height:100vh;background:radial-gradient(900px 420px at 8% -8%,rgba(255,240,0,.07),transparent 60%),var(--bg)}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;background:rgba(10,10,10,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .logo-img{height:30px;display:block}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--y);color:#111;font-weight:800;display:grid;place-items:center;font-size:15px}
+.user b{display:block;font-size:14px;line-height:1.2}
+.user small{color:var(--muted);font-size:12px}
+.ghost{padding:8px 16px;background:transparent;border:1px solid var(--line2);color:var(--text);border-radius:999px;font-size:13px;transition:border-color .2s,color .2s}
+.ghost:hover,.ghost:focus-visible{border-color:var(--y);color:var(--y);outline:none}
+
+.hub-wrap{max-width:1200px;margin:0 auto;padding:48px 28px 64px}
+.hello{animation:fadeUp .6s var(--ease) backwards}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.hello h1{font-size:clamp(42px,6.4vw,76px);line-height:.98;margin:14px 0 14px}
+.accent{color:var(--y)}
+.today{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font-size:15px}
+.today .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(61,220,132,.14)}
+
+.row-head{display:flex;justify-content:space-between;align-items:baseline;margin:44px 0 14px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.row-head b{color:var(--text)}
+.hub-grid{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:24px;align-items:start}
+.modules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.card{position:relative;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;min-height:214px;display:flex;flex-direction:column;gap:12px;color:var(--text);overflow:hidden;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;animation:fadeUp .55s var(--ease) backwards}
+.card::before{content:'';position:absolute;inset:0;background:radial-gradient(380px circle at var(--mx,30%) var(--my,0%),rgba(255,240,0,.10),transparent 45%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover,.card.is-active{transform:translateY(-4px);border-color:rgba(255,240,0,.55);box-shadow:0 22px 44px -22px rgba(255,240,0,.28)}
+.card:hover::before,.card.is-active::before{opacity:1}
+.card:focus-visible{outline:2px solid var(--y);outline-offset:3px}
+.card>*{position:relative}
+.card-top{display:flex;justify-content:space-between;align-items:center}
+.card-icon{width:46px;height:46px;flex:none;border-radius:13px;background:#1e1e1e;border:1px solid var(--line2);display:grid;place-items:center;color:var(--y);transition:background .3s,color .3s,border-color .3s}
+.card:hover .card-icon,.card.is-active .card-icon{background:var(--y);color:#111;border-color:var(--y)}
+.chip{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.chip.live{color:var(--green);border-color:rgba(61,220,132,.35);background:rgba(61,220,132,.08)}
+.chip.live::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:1px}
+.card-tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.card h2{font-size:27px;line-height:1.05;margin:3px 0 0}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.card-features{display:none;list-style:none;padding:0;margin:0;font-size:13px;color:#cfcfcf}
+.card-features li{padding:3px 0 3px 14px;position:relative}
+.card-features li::before{content:'';position:absolute;left:0;top:11px;width:5px;height:5px;border-radius:50%;background:var(--y)}
+.card-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+.card-arrow{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;transition:transform .3s var(--ease),background .3s,color .3s,border-color .3s}
+.card:hover .card-arrow,.card.is-active .card-arrow{transform:translateX(3px);background:var(--y);color:#111;border-color:var(--y)}
+.card.soon:hover .card-arrow,.card.soon.is-active .card-arrow{transform:none;background:#222;color:var(--muted);border-color:var(--line2)}
+
+.preview{position:sticky;top:86px;background:linear-gradient(180deg,#161616,#0f0f0f);border:1px solid var(--line);border-radius:20px;padding:22px;min-height:448px;overflow:hidden}
+.pv{animation:pvIn .38s var(--ease)}
+.pv-head{display:flex;gap:12px;align-items:center}
+.pv-head .card-icon{background:var(--y);color:#111;border-color:var(--y)}
+.pv-head h3{font-size:24px;line-height:1;margin:4px 0 0}
+.pv-head .chip{margin-left:auto}
+.pv-visual{margin:18px 0 14px;background:#0b0b0b;border:1px solid var(--line);border-radius:14px;padding:16px}
+.pv-note{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin:0 0 14px}
+.pv-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.pv-list{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+.pv-list li{display:flex;gap:10px;font-size:14px;color:#ddd;animation:fadeUp .4s var(--ease) backwards}
+.pv-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--y);margin-top:8px;flex:none}
+.pv-cta{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.pv-cta b{color:var(--y)}
+.pv-empty{min-height:402px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;color:var(--muted)}
+.pv-empty h3{color:var(--text);font-size:24px;margin:10px 0 0}
+.pv-empty p{margin:0;max-width:250px;font-size:14px}
+.pv-ring{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;color:var(--y);border:1px solid rgba(255,240,0,.35);position:relative}
+.pv-ring::after{content:'';position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--y);animation:ping 2.2s cubic-bezier(0,0,.2,1) infinite}
+
+.vz{width:100%;height:auto;display:block}
+.vz-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.vz-head b{color:var(--text);letter-spacing:0;text-transform:none;font-size:13px}
+.vz-head b.up{color:var(--green)}
+.vz-head b.hot{color:var(--red)}
+.vz-stat{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid #1d1d1d}
+.vz-stat b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:32px;color:var(--y);line-height:1}
+.vz-stat span{color:var(--muted);font-size:13px}
+.vz-progress{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:12px;color:var(--muted);margin-top:10px}
+.vz-progress b{color:var(--y)}
+.bar{height:8px;background:#1f1f1f;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;animation:grow .9s var(--ease) backwards}
+.sb{transform-box:fill-box;transform-origin:50% 100%;animation:rise .6s var(--ease) backwards}
+.nd{animation:fadeUp .45s var(--ease) backwards}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1c1c1c;animation:fadeUp .4s var(--ease) backwards}
+.mrow:last-child{border-bottom:0}
+.mrow b{display:block;font-size:13px}
+.mrow div span{font-size:12px;color:var(--muted)}
+.st{font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.st.p{color:var(--red);background:rgba(255,90,79,.1)}
+.st.c{color:var(--y);background:rgba(255,240,0,.1)}
+.st.f{color:var(--green);background:rgba(61,220,132,.1)}
+.trow{display:grid;grid-template-columns:78px 1fr 34px;gap:10px;align-items:center;font-size:13px;padding:7px 0}
+.trow b{text-align:right;font-size:12px}
+.legend{display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+#appbar{position:sticky;top:0;z-index:5;height:56px;padding:0 20px;display:flex;align-items:center;gap:14px;background:#111;border-bottom:1px solid var(--line);font-size:13px}
+#appbar .logo-img{height:24px;display:block}
+#appbar .sep{width:1px;height:22px;background:var(--line2)}
+#moduleTitle{font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:18px;color:var(--y);letter-spacing:.4px}
+#appbar .spacer{flex:1}
+#identity{color:var(--muted)}
+iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
+
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.4);color:var(--text);padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:20;box-shadow:0 12px 30px rgba(0,0,0,.5);max-width:calc(100vw - 32px)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}}
+@keyframes pvIn{from{opacity:0;transform:translateY(10px)}}
+@keyframes grow{from{width:0}}
+@keyframes rise{from{transform:scaleY(0)}}
+@keyframes ping{75%,100%{transform:scale(1.6);opacity:0}}
+
+@media (max-width:1020px),(hover:none){.hub-grid{grid-template-columns:1fr}.preview{display:none}.card-features{display:block}}
+@media (max-width:640px){
+ .login{margin:16px;padding:24px}
+ .topbar{padding:10px 16px}.topbar .logo-img{height:26px}.user div{display:none}
+ .hub-wrap{padding:30px 16px 48px}
+ .modules{grid-template-columns:1fr}
+ .row-head{margin-top:32px}
+ #appbar{padding:0 12px;gap:10px}#appbar .logo-img,#appbar .sep,#identity{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<main id="login" class="login"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><p>Área interna da equipe</p><form id="form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main>
+
+<section id="hub" hidden>
+ <header class="topbar">
+  <img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness">
+  <div class="topbar-right">
+   <div class="user"><span class="avatar" id="avatar"></span><div><b id="userName"></b><small id="userRole"></small></div></div>
+   <button type="button" class="ghost" id="logout">Sair</button>
+  </div>
+ </header>
+ <div class="hub-wrap">
+  <div class="hello">
+   <p class="eyebrow">Boha Fitness · Sistema interno</p>
+   <h1 class="display"><span id="greeting">Olá</span>, <span id="firstName" class="accent"></span></h1>
+   <p class="today"><span class="dot"></span><span id="today"></span></p>
+  </div>
+  <div class="row-head"><span>Áreas do sistema</span><span id="liveCount"></span></div>
+  <div class="hub-grid">
+   <div class="modules" id="modules"></div>
+   <aside class="preview" id="preview" aria-live="polite"></aside>
+  </div>
+ </div>
+</section>
+
+<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><span id="identity"></span><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
+<div id="toast" role="status" aria-live="polite"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
@@ -33,18 +207,181 @@ window.bohaAPI=async function(path,options={}){
  }return reply({},404);
  }catch{return reply({error:'Acesso negado ou falha de conexão.'},403)}
 };
-let currentUser=null;
-async function showSession(session){
- if(!session){currentUser=null;el('workspace').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return}
- if(currentUser===session.user.id)return;
- message('Carregando sua área...');
- const {data,error}=await client.from('boha_content').select('data').eq('id','dashboard').single();
- if(error||!data?.data?.html){message('Seu acesso ainda não foi liberado ou o painel está em configuração.');return}
- currentUser=session.user.id;el('identity').textContent=session.user.email;el('dashboard').srcdoc=data.data.html.replaceAll("fetch('/api/","parent.bohaAPI('/api/");el('login').hidden=true;el('workspace').hidden=false;message('');
+
+const svg=(body,size=22)=>`<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+const ICONS={
+ org:svg('<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2.5h12V16"/>'),
+ sales:svg('<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'),
+ maint:svg('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>'),
+ mkt:svg('<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/>'),
+ arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>',16),
+ clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',16),
+ cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26)
+};
+const MODULES=[
+ {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
+  desc:'Organograma, funções e rotinas de quem faz a Boha acontecer.',
+  features:['Organograma completo da equipe','Turnos e responsabilidades de cada um','Fotos e observações de cada pessoa']},
+ {key:'vendas',status:'soon',icon:'sales',tag:'Comercial',title:'Vendas',visual:'sales',
+  desc:'Matrículas e faturamento, unidade por unidade, em tempo real.',
+  features:['Matrículas por dia e por mês','Comparativo entre as 3 unidades','Meta do mês e quanto falta']},
+ {key:'compras',status:'soon',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
+  desc:'O que cada área da academia precisa — e o que já foi resolvido.',
+  features:['Pedidos por área: musculação, cardio, vestiário…','Status: pendente, comprado ou feito','Histórico de manutenção de cada área']},
+ {key:'marketing',status:'soon',icon:'mkt',tag:'Conteúdo',title:'Marketing',visual:'mkt',
+  desc:'Termômetro de gravações: qual aula está há mais tempo sem conteúdo.',
+  features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']}
+];
+const ROLE_LABEL={admin:'Administrador',editor:'Editor'};
+const TZ='America/Sao_Paulo';
+let profile=null,currentView=null,activeKey=null,cache={},stats={members:null},clockTimer=null;
+
+function toast(text){const t=el('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
+function tick(){
+ const d=new Date();
+ const date=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'numeric',month:'long',timeZone:TZ}).format(d);
+ const time=new Intl.DateTimeFormat('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:TZ}).format(d);
+ const h=+new Intl.DateTimeFormat('pt-BR',{hour:'numeric',hourCycle:'h23',timeZone:TZ}).format(d);
+ el('today').textContent=date.charAt(0).toUpperCase()+date.slice(1)+' · '+time;
+ el('greeting').textContent=h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
 }
+
+const VISUALS={
+ org(){
+  const n=stats.members;
+  const node=(x,y,w,h,top,delay)=>`<g class="nd" style="animation-delay:${delay}ms"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${top?'#fff000':'#1c1c1c'}" stroke="${top?'#fff000':'#3a3a3a'}"/><circle cx="${x+h/2}" cy="${y+h/2}" r="${h/4.4}" fill="${top?'#111':'#444'}"/>${w>40?`<rect x="${x+h}" y="${y+h/2-2}" width="${w-h-9}" height="4" rx="2" fill="${top?'#111':'#333'}"/>`:''}</g>`;
+  let s='<svg viewBox="0 0 300 142" class="vz" aria-hidden="true"><path d="M150 38V54M60 54H240M60 54V70M150 54V70M240 54V70" stroke="#3a3a3a" fill="none"/>';
+  s+=node(115,10,70,28,true,0);
+  [60,150,240].forEach((cx,i)=>{
+   s+=`<path d="M${cx} 96V106M${cx-20} 106H${cx+20}M${cx-20} 106V118M${cx+20} 106V118" stroke="#3a3a3a" fill="none"/>`;
+   s+=node(cx-32,70,64,26,false,120+i*80)+node(cx-34,118,28,18,false,380+i*70)+node(cx+6,118,28,18,false,420+i*70);
+  });
+  return s+`</svg><div class="vz-stat"><b>${n===null?'—':n}</b><span>${n===null?'carregando equipe…':n===1?'pessoa cadastrada no organograma':'pessoas cadastradas no organograma'}</span></div>`;
+ },
+ sales(){
+  const h=[38,52,46,64,58,72,61,84,76,92,88,104];
+  const bars=h.map((v,i)=>`<rect class="sb" x="${14+i*23.5}" y="${130-v}" width="14" height="${v}" rx="3" fill="${i===11?'#fff000':'#2c2c2c'}" style="animation-delay:${i*40}ms"/>`).join('');
+  return `<div class="vz-head"><span>Matrículas · 12 meses</span><b class="up">▲ 18%</b></div><svg viewBox="0 0 300 136" class="vz" aria-hidden="true"><line x1="8" x2="292" y1="22" y2="22" stroke="#fff000" stroke-opacity=".45" stroke-dasharray="4 4"/><text x="292" y="15" text-anchor="end" fill="#fff000" fill-opacity=".75" font-size="9" font-family="Inter,Arial" font-weight="700" letter-spacing="1">META</text>${bars}<line x1="8" x2="292" y1="130.5" y2="130.5" stroke="#2a2a2a"/></svg><div class="vz-progress"><span>Meta do mês</span><div class="bar"><i style="width:78%;background:#fff000"></i></div><b>78%</b></div>`;
+ },
+ maint(){
+  const rows=[['Vestiário','Trocar chuveiro 2','p','Pendente'],['Musculação','Cabo do crossover','c','Comprado'],['Cardio','Revisão da esteira 3','f','Feito'],['Recepção','Bobina da catraca','p','Pendente']];
+  return '<div class="vz-head"><span>Pedidos da semana</span><b>2 pendentes</b></div>'+rows.map((r,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${r[0]}</b><span>${r[1]}</span></div><span class="st ${r[2]}">${r[3]}</span></div>`).join('');
+ },
+ mkt(){
+  const rows=[['Zumba',41,'#ff5a4f'],['Jump',26,'#ff9f2e'],['Muay Thai',14,'#fff000'],['Pilates',4,'#3ddc84']];
+  return '<div class="vz-head"><span>Dias sem gravar</span><b class="hot">Próxima: Zumba</b></div>'+rows.map((r,i)=>`<div class="trow"><span>${r[0]}</span><div class="bar"><i style="width:${Math.round(r[1]/45*100)}%;background:${r[2]};animation-delay:${i*90}ms"></i></div><b style="color:${r[2]}">${r[1]}d</b></div>`).join('')+'<div class="legend"><span><i style="background:#3ddc84"></i>em dia</span><span><i style="background:#fff000"></i>atenção</span><span><i style="background:#ff5a4f"></i>atrasada</span></div>';
+ }
+};
+
+function previewHTML(m){
+ const live=m.status==='live';
+ return `<div class="pv">
+  <div class="pv-head"><span class="card-icon">${ICONS[m.icon]}</span><div><span class="card-tag">${m.tag}</span><h3 class="display">${m.title}</h3></div><span class="chip ${live?'live':''}">${live?'Disponível':'Em breve'}</span></div>
+  <div class="pv-visual">${VISUALS[m.visual]()}</div>
+  ${live?'':`<p class="pv-note">${ICONS.clock}Prévia ilustrativa — módulo em construção.</p>`}
+  <p class="pv-label">O que você encontra aqui</p>
+  <ul class="pv-list">${m.features.map((f,i)=>`<li style="animation-delay:${120+i*60}ms">${f}</li>`).join('')}</ul>
+  <div class="pv-cta">${live?'<span>Clique no card para entrar</span><b>Abrir →</b>':'<span>Chega em breve por aqui</span><b>Em construção</b>'}</div>
+ </div>`;
+}
+function emptyPreview(){return `<div class="pv pv-empty"><span class="pv-ring">${ICONS.cursor}</span><h3 class="display">Explore as áreas</h3><p>Passe o mouse sobre um card pra ver uma prévia do que tem dentro.</p></div>`}
+function showPreview(m){
+ if(activeKey===m.key)return;
+ activeKey=m.key;
+ document.querySelectorAll('.card').forEach(c=>c.classList.toggle('is-active',c.dataset.key===m.key));
+ el('preview').innerHTML=previewHTML(m);
+}
+function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
+function renderModules(){
+ const wrap=el('modules');wrap.innerHTML='';
+ MODULES.forEach((m,i)=>{
+  const live=m.status==='live';
+  const b=document.createElement('button');
+  b.type='button';b.className='card'+(live?'':' soon');b.dataset.key=m.key;b.style.animationDelay=(140+i*80)+'ms';
+  b.innerHTML=`<div class="card-top"><span class="card-icon">${ICONS[m.icon]}</span><span class="chip ${live?'live':''}">${live?'Disponível':'Em breve'}</span></div>
+   <div><span class="card-tag">${m.tag}</span><h2 class="display">${m.title}</h2></div>
+   <p>${m.desc}</p>
+   <ul class="card-features">${m.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+   <div class="card-foot"><span data-meta="${m.key}">${live?(stats.members===null?'Abrir módulo':memberLabel(stats.members)):'Em construção'}</span><span class="card-arrow">${live?ICONS.arrow:ICONS.clock}</span></div>`;
+  b.addEventListener('mouseenter',()=>showPreview(m));
+  b.addEventListener('focus',()=>showPreview(m));
+  b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')});
+  b.addEventListener('click',()=>openModule(m));
+  wrap.appendChild(b);
+ });
+ const live=MODULES.filter(m=>m.status==='live').length;
+ el('liveCount').innerHTML=`<b>${live}</b> de ${MODULES.length} disponíve${live===1?'l':'is'}`;
+}
+async function loadStats(){
+ try{
+  const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
+  if(error||typeof count!=='number')return;
+  stats.members=count;
+  const meta=document.querySelector('[data-meta="hierarquia"]');if(meta)meta.textContent=memberLabel(count);
+  if(activeKey==='hierarquia'){activeKey=null;showPreview(MODULES[0])}
+ }catch{}
+}
+function openModule(m){
+ if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
+ location.hash=m.key;
+}
+function goHome(){history.pushState(null,'',location.pathname+location.search);route()}
+async function route(){
+ if(!profile)return;
+ const key=location.hash.slice(1);
+ const m=MODULES.find(x=>x.key===key&&x.status==='live');
+ if(!m){currentView=null;el('workspace').hidden=true;el('dashboard').srcdoc='';el('hub').hidden=false;tick();return}
+ if(currentView===key)return;
+ currentView=key;
+ let html=cache[m.content];
+ if(!html){
+  toast(`Abrindo ${m.title}…`);
+  const {data,error}=await client.from('boha_content').select('data').eq('id',m.content).single();
+  if(error||!data?.data?.html){currentView=null;toast('Não foi possível abrir esse módulo agora.');goHome();return}
+  html=cache[m.content]=data.data.html.replaceAll("fetch('/api/","parent.bohaAPI('/api/");
+ }
+ if(currentView!==key)return;
+ el('moduleTitle').textContent=m.title;
+ el('dashboard').srcdoc=html;
+ el('hub').hidden=true;el('workspace').hidden=false;window.scrollTo(0,0);
+}
+function enterHub(me,session){
+ const name=(me.name||session.user.email.split('@')[0]).trim();
+ profile={uid:session.user.id,email:session.user.email,name,role:me.role};
+ el('userName').textContent=name;
+ el('userRole').textContent=ROLE_LABEL[me.role]||'Equipe';
+ el('avatar').textContent=name.charAt(0).toUpperCase();
+ el('firstName').textContent=name.split(' ')[0];
+ el('identity').textContent=name;
+ renderModules();
+ activeKey=null;el('preview').innerHTML=emptyPreview();
+ tick();clearInterval(clockTimer);clockTimer=setInterval(tick,30000);
+ el('login').hidden=true;message('');
+ route();loadStats();
+}
+async function showSession(session){
+ if(!session){
+  profile=null;currentView=null;activeKey=null;cache={};stats={members:null};clearInterval(clockTimer);
+  el('hub').hidden=true;el('workspace').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return;
+ }
+ if(profile&&profile.uid===session.user.id)return;
+ message('Carregando sua área...');
+ try{
+  const {data,error}=await client.rpc('boha_me');
+  const me=Array.isArray(data)?data[0]:data;
+  if(error||!me?.role){message('Seu acesso ainda não foi liberado ou o painel está em configuração.');return}
+  enterHub(me,session);
+ }catch{message('Falha de conexão. Tente novamente.')}
+}
+async function logout(){await client.auth.signOut();history.replaceState(null,'',location.pathname+location.search);await showSession(null)}
+
 el('form').onsubmit=async event=>{event.preventDefault();busy(true);try{const {data,error}=await client.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error){message('Não foi possível entrar. Confira e-mail, senha e confirmação do e-mail.');return}el('password').value='';await showSession(data.session)}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
 el('register').onclick=async()=>{if(!el('form').reportValidity())return;busy(true);try{const {data,error}=await client.auth.signUp({email:el('email').value.trim(),password:el('password').value,options:{emailRedirectTo:location.origin+location.pathname}});if(error){message('Não foi possível criar o acesso: '+error.message);return}el('password').value='';if(data.session)await showSession(data.session);else message('Confira seu e-mail e confirme o cadastro. Depois volte e clique em Entrar.')}catch(error){message('Falha de conexão: '+(error?.message||'tente novamente.'))}finally{busy(false)}};
-el('logout').onclick=async()=>{await client.auth.signOut();await showSession(null)};
+el('logout').onclick=logout;
+el('logout2').onclick=logout;
+el('back').onclick=goHome;
+window.addEventListener('hashchange',route);
+window.addEventListener('popstate',route);
 client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')showSession(null)});
 client.auth.getSession().then(({data})=>showSession(data.session)).catch(()=>message('Não foi possível restaurar sua sessão.'));
 </script></body></html>
