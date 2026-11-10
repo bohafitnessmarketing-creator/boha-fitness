@@ -22,6 +22,8 @@ button{font:inherit;cursor:pointer}
 .login button.primary{background:var(--y);color:#111;font-weight:800;border-color:var(--y)}
 .login button:disabled{opacity:.5;cursor:wait}
 .login .logo-img{height:40px;display:block;margin-bottom:14px}
+.login button.linkish{background:none;border:0;color:var(--muted);font-size:13px;padding:8px 0 0}
+.login button.linkish:hover{color:var(--y)}
 #message{min-height:28px;color:var(--y)}
 .hint{font-size:12px}
 
@@ -149,7 +151,7 @@ iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style></head>
 <body>
-<main id="login" class="login"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><p>Área interna da equipe</p><form id="form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main>
+<main id="login" class="login"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><p>Área interna da equipe</p><form id="form"><div id="nameWrap" hidden><label for="fullName">Seu nome</label><input id="fullName" type="text" autocomplete="name" maxlength="60" placeholder="Como você quer ser chamado(a)"></div><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button><button id="backToLogin" type="button" class="linkish" hidden>Já tenho acesso — entrar</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main>
 
 <section id="hub" hidden>
  <header class="topbar">
@@ -375,8 +377,11 @@ async function showSession(session){
 }
 async function logout(){await client.auth.signOut();history.replaceState(null,'',location.pathname+location.search);await showSession(null)}
 
-el('form').onsubmit=async event=>{event.preventDefault();busy(true);try{const {data,error}=await client.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error){message('Não foi possível entrar. Confira e-mail, senha e confirmação do e-mail.');return}el('password').value='';await showSession(data.session)}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
-el('register').onclick=async()=>{if(!el('form').reportValidity())return;busy(true);try{const {data,error}=await client.auth.signUp({email:el('email').value.trim(),password:el('password').value,options:{emailRedirectTo:location.origin+location.pathname}});if(error){message('Não foi possível criar o acesso: '+error.message);return}el('password').value='';if(data.session)await showSession(data.session);else message('Confira seu e-mail e confirme o cadastro. Depois volte e clique em Entrar.')}catch(error){message('Falha de conexão: '+(error?.message||'tente novamente.'))}finally{busy(false)}};
+let signupMode=false;
+function setSignup(on){signupMode=on;el('nameWrap').hidden=!on;el('fullName').required=on;el('enter').hidden=on;el('backToLogin').hidden=!on;el('register').textContent=on?'Criar meu acesso':'Criar meu primeiro acesso';el('register').classList.toggle('primary',on);el('password').autocomplete=on?'new-password':'current-password';message('');if(on)el('fullName').focus()}
+el('backToLogin').onclick=()=>setSignup(false);
+el('form').onsubmit=async event=>{event.preventDefault();if(signupMode){el('register').click();return}busy(true);try{const {data,error}=await client.auth.signInWithPassword({email:el('email').value.trim(),password:el('password').value});if(error){message('Não foi possível entrar. Confira e-mail, senha e confirmação do e-mail.');return}el('password').value='';await showSession(data.session)}catch{message('Falha de conexão. Tente novamente.')}finally{busy(false)}};
+el('register').onclick=async()=>{if(!signupMode){setSignup(true);return}if(!el('form').reportValidity())return;busy(true);try{const {data,error}=await client.auth.signUp({email:el('email').value.trim(),password:el('password').value,options:{emailRedirectTo:location.origin+location.pathname,data:{name:el('fullName').value.trim()}}});if(error){message('Não foi possível criar o acesso: '+error.message);return}el('password').value='';if(data.session)await showSession(data.session);else message('Confira seu e-mail e confirme o cadastro. Depois volte e clique em Entrar.')}catch(error){message('Falha de conexão: '+(error?.message||'tente novamente.'))}finally{busy(false)}};
 el('logout').onclick=logout;
 el('logout2').onclick=logout;
 el('back').onclick=goHome;
