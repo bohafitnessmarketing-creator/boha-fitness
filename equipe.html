@@ -136,6 +136,42 @@ iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 .alert small{display:block;color:var(--y);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .alert b{display:block;font-size:16px;margin:4px 0 10px;overflow-wrap:anywhere}
 .alert-actions{display:flex;gap:8px;align-items:center}
+.bell{position:relative;flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--text);background:transparent;transition:border-color .2s,color .2s}
+.bell:hover,.bell[aria-expanded="true"]{border-color:var(--y);color:var(--y)}
+.bell-n{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid var(--bg);line-height:1}
+.bell.ring svg{animation:ring .9s var(--ease)}
+@keyframes ring{20%{transform:rotate(14deg)}40%{transform:rotate(-12deg)}60%{transform:rotate(8deg)}80%{transform:rotate(-4deg)}}
+.np{position:fixed;z-index:25;width:min(390px,calc(100vw - 24px));max-height:min(74vh,640px);display:flex;flex-direction:column;background:#121212;border:1px solid var(--line2);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.65);animation:fadeUp .22s var(--ease);overflow:hidden}
+.np-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.np-h b{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:19px;letter-spacing:.3px}
+.np-x{width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--text);display:grid;place-items:center;font-size:12px}
+.np-x:hover{border-color:var(--y);color:var(--y)}
+.np-body{overflow-y:auto;padding:4px 8px 10px}
+.np-sec{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 8px 4px}
+.np-item{display:flex;gap:12px;align-items:flex-start;width:100%;padding:10px 8px;border-radius:12px;text-align:left;color:var(--text);background:none;border:0}
+button.np-item:hover,button.np-item:focus-visible{background:#1b1b1b}
+.np-ico{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center}
+.np-ico.late{background:rgba(255,90,79,.12);color:var(--red)}
+.np-ico.today{background:rgba(255,240,0,.1);color:var(--y)}
+.np-ico.news{background:#1e1e1e;color:var(--y)}
+.np-txt{flex:1;min-width:0}
+.np-txt b{display:block;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+.np-txt span{display:block;font-size:13px;color:#bdbdbd;line-height:1.45;margin-top:2px}
+.np-txt small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px}
+.np-txt small.late{color:var(--red);font-weight:700}
+.np-item.unread .np-txt b::after{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--y);margin-left:8px;vertical-align:2px}
+.np-go{flex:none;align-self:center;color:#555}
+button.np-item:hover .np-go{color:var(--y)}
+.np-empty{padding:14px 8px;color:var(--muted);font-size:13.5px}
+.np-f{border-top:1px solid var(--line);padding:10px 16px}
+.np-link{background:none;border:0;color:var(--muted);font-size:13px;padding:4px 0}
+.np-link:hover{color:var(--y)}
+.np-form{display:grid;gap:8px;padding:6px 0 4px}
+.np-form input,.np-form textarea,.np-form select{background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;color:var(--text);font:inherit;font-size:14px;outline:none;width:100%}
+.np-form input:focus,.np-form textarea:focus,.np-form select:focus{border-color:var(--y)}
+.np-form textarea{min-height:70px;resize:vertical}
+.np-form .row{display:flex;gap:8px;align-items:center}
+.np-form .btn-y{padding:9px 14px;font-size:13px}
 .alert .btn-y{padding:8px 14px;font-size:13px}
 .bar2{position:sticky;top:0;z-index:5;height:56px;padding:0 20px;display:flex;align-items:center;gap:14px;background:#111;border-bottom:1px solid var(--line);font-size:13px}
 .bar2 .logo-img{height:24px;display:block}
@@ -213,6 +249,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
  <header class="topbar">
   <img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness">
   <div class="topbar-right">
+   <button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button>
    <div class="user"><span class="avatar" id="avatar"></span><div><b id="userName"></b><small id="userRole"></small></div></div>
    <button type="button" class="ghost" id="logout">Sair</button>
   </div>
@@ -231,9 +268,9 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
  </div>
 </section>
 
-<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><span id="identity"></span><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
+<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><span id="identity"></span><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
 <section id="accessView" hidden>
- <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="ghost" id="logout3">Sair</button></div>
+ <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout3">Sair</button></div>
  <div class="acc-wrap">
   <div class="acc-head"><p class="eyebrow">Somente administradores</p><h1 class="display">Gestão de <span class="accent">acessos</span></h1><p class="sub">Libere o e-mail da pessoa aqui, mande o convite pelo WhatsApp e ela mesma cria a senha no primeiro acesso. Você nunca precisa saber a senha de ninguém.</p></div>
   <form class="acc-card" id="accForm" autocomplete="off">
@@ -251,6 +288,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
   <div class="acc-card"><div class="acc-top"><h2 class="display">Pessoas com acesso</h2><span id="accCount"></span></div><div id="accList"></div></div>
  </div>
 </section>
+<section id="notifPanel" class="np" role="dialog" aria-labelledby="npTitle" tabindex="-1" hidden><header class="np-h"><b id="npTitle">Notificações</b><button type="button" class="np-x" id="npClose" aria-label="Fechar notificações">✕</button></header><div class="np-body" id="npBody"></div><footer class="np-f" id="npFoot" hidden></footer></section>
 <div id="alerts" aria-live="assertive"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -466,7 +504,7 @@ async function loadTasks(){
   const now=new Date(),t0=localISO(now),hm=now.toTimeString().slice(0,5),late=t=>t.due_date&&(t.due_date<t0||(t.due_date===t0&&t.due_time&&t.due_time<hm));
   const sorted=data.filter(t=>t.due_date).sort((a,b)=>a.due_date.localeCompare(b.due_date)||(a.due_time||'99').localeCompare(b.due_time||'99'));
   stats.tasks={today:data.filter(t=>t.due_date===t0&&!late(t)).length,late:data.filter(late).length,next:sorted.slice(0,4).map(t=>({title:t.title,late:late(t),when:t.due_date===t0?(t.due_time||'hoje'):t.due_date.slice(8)+'/'+t.due_date.slice(5,7)+(t.due_time?' '+t.due_time:'')}))};
-  refreshMeta('checklist');checkReminders();
+  refreshMeta('checklist');checkReminders();updateBell();if(npOpen)renderPanel();
  }catch{}
 }
 function beep(){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.2,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.5);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.55);setTimeout(()=>c.close(),800)}catch{}}
@@ -498,10 +536,101 @@ function checkReminders(){
  }
 }
 function startReminders(){
- clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks()}},20000);startReminders.last=Date.now();
+ clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks();loadNotices()}},20000);startReminders.last=Date.now();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sistema/sw.js').then(r=>{swReg=r}).catch(()=>{});
 }
-window.addEventListener('focus',()=>{if(profile)loadTasks()});
+window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices()}});
+let notices=[],seenAt=null,npOpen=false,npSeenRef=null,npCompose=false,lastBell=0,npAnchor=null;
+const NI={
+ clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',17),
+ alert:svg('<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.5v.01"/>',17),
+ news:svg('<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',17),
+ chev:svg('<path d="M9 6l6 6-6 6"/>',16)
+};
+const after=(a,b)=>!b||new Date(a)>new Date(b);
+function relTime(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return 'agora';if(s<3600)return 'há '+Math.floor(s/60)+' min';if(s<86400)return 'há '+Math.floor(s/3600)+' h';if(s<172800)return 'ontem';return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:TZ})}
+function taskBuckets(){
+ const now=new Date(),t0=localISO(now),hm=now.toTimeString().slice(0,5);
+ const late=openTasks.filter(t=>t.due_date&&(t.due_date<t0||(t.due_date===t0&&t.due_time&&t.due_time<=hm)));
+ const today=openTasks.filter(t=>t.due_date===t0&&!late.includes(t));
+ const ord=(a,b)=>a.due_date.localeCompare(b.due_date)||(a.due_time||'99').localeCompare(b.due_time||'99');
+ return {late:late.sort(ord),today:today.sort(ord)};
+}
+function unreadCount(){return notices.filter(n=>after(n.created_at,seenAt)).length}
+function updateBell(){
+ if(!profile)return;
+ const n=unreadCount()+taskBuckets().late.length;
+ document.querySelectorAll('[data-bell]').forEach(b=>{const c=b.querySelector('.bell-n');c.hidden=!n;c.textContent=n>9?'9+':n;b.setAttribute('aria-label',n?`Notificações (${n} nova${n===1?'':'s'})`:'Notificações');if(n>lastBell){b.classList.remove('ring');void b.offsetWidth;b.classList.add('ring')}});
+ lastBell=n;
+}
+async function loadNotices(){
+ if(!profile)return;
+ try{
+  const [n,s]=await Promise.all([client.from('boha_notices').select('id,created_at,title,body,module').order('created_at',{ascending:false}).limit(30),client.from('boha_notice_seen').select('seen_at').maybeSingle()]);
+  if(!n.error&&Array.isArray(n.data))notices=n.data;
+  if(!s.error)seenAt=s.data?s.data.seen_at:seenAt;
+  updateBell();if(npOpen)renderPanel();
+ }catch{}
+}
+const canOpen=k=>visibleModules().some(m=>m.key===k&&m.status==='live');
+function renderPanel(){
+ const {late,today}=taskBuckets(),t0=localISO(new Date());let h='';
+ const dm=d=>d.slice(8)+'/'+d.slice(5,7);
+ if(late.length||today.length){
+  h+='<p class="np-sec">Seu checklist</p>';
+  h+=late.map(t=>`<button type="button" class="np-item" data-go="checklist"><span class="np-ico late">${NI.alert}</span><span class="np-txt"><b>${esc(t.title)}</b><small class="late">Atrasada · ${t.due_date===t0?'hoje':dm(t.due_date)}${t.due_time?' às '+t.due_time:''}</small></span><span class="np-go">${NI.chev}</span></button>`).join('');
+  h+=today.map(t=>`<button type="button" class="np-item" data-go="checklist"><span class="np-ico today">${NI.clock}</span><span class="np-txt"><b>${esc(t.title)}</b><small>Hoje${t.due_time?' às '+t.due_time:''}</small></span><span class="np-go">${NI.chev}</span></button>`).join('');
+ }
+ h+='<p class="np-sec">Novidades do sistema</p>';
+ h+=notices.length?notices.map(n=>{const un=after(n.created_at,npSeenRef),go=n.module&&canOpen(n.module);const inner=`<span class="np-ico news">${NI.news}</span><span class="np-txt"><b>${esc(n.title)}</b>${n.body?`<span>${esc(n.body)}</span>`:''}<small>${relTime(n.created_at)}${go?' · toque para abrir':''}</small></span>${go?`<span class="np-go">${NI.chev}</span>`:''}`;return go?`<button type="button" class="np-item ${un?'unread':''}" data-go="${esc(n.module)}">${inner}</button>`:`<div class="np-item ${un?'unread':''}">${inner}</div>`}).join(''):'<p class="np-empty">Nenhuma novidade por enquanto.</p>';
+ el('npBody').innerHTML=h;
+ const f=el('npFoot');f.hidden=profile?.role!=='admin';
+ if(!f.hidden&&!f.contains(document.activeElement))f.innerHTML=npCompose?`<form class="np-form" id="npForm"><input id="npT" maxlength="120" required placeholder="Título da novidade"><textarea id="npB" maxlength="600" placeholder="O que mudou? (opcional)"></textarea><div class="row"><select id="npA" aria-label="Quem vê"><option value="">Todos</option><option value="admin">Só administradores</option></select><select id="npM" aria-label="Área"><option value="">Sem link</option>${visibleModules().filter(m=>m.status==='live').map(m=>`<option value="${m.key}">${esc(m.title)}</option>`).join('')}</select></div><div class="row"><button type="submit" class="btn-y">Publicar</button><button type="button" class="np-link" id="npCancel">Cancelar</button></div></form>`:'<button type="button" class="np-link" id="npNew">+ Publicar novidade para a equipe</button>';
+}
+function placePanel(btn){
+ const p=el('notifPanel'),r=btn.getBoundingClientRect(),w=p.offsetWidth;
+ p.style.top=Math.round(r.bottom+10)+'px';
+ p.style.left=Math.round(Math.max(12,Math.min(window.innerWidth-w-12,r.right-w)))+'px';
+}
+async function markSeen(){
+ const now=new Date().toISOString();seenAt=now;updateBell();
+ try{await client.from('boha_notice_seen').upsert({email:profile.email.toLowerCase(),seen_at:now})}catch{}
+}
+function openPanel(btn){
+ npOpen=true;npAnchor=btn;npSeenRef=seenAt;npCompose=false;renderPanel();
+ const p=el('notifPanel');p.hidden=false;placePanel(btn);
+ document.querySelectorAll('[data-bell]').forEach(b=>b.setAttribute('aria-expanded','true'));
+ p.focus({preventScroll:true});markSeen();
+}
+function closePanel(){
+ if(!npOpen)return;npOpen=false;el('notifPanel').hidden=true;
+ document.querySelectorAll('[data-bell]').forEach(b=>b.setAttribute('aria-expanded','false'));
+ if(npAnchor&&npAnchor.isConnected&&npAnchor.offsetParent)npAnchor.focus({preventScroll:true});
+}
+document.addEventListener('click',async e=>{
+ const bell=e.target.closest('[data-bell]');
+ if(bell){npOpen&&npAnchor===bell?closePanel():(closePanel(),openPanel(bell));return}
+ if(!npOpen)return;
+ if(!e.target.closest('#notifPanel')){closePanel();return}
+ if(e.target.closest('#npClose')){closePanel();return}
+ if(e.target.closest('#npNew')){npCompose=true;el('npFoot').innerHTML='';renderPanel();el('npT').focus();return}
+ if(e.target.closest('#npCancel')){npCompose=false;el('npFoot').innerHTML='';renderPanel();return}
+ const go=e.target.closest('[data-go]');
+ if(go){const k=go.dataset.go;closePanel();if(location.hash==='#'+k){if(k==='checklist'){try{el('dashboard').contentWindow.bohaReload()}catch{}}}else location.hash=k}
+});
+document.addEventListener('submit',async e=>{
+ if(e.target.id!=='npForm')return;e.preventDefault();
+ const row={title:el('npT').value.trim(),body:el('npB').value.trim(),module:el('npM').value||null,audience:el('npA').value?[el('npA').value]:null};
+ if(!row.title)return;
+ const b=e.target.querySelector('button[type=submit]');b.disabled=true;
+ const {error}=await client.from('boha_notices').insert(row);
+ b.disabled=false;
+ if(error){toast('Não foi possível publicar.');return}
+ npCompose=false;el('npFoot').innerHTML='';await loadNotices();await markSeen();npSeenRef=seenAt;renderPanel();toast(row.audience?'Novidade publicada para os administradores.':'Novidade publicada para toda a equipe.');
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&npOpen)closePanel()});
+window.addEventListener('resize',()=>{if(npOpen&&npAnchor)placePanel(npAnchor)});
+window.addEventListener('hashchange',closePanel);
 window.bohaCtx={client,get profile(){return profile},refreshReminders:loadTasks,toast};
 function openModule(m){
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
@@ -542,12 +671,12 @@ function enterHub(me,session){
  activeKey=null;el('preview').innerHTML=emptyPreview();
  tick();clearInterval(clockTimer);clockTimer=setInterval(tick,30000);
  el('login').hidden=true;message('');
- route();loadStats();startReminders();
+ route();loadStats();startReminders();loadNotices();
 }
 async function showSession(session){
  if(!session){
   profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null};clearInterval(clockTimer);
-  accData=[];el('accInvite').innerHTML='';clearInterval(remTimer);openTasks=[];firing=new Set();el('alerts').innerHTML='';
+  accData=[];el('accInvite').innerHTML='';clearInterval(remTimer);openTasks=[];firing=new Set();el('alerts').innerHTML='';closePanel();notices=[];seenAt=null;lastBell=0;
   el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('login').hidden=false;return;
  }
  if(profile&&profile.uid===session.user.id)return;
