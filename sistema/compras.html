@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Compras e manutenção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#181818;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--blue:#6f9bff;--gray:#8b9099;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+img{display:block}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.muted{color:var(--muted)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;white-space:nowrap;text-align:center;transition:filter .2s}
+.btn-y:hover{filter:brightness(1.07)}.btn-y:disabled{opacity:.5;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:8px 14px;font-size:13px;white-space:nowrap;transition:border-color .2s,color .2s;text-align:center}
+.btn-g:hover{border-color:var(--y);color:var(--y)}
+.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}
+.page{max-width:1280px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hd h1{font-size:clamp(34px,4.6vw,54px);line-height:1;margin:12px 0 6px}
+.hd p{margin:0;color:var(--muted);font-size:14px;max-width:560px}
+.hd-tools{display:flex;gap:8px;flex-wrap:wrap}
+
+.filters{position:sticky;top:0;z-index:6;margin:20px -28px 0;padding:12px 28px;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.frow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0}
+.frow>.seg{flex:0 1 auto;min-width:0}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.seg::-webkit-scrollbar{display:none}
+.seg button{display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.seg img{width:24px;height:24px;border-radius:6px;object-fit:cover}
+.seg .n{font-size:11px;font-weight:800;background:#262626;color:#ddd;border-radius:99px;padding:1px 7px}
+.seg button[aria-pressed="true"] .n{background:#111;color:var(--y)}
+.inp,select.inp{background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;font-size:14px;outline:none;font-weight:500;min-width:0}
+.inp:focus{border-color:var(--y)}
+.search{flex:1;min-width:180px;max-width:340px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:block;width:100%;transition:border-color .2s,transform .2s var(--ease)}
+button.kpi:hover{border-color:#444;transform:translateY(-1px)}
+.kpi.on{border-color:rgba(255,240,0,.6)}
+.kpi .l{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{display:block;font-size:30px;font-weight:700;line-height:1.2;margin-top:2px}
+.kpi .s{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.kpi.bad .v{color:var(--bad)}
+
+.units{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.unit{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:230px;border-radius:18px;overflow:hidden;border:1px solid var(--line);color:#fff;transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.unit>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.unit::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,8,.97) 12%,rgba(8,8,8,.6) 55%,rgba(8,8,8,.15));z-index:1}
+.unit:hover{transform:translateY(-4px);border-color:rgba(255,240,0,.6);box-shadow:0 24px 44px -26px rgba(255,240,0,.35)}
+.unit:hover>img{transform:scale(1.06)}
+.u-b{position:relative;z-index:2;padding:18px}
+.u-b h3{font-size:30px;line-height:1;margin:0 0 10px}
+.u-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:#d0d0d0}
+.u-stats b{color:#fff;font-size:17px;margin-right:4px}
+.u-stats .red b{color:var(--bad)}
+.pbar{display:flex;height:6px;gap:2px;margin-top:12px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.1)}
+.pbar i{display:block;height:100%}
+.u-go{margin-top:12px;font-size:13px;font-weight:700;color:var(--y)}
+
+.sec{margin-top:30px}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sec-h h2{font-size:22px;margin:0;line-height:1}
+.sec-h .dot{width:10px;height:10px;border-radius:50%}
+.sec-h span.c{font-size:13px;color:var(--muted)}
+.sec-h .hint{font-size:12.5px;color:var(--muted);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:border-color .2s,transform .25s var(--ease);animation:in .3s var(--ease) backwards}
+.card:hover{border-color:#3d3d3d;transform:translateY(-2px)}
+.card.done{opacity:.7}
+.c-main{display:flex;flex-direction:column;text-align:left;width:100%;flex:1}
+.ph{position:relative;aspect-ratio:16/9;background:#1a1a1a;display:grid;place-items:center;color:#3c3c3c;overflow:hidden}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pc,#555)}
+.c-body{padding:12px 14px 4px;display:grid;gap:6px}
+.c-title{font-weight:700;font-size:15.5px;line-height:1.3;overflow-wrap:anywhere}
+.card.done .c-title{text-decoration:line-through;color:#888}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11.5px;font-weight:700;border:1px solid var(--line2);border-radius:99px;padding:2px 9px;color:#cfcfcf;white-space:nowrap}
+.chip.y{color:var(--y);border-color:rgba(255,240,0,.35)}
+.chip.k{color:var(--blue);border-color:rgba(111,155,255,.35)}
+.price{font-size:14px;color:#d8d8d8}
+.price b{font-size:16px;color:#fff}
+.price .nop{color:var(--warn);font-weight:600;font-size:13px}
+.age{font-size:12px;color:var(--muted)}
+.age.late{color:var(--bad);font-weight:700}
+.c-foot{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 14px 14px}
+.pchip{appearance:none;-webkit-appearance:none;border:1px solid var(--pc);color:var(--pc);background:transparent;border-radius:99px;padding:3px 24px 3px 10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.pchip:disabled{background-image:none;padding-right:10px;cursor:default}
+.pchip option{background:#1a1a1a;color:#eee;text-transform:none}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.lk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--y);text-decoration:none;border:1px solid rgba(255,240,0,.35);border-radius:99px;padding:4px 11px;max-width:100%}
+.lk:hover{background:rgba(255,240,0,.08)}
+.step{font-size:12.5px;font-weight:700;border:1px solid var(--line2);border-radius:99px;padding:4px 12px;transition:border-color .2s,color .2s}
+.step:hover{border-color:var(--good);color:var(--good)}
+.st-chip{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 9px}
+.st-pendente{color:#bbb;background:#222}.st-andamento{color:var(--blue);background:rgba(111,155,255,.12)}.st-concluido{color:var(--good);background:rgba(61,220,132,.12)}
+
+.empty{margin-top:24px;padding:38px 20px;border:1px dashed var(--line2);border-radius:16px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:4px}
+.state{padding:60px 20px;text-align:center;color:var(--muted)}
+
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s}
+.overlay.open{opacity:1;visibility:visible;transition:opacity .25s}
+.drawer{position:absolute;right:0;top:0;bottom:0;width:min(620px,100%);background:#111;border-left:1px solid var(--line2);overflow-y:auto;padding:22px 26px 40px;transform:translateX(36px);transition:transform .35s var(--ease)}
+.overlay.open .drawer{transform:none}
+.dr-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.dr-top h2{font-size:28px;margin:0;line-height:1}
+.x{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;flex:none}
+.x:hover{border-color:var(--y);color:var(--y)}
+form.f{display:grid;gap:16px;margin-top:18px}
+.f label,.f .lb{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.f .inp{width:100%;font-size:15px;padding:10px 12px}
+.f textarea.inp{min-height:84px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:12px}
+.pick{display:flex;gap:6px;flex-wrap:wrap}
+.pick button{border:1px solid var(--line2);border-radius:10px;padding:8px 13px;font-size:13.5px;font-weight:700;color:var(--muted);transition:all .15s}
+.pick button:hover{color:var(--text)}
+.pick button[aria-pressed="true"]{background:var(--c,var(--y));border-color:var(--c,var(--y));color:#111}
+.pick.prio{display:grid;grid-template-columns:repeat(2,1fr)}
+.pick.prio button{display:grid;gap:1px}
+.pick.prio small{font-weight:500;font-size:11.5px;opacity:.85}
+.total{font-size:14px;color:var(--muted)}.total b{color:#fff;font-size:17px}
+.dropzone{position:relative;border:1px dashed #555;border-radius:14px;min-height:150px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:14px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.dropzone:hover,.dropzone.over{border-color:var(--y);color:var(--y)}
+.dropzone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dz-actions{display:flex;gap:8px;margin-top:8px}
+.dr-actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;align-items:center;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+.newarea{display:flex;gap:8px;margin-top:8px}
+.ro .f .inp,.ro .pick button,.ro .dropzone{pointer-events:none}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px);display:flex;gap:14px;align-items:center}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast button{color:var(--y);font-weight:700}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+@media (max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.units{grid-template-columns:1fr}.unit{min-height:190px}}
+@media (max-width:640px){.page{padding:16px 16px 70px}.filters{position:static;margin:16px 0 0;padding:0;background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none}.grid{grid-template-columns:1fr}.drawer{padding:18px 16px 36px}.two,.three{grid-template-columns:1fr}.search{max-width:none}.kpi .v{font-size:21px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+<div class="overlay" id="overlay"><section class="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle" tabindex="-1"><div class="dr-top"><h2 class="display" id="drTitle"></h2><button class="x" id="drClose" aria-label="Fechar">✕</button></div><div id="drBody"></div></section></div>
+<input type="file" id="photoIn" accept="image/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastTxt"></span><button id="toastBtn" hidden></button></div>
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UNITS={cb:{name:'Casa Branca',photo:'../imagens/unidade-jardim-casa-branca-1024x1024.jpg'},te:{name:'Santa Tereza',photo:'../imagens/unidade-jardim-santa-tereza-300x300.png'},ma:{name:'Macedônia',photo:'../imagens/unidade-jardim-macedonia-1024x1024.jpg'}};
+const PRIO={urgente:{l:'Urgente',c:'#ff5a4f',d:'Parado ou com risco',o:0},alta:{l:'Alta',c:'#ff9f2e',d:'Resolver esta semana',o:1},media:{l:'Média',c:'#fff000',d:'Resolver este mês',o:2},baixa:{l:'Baixa',c:'#8b9099',d:'Quando der',o:3}};
+const STATUS={compra:{pendente:'Pendente',andamento:'Comprado',concluido:'Recebido'},manutencao:{pendente:'Pendente',andamento:'Em andamento',concluido:'Resolvido'}};
+const STEP={compra:{pendente:['andamento','Marcar como comprado'],andamento:['concluido','Marcar como recebido']},manutencao:{pendente:['andamento','Iniciar'],andamento:['concluido','Marcar como resolvido']}};
+const KIND={compra:'Compra',manutencao:'Manutenção'};
+const IMG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>';
+const LINK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>';
+let ROWS=[],AREAS=[],URLS={},S={unit:'all',status:'open',kind:'all',area:'all',q:'',view:'prio'},EDIT=null,PH={blob:null,remove:false,url:null},lastFocus=null,ROLE='viewer';
+const canEdit=()=>ROLE==='admin'||ROLE==='editor',canDelete=()=>ROLE==='admin';
+const brl=v=>v==null?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const isOpen=r=>r.status!=='concluido',total=r=>r.price==null?null:Number(r.price)*r.qty;
+const days=r=>Math.max(0,Math.floor((Date.now()-new Date(r.created_at))/864e5));
+function toast(t,action,fn){$('toastTxt').textContent=t;const b=$('toastBtn');b.hidden=!action;if(action){b.textContent=action;b.onclick=()=>{$('toast').classList.remove('show');fn()}}$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),action?6000:3200)}
+function host(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch{return 'link'}}
+const safeUrl=u=>{try{const x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:null}catch{return null}};
+
+/* ---------- dados ---------- */
+async function load(){
+ const [r,a]=await Promise.all([CTX.client.from('boha_requests').select('*').order('created_at',{ascending:true}).limit(2000),CTX.client.from('boha_areas').select('*').order('sort',{ascending:true}).order('name',{ascending:true})]);
+ if(r.error)throw r.error;if(a.error)throw a.error;
+ ROWS=r.data||[];AREAS=a.data||[];await sign();render();
+}
+async function sign(){
+ const need=ROWS.filter(r=>r.photo).map(r=>r.id+'.jpg');if(!need.length){URLS={};return}
+ try{const {data}=await CTX.client.storage.from('boha-compras').createSignedUrls(need,3600);const m={};(data||[]).forEach(x=>{if(x&&x.signedUrl&&x.path)m[x.path.replace(/\.jpg$/,'')]=x.signedUrl});URLS=m}catch{}
+}
+const areasOf=u=>AREAS.filter(a=>a.unit===u).map(a=>a.name);
+function visible(){
+ const q=S.q.trim().toLocaleLowerCase();
+ return ROWS.filter(r=>(S.unit==='all'||r.unit===S.unit)&&(S.kind==='all'||r.kind===S.kind)&&(S.area==='all'||r.area===S.area)&&(S.status==='all'||(S.status==='open'?isOpen(r):!isOpen(r)))&&(!q||(r.title+' '+r.area+' '+r.notes+' '+UNITS[r.unit].name).toLocaleLowerCase().includes(q)));
+}
+/* ---------- render ---------- */
+function cardHTML(r,i){
+ const p=PRIO[r.priority],t=total(r),ed=canEdit(),u=URLS[r.id],lk=r.link?safeUrl(r.link):null,d=days(r),st=STATUS[r.kind][r.status],step=STEP[r.kind][r.status];
+ return `<article class="card ${isOpen(r)?'':'done'}" style="--pc:${p.c};animation-delay:${Math.min(i,12)*25}ms"><button class="c-main" data-open="${r.id}" aria-label="Abrir ${esc(r.title)}"><span class="ph">${u?`<img src="${esc(u)}" alt="" loading="lazy">`:IMG}</span><span class="c-body"><span class="c-title">${esc(r.title)}</span><span class="chips"><span class="chip y">${esc(UNITS[r.unit].name)}</span>${r.area?`<span class="chip">${esc(r.area)}</span>`:''}<span class="chip k">${KIND[r.kind]}</span><span class="st-chip st-${r.status}">${st}</span></span><span class="price">${t!=null?`<b>${brl(t)}</b>${r.qty>1?` · ${r.qty} × ${brl(Number(r.price))}`:''}`:`<span class="nop">${r.kind==='compra'?'Sem valor informado':'Sem orçamento'}</span>`}</span><span class="age ${isOpen(r)&&r.priority==='urgente'&&d>=3?'late':''}">${isOpen(r)?(d===0?'Aberto hoje':`Aberto há ${d} dia${d===1?'':'s'}`):'Concluído em '+new Date(r.done_at||r.updated_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</span></span></button>
+ <div class="c-foot"><select class="pchip" data-prio="${r.id}" style="--pc:${p.c}" aria-label="Prioridade de ${esc(r.title)}" ${ed?'':'disabled'}>${Object.entries(PRIO).map(([k,v])=>`<option value="${k}" ${k===r.priority?'selected':''}>${v.l}</option>`).join('')}</select><span class="acts">${lk?`<a class="lk" href="${esc(lk)}" target="_blank" rel="noopener noreferrer">${LINK}${esc(host(lk))}</a>`:''}${ed&&step?`<button class="step" data-step="${r.id}">${step[1]}</button>`:''}</span></div></article>`;
+}
+function groupBy(list){
+ if(S.view==='area'){
+  const m=new Map();list.forEach(r=>{const k=(S.unit==='all'?UNITS[r.unit].name+' · ':'')+(r.area||'Sem área');if(!m.set&&0)return;if(!m.has(k))m.set(k,[]);m.get(k).push(r)});
+  return [...m.entries()].map(([k,v])=>({key:k,title:k,items:v.sort(byPrio),dot:PRIO[v.filter(isOpen).sort(byPrio)[0]?.priority||'baixa'].c})).sort((a,b)=>byPrio(a.items[0],b.items[0]));
+ }
+ const g=[];
+ Object.entries(PRIO).forEach(([k,v])=>{const it=list.filter(r=>isOpen(r)&&r.priority===k);if(it.length)g.push({key:k,title:v.l,hint:v.d,dot:v.c,items:it.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at))})});
+ const done=list.filter(r=>!isOpen(r)).sort((a,b)=>new Date(b.done_at||b.updated_at)-new Date(a.done_at||a.updated_at));
+ if(done.length)g.push({key:'done',title:'Concluídas',dot:'#3ddc84',items:done});
+ return g;
+}
+const byPrio=(a,b)=>PRIO[a.priority].o-PRIO[b.priority].o||(isOpen(b)-isOpen(a))||new Date(a.created_at)-new Date(b.created_at);
+function render(){
+ if(!ROWS&&!AREAS)return;
+ const scope=ROWS.filter(r=>S.unit==='all'||r.unit===S.unit),open=scope.filter(isOpen),urg=open.filter(r=>r.priority==='urgente'),priced=open.filter(r=>r.kind==='compra'&&r.price!=null),sum=priced.reduce((a,r)=>a+total(r),0),nop=open.filter(r=>r.kind==='compra'&&r.price==null).length;
+ const m30=scope.filter(r=>!isOpen(r)&&Date.now()-new Date(r.done_at||r.updated_at)<30*864e5).length;
+ const list=visible(),groups=groupBy(list),cnt=u=>ROWS.filter(r=>isOpen(r)&&(u==='all'||r.unit===u)).length;
+ const keepQ=$('q')?$('q').value:S.q,hadFocus=document.activeElement&&document.activeElement.id==='q';
+ let h=`<header class="hd"><div><p class="eyebrow">Compras &amp; manutenção</p><h1 class="display">O que precisa ser resolvido</h1><p>Pedidos de compra e reparos das 3 unidades, ordenados por prioridade. Anexe a foto, o link e o valor para decidir mais rápido.</p></div><div class="hd-tools"><button class="btn-g" id="btnCsv">Exportar lista</button>${canEdit()?'<button class="btn-y" id="btnNew">+ Nova solicitação</button>':''}</div></header>
+ <div class="filters"><div class="frow"><div class="seg" role="group" aria-label="Unidade"><button data-unit="all" aria-pressed="${S.unit==='all'}">Todas <span class="n">${cnt('all')}</span></button>${Object.entries(UNITS).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}"><img src="${v.photo}" alt="">${v.name} <span class="n">${cnt(k)}</span></button>`).join('')}</div><div class="seg" role="group" aria-label="Situação">${[['open','Em aberto'],['done','Concluídas'],['all','Todas']].map(([k,l])=>`<button data-status="${k}" aria-pressed="${S.status===k}">${l}</button>`).join('')}</div></div>
+ <div class="frow"><div class="seg" role="group" aria-label="Tipo">${[['all','Tudo'],['compra','Compras'],['manutencao','Manutenção']].map(([k,l])=>`<button data-kind="${k}" aria-pressed="${S.kind===k}">${l}</button>`).join('')}</div><select class="inp" id="selArea" aria-label="Área"><option value="all">Todas as áreas</option>${(S.unit==='all'?[...new Set(AREAS.map(a=>a.name))]:areasOf(S.unit)).map(a=>`<option ${a===S.area?'selected':''}>${esc(a)}</option>`).join('')}</select><div class="seg" role="group" aria-label="Organizar"><button data-view="prio" aria-pressed="${S.view==='prio'}">Por prioridade</button><button data-view="area" aria-pressed="${S.view==='area'}">Por área</button></div><input class="inp search" id="q" type="search" placeholder="Buscar item, área ou detalhe…" value="${esc(keepQ)}" aria-label="Buscar"></div></div>
+ <div class="kpis"><button class="kpi" data-reset="1"><span class="l">Em aberto</span><span class="v">${open.length}</span><span class="s">${S.unit==='all'?'nas 3 unidades':UNITS[S.unit].name}</span></button><button class="kpi ${urg.length?'bad':''} ${S.status==='open'&&false?'on':''}" data-urg="1"><span class="l">Urgentes</span><span class="v">${urg.length}</span><span class="s">${urg.length?'ver só os urgentes':'nada parado'}</span></button><div class="kpi"><span class="l">Valor a comprar</span><span class="v">${brl(sum)}</span><span class="s">${nop?nop+' item'+(nop===1?'':'s')+' sem valor informado':'todos com valor'}</span></div><div class="kpi"><span class="l">Resolvidas em 30 dias</span><span class="v">${m30}</span><span class="s">compras recebidas e reparos</span></div></div>`;
+ if(S.unit==='all'&&S.status!=='done')h+=`<div class="units">${Object.entries(UNITS).map(([k,v])=>{const o=ROWS.filter(r=>r.unit===k&&isOpen(r)),u=o.filter(r=>r.priority==='urgente').length,val=o.filter(r=>r.kind==='compra'&&r.price!=null).reduce((a,r)=>a+total(r),0);return `<button class="unit" data-unit="${k}"><img src="${v.photo}" alt="" loading="lazy"><span class="u-b"><h3 class="display">${v.name}</h3><span class="u-stats"><span><b>${o.length}</b>em aberto</span><span class="${u?'red':''}"><b>${u}</b>urgente${u===1?'':'s'}</span><span><b>${brl(val)}</b></span></span><span class="pbar" aria-hidden="true">${Object.entries(PRIO).map(([pk,pv])=>{const n=o.filter(r=>r.priority===pk).length;return n?`<i style="flex:${n};background:${pv.c}"></i>`:''}).join('')}</span><span class="u-go">Ver pedidos →</span></span></button>`}).join('')}</div>`;
+ if(!groups.length)h+=`<div class="empty"><b>${ROWS.length?(S.status==='done'?'Nenhuma concluída por aqui':'Nada em aberto aqui 👏'):'Nenhuma solicitação ainda'}</b>${canEdit()?'Use “+ Nova solicitação” para anotar o que a unidade precisa comprar ou consertar.':'Quando alguém registrar um pedido, ele aparece aqui.'}</div>`;
+ else h+=groups.map(g=>`<section class="sec"><div class="sec-h"><span class="dot" style="background:${g.dot}"></span><h2 class="display">${esc(g.title)}</h2><span class="c">${g.items.length}</span>${g.hint?`<span class="hint">${g.hint}</span>`:''}</div><div class="grid">${g.items.map(cardHTML).join('')}</div></section>`).join('');
+ $('page').innerHTML=h;
+ if(hadFocus){const q=$('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}
+}
+/* ---------- formulário ---------- */
+function openForm(r){
+ const edit=!!r;EDIT=r?{...r}:{unit:S.unit==='all'?'':S.unit,area:'',kind:'compra',title:'',notes:'',priority:'media',status:'pendente',qty:1,price:null,link:'',photo:false};
+ PH={blob:null,remove:false,url:r&&URLS[r.id]||null};
+ const ro=!canEdit();$('drTitle').textContent=edit?(ro?'Detalhes do pedido':'Editar pedido'):'Nova solicitação';
+ $('drBody').innerHTML=`<form class="f ${ro?'ro':''}" id="form" autocomplete="off">
+ <div><span class="lb">O que é?</span><div class="pick" id="pKind">${Object.entries(KIND).map(([k,v])=>`<button type="button" data-k="${k}" aria-pressed="${EDIT.kind===k}">${v}</button>`).join('')}</div></div>
+ <div class="two"><div><label for="fUnit">Unidade</label><select class="inp" id="fUnit" required><option value="" disabled ${EDIT.unit?'':'selected'}>Escolha…</option>${Object.entries(UNITS).map(([k,v])=>`<option value="${k}" ${EDIT.unit===k?'selected':''}>${v.name}</option>`).join('')}</select></div><div><label for="fArea">Área</label><select class="inp" id="fArea"></select></div></div>
+ <div id="newAreaBox" class="newarea" hidden><input class="inp" id="fNewArea" maxlength="60" placeholder="Nome da nova área"></div>
+ <div><label for="fTitle">${EDIT.kind==='compra'?'O que precisa comprar?':'O que precisa consertar?'}</label><input class="inp" id="fTitle" maxlength="160" required placeholder="${EDIT.kind==='compra'?'Ex.: Anilha de 10 kg (par)':'Ex.: Esteira 3 parando durante o uso'}" value="${esc(EDIT.title)}"></div>
+ <div><span class="lb">Prioridade</span><div class="pick prio" id="pPrio">${Object.entries(PRIO).map(([k,v])=>`<button type="button" data-p="${k}" style="--c:${v.c}" aria-pressed="${EDIT.priority===k}">${v.l}<small>${v.d}</small></button>`).join('')}</div></div>
+ <div class="three"><div><label for="fQty">Quantidade</label><input class="inp" id="fQty" type="number" min="1" max="9999" step="1" value="${EDIT.qty}"></div><div><label for="fPrice">Valor (unidade)</label><input class="inp" id="fPrice" inputmode="decimal" placeholder="0,00" value="${EDIT.price==null?'':String(Number(EDIT.price).toFixed(2)).replace('.',',')}"></div><div><span class="lb">Total</span><div class="total" id="fTotal"></div></div></div>
+ <div><label for="fLink">Link da compra</label><input class="inp" id="fLink" inputmode="url" maxlength="1000" placeholder="https://…" value="${esc(EDIT.link||'')}"></div>
+ <div><span class="lb">Foto do que precisa</span><div class="dropzone" id="dz" tabindex="0" role="button" aria-label="Anexar foto"></div><div class="dz-actions" id="dzAct"></div></div>
+ <div><label for="fNotes">Detalhes</label><textarea class="inp" id="fNotes" maxlength="2000" placeholder="Modelo, medida, fornecedor, o que já foi tentado…">${esc(EDIT.notes)}</textarea></div>
+ ${edit?`<div><span class="lb">Andamento</span><div class="pick" id="pStat">${['pendente','andamento','concluido'].map(k=>`<button type="button" data-s="${k}" aria-pressed="${EDIT.status===k}">${STATUS[EDIT.kind][k]}</button>`).join('')}</div></div>`:''}
+ <div class="dr-actions">${ro?'<span></span>':`<span>${edit&&canDelete()?'<button type="button" class="btn-g danger" id="btnDel">Excluir</button>':''}</span><span style="display:flex;gap:8px"><button type="button" class="btn-g" id="btnCancel">Cancelar</button><button type="submit" class="btn-y" id="btnSave">${edit?'Salvar':'Registrar pedido'}</button></span>`}</div></form>`;
+ fillAreas();updTotal();updPhoto();openDrawer();if(!edit)$('fTitle').focus();
+}
+function fillAreas(){
+ const u=$('fUnit').value,list=u?areasOf(u):[],cur=EDIT.area;
+ const opts=[...new Set([...list,...(cur&&!list.includes(cur)?[cur]:[])])];
+ $('fArea').innerHTML=`<option value="">${u?'Sem área específica':'Escolha a unidade'}</option>${opts.map(a=>`<option ${a===cur?'selected':''}>${esc(a)}</option>`).join('')}${u&&canEdit()?'<option value="__new">+ Nova área…</option>':''}`;
+}
+function updTotal(){const q=Math.max(1,parseInt($('fQty').value)||1),p=parseNum($('fPrice').value);$('fTotal').innerHTML=p==null?'<span class="muted">—</span>':`<b>${brl(p*q)}</b>`}
+function parseNum(s){s=String(s||'').trim().replace(/R\$\s*/i,'');if(!s)return null;if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>=0?Math.round(n*100)/100:NaN}
+function updPhoto(){
+ const dz=$('dz'),ro=!canEdit();
+ dz.innerHTML=PH.url?`<img src="${esc(PH.url)}" alt="Foto anexada">`:`<span>${IMG}<br>${ro?'Sem foto':'Toque para anexar uma foto<br><small>ou arraste uma imagem aqui</small>'}</span>`;
+ $('dzAct').innerHTML=ro?'':PH.url?'<button type="button" class="btn-g" id="photoChange">Trocar foto</button><button type="button" class="btn-g danger" id="photoRemove">Remover foto</button>':'';
+}
+async function toBlob(file){
+ const url=URL.createObjectURL(file);try{
+  const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
+  const s=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  for(const q of [.82,.7,.55]){const b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));if(b&&b.size<=1900*1024)return b}
+  throw new Error('grande');
+ }finally{URL.revokeObjectURL(url)}
+}
+async function pickPhoto(file){
+ if(!file)return;if(!/^image\//.test(file.type)){toast('Escolha uma imagem.');return}
+ try{const b=await toBlob(file);if(PH.url&&PH.blob)URL.revokeObjectURL(PH.url);PH={blob:b,remove:false,url:URL.createObjectURL(b)};updPhoto()}catch{toast('Não consegui usar essa foto. Tente outra.')}
+}
+async function saveForm(e){
+ e.preventDefault();if(!canEdit())return;
+ const unit=$('fUnit').value,title=$('fTitle').value.trim();let area=$('fArea').value;
+ if(!unit){toast('Escolha a unidade.');return}if(!title){toast('Diga o que precisa.');return}
+ const price=parseNum($('fPrice').value);if(Number.isNaN(price)){toast('Valor inválido. Use números, ex.: 1.250,90');return}
+ let link=$('fLink').value.trim();if(link&&!/^https?:\/\//i.test(link))link='https://'+link;if(link&&!safeUrl(link)){toast('Link inválido.');return}
+ if(area==='__new'){area=$('fNewArea').value.trim();if(!area){toast('Digite o nome da nova área.');return}}
+ const row={unit,area,kind:EDIT.kind,title,notes:$('fNotes').value.trim(),priority:EDIT.priority,qty:Math.max(1,Math.min(9999,parseInt($('fQty').value)||1)),price,link:link||null,status:EDIT.status};
+ const b=$('btnSave');b.disabled=true;
+ try{
+  if(area&&!areasOf(unit).includes(area)){const {data,error}=await CTX.client.from('boha_areas').insert({unit,name:area,sort:200}).select().single();if(!error&&data)AREAS.push(data)}
+  let id=EDIT.id,warn='';
+  if(id){const {error}=await CTX.client.from('boha_requests').update({...row,photo:PH.remove?false:(PH.blob?true:EDIT.photo)}).eq('id',id);if(error)throw error}
+  else{const {data,error}=await CTX.client.from('boha_requests').insert({...row,photo:false}).select().single();if(error||!data)throw error||new Error('x');id=data.id}
+  if(PH.blob){const up=await CTX.client.storage.from('boha-compras').upload(id+'.jpg',PH.blob,{contentType:'image/jpeg',upsert:true});if(up.error)warn='O pedido foi salvo, mas a foto não subiu.';else await CTX.client.from('boha_requests').update({photo:true}).eq('id',id)}
+  else if(PH.remove&&EDIT.photo){await CTX.client.storage.from('boha-compras').remove([id+'.jpg'])}
+  await load();closeDrawer();toast(warn||(EDIT.id?'Pedido atualizado.':'Pedido registrado.'));
+ }catch(err){b.disabled=false;toast('Não foi possível salvar. '+(err&&err.message?err.message:'Tente de novo.'))}
+}
+async function setStatus(id,status,undo=true){
+ const r=ROWS.find(x=>x.id===id);if(!r)return;const prev=r.status,{error}=await CTX.client.from('boha_requests').update({status}).eq('id',id);
+ if(error){toast('Não foi possível atualizar.');return}
+ r.status=status;r.updated_at=new Date().toISOString();r.done_at=status==='concluido'?r.updated_at:null;render();
+ undo?toast(STATUS[r.kind][status]+' ✔','Desfazer',()=>setStatus(id,prev,false)):toast('Andamento atualizado.');
+}
+async function del(id){
+ const r=ROWS.find(x=>x.id===id);if(!r||!confirm(`Excluir “${r.title}”? Isso não pode ser desfeito.`))return;
+ const {error}=await CTX.client.from('boha_requests').delete().eq('id',id);if(error){toast('Não foi possível excluir.');return}
+ if(r.photo)CTX.client.storage.from('boha-compras').remove([id+'.jpg']).catch(()=>{});
+ ROWS=ROWS.filter(x=>x.id!==id);closeDrawer();render();toast('Pedido excluído.');
+}
+function exportCsv(){
+ const list=visible().sort(byPrio);if(!list.length){toast('Nada para exportar com este filtro.');return}
+ const c=v=>'"'+String(v??'').replace(/"/g,'""')+'"',n=v=>v==null?'':String(v).replace('.',',');
+ const lines=[['Unidade','Área','Tipo','Item','Prioridade','Andamento','Quantidade','Valor unitário','Total','Link','Aberto em','Detalhes'].map(c).join(';')];
+ list.forEach(r=>lines.push([UNITS[r.unit].name,r.area,KIND[r.kind],r.title,PRIO[r.priority].l,STATUS[r.kind][r.status],r.qty,n(r.price),n(total(r)),r.link||'',new Date(r.created_at).toLocaleDateString('pt-BR'),r.notes].map((v,i)=>i===6?v:c(v)).join(';')));
+ const url=URL.createObjectURL(new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='boha-compras-manutencao.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Lista exportada.');
+}
+function openDrawer(){lastFocus=document.activeElement;$('overlay').classList.add('open');document.body.style.overflow='hidden'}
+function closeDrawer(){$('overlay').classList.remove('open');document.body.style.overflow='';if(PH.blob&&PH.url)URL.revokeObjectURL(PH.url);EDIT=null;if(lastFocus&&lastFocus.isConnected)lastFocus.focus()}
+/* ---------- eventos ---------- */
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-unit],[data-status],[data-kind],[data-view],[data-open],[data-step],[data-reset],[data-urg],#btnNew,#btnCsv,#drClose,#btnCancel,#btnDel,#dz,#photoChange,#photoRemove,[data-k],[data-p],[data-s]');if(!t)return;
+ if(t.dataset.unit){S.unit=t.dataset.unit;S.area='all';render();window.scrollTo({top:0})}
+ else if(t.dataset.status){S.status=t.dataset.status;render()}
+ else if(t.dataset.kind){S.kind=t.dataset.kind;render()}
+ else if(t.dataset.view){S.view=t.dataset.view;render()}
+ else if(t.dataset.open){openForm(ROWS.find(r=>r.id===t.dataset.open))}
+ else if(t.dataset.step){const r=ROWS.find(x=>x.id===t.dataset.step);if(r)setStatus(r.id,STEP[r.kind][r.status][0])}
+ else if(t.dataset.reset){S.status='open';S.kind='all';S.area='all';S.q='';render()}
+ else if(t.dataset.urg){S.status='open';S.view='prio';render();const s=document.querySelector('.sec');if(s)s.scrollIntoView({behavior:'smooth',block:'start'})}
+ else if(t.id==='btnNew')openForm(null);
+ else if(t.id==='btnCsv')exportCsv();
+ else if(t.id==='drClose'||t.id==='btnCancel')closeDrawer();
+ else if(t.id==='btnDel')del(EDIT.id);
+ else if(t.id==='dz'||t.id==='photoChange'){if(canEdit())$('photoIn').click()}
+ else if(t.id==='photoRemove'){if(PH.blob&&PH.url)URL.revokeObjectURL(PH.url);PH={blob:null,remove:true,url:null};updPhoto()}
+ else if(t.dataset.k){EDIT.kind=t.dataset.k;document.querySelectorAll('#pKind button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===EDIT.kind));$('fTitle').previousElementSibling.textContent=EDIT.kind==='compra'?'O que precisa comprar?':'O que precisa consertar?';$('fTitle').placeholder=EDIT.kind==='compra'?'Ex.: Anilha de 10 kg (par)':'Ex.: Esteira 3 parando durante o uso';document.querySelectorAll('#pStat button').forEach(b=>b.textContent=STATUS[EDIT.kind][b.dataset.s])}
+ else if(t.dataset.p){EDIT.priority=t.dataset.p;document.querySelectorAll('#pPrio button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===EDIT.priority))}
+ else if(t.dataset.s){EDIT.status=t.dataset.s;document.querySelectorAll('#pStat button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===EDIT.status))}
+});
+document.addEventListener('change',async e=>{
+ const t=e.target;
+ if(t.id==='selArea'){S.area=t.value;render()}
+ else if(t.dataset&&t.dataset.prio){const r=ROWS.find(x=>x.id===t.dataset.prio),prev=r.priority;r.priority=t.value;const {error}=await CTX.client.from('boha_requests').update({priority:t.value}).eq('id',r.id);if(error){r.priority=prev;toast('Não foi possível mudar a prioridade.')}else toast(`Prioridade: ${PRIO[t.value].l}.`);render()}
+ else if(t.id==='fUnit'){EDIT.area='';fillAreas();$('newAreaBox').hidden=true}
+ else if(t.id==='fArea'){$('newAreaBox').hidden=t.value!=='__new';if(t.value==='__new')$('fNewArea').focus()}
+ else if(t.id==='photoIn'){pickPhoto(t.files[0]);t.value=''}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='q'){S.q=e.target.value;clearTimeout(input.t);input.t=setTimeout(render,180)}
+ else if(e.target.id==='fQty'||e.target.id==='fPrice')updTotal();
+});
+function input(){}
+document.addEventListener('submit',e=>{if(e.target.id==='form')saveForm(e)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('overlay').classList.contains('open'))closeDrawer();if((e.key==='Enter'||e.key===' ')&&e.target.id==='dz'){e.preventDefault();if(canEdit())$('photoIn').click()}});
+$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeDrawer()});
+document.addEventListener('dragover',e=>{const d=$('dz');if(d&&e.target.closest('#dz')&&canEdit()){e.preventDefault();d.classList.add('over')}});
+document.addEventListener('dragleave',()=>{const d=$('dz');if(d)d.classList.remove('over')});
+document.addEventListener('drop',e=>{const d=$('dz');if(d&&e.target.closest('#dz')&&canEdit()){e.preventDefault();d.classList.remove('over');pickPhoto(e.dataTransfer.files[0])}});
+window.bohaReload=()=>{if(!EDIT)load().catch(()=>{})};
+setInterval(()=>{if(!document.hidden&&!EDIT)load().catch(()=>{})},120000);
+(async()=>{
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#compras" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ ROLE=(CTX.profile&&CTX.profile.role)||'viewer';
+ try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os pedidos. Atualize a página.</div>'}
+})();
+</script></body></html>

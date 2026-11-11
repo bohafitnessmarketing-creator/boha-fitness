@@ -233,6 +233,8 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
  .row-head{margin-top:32px}
  #appbar{padding:0 12px;gap:10px}#appbar .logo-img,#appbar .sep,#identity{display:none}
  .bar2{padding:0 12px;gap:10px}.bar2 .logo-img,.bar2 .sep{display:none}
+ #moduleTitle,.bar2 .mtitle{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ #appbar .ghost,.bar2 .ghost{white-space:nowrap}
  .acc-wrap{padding:28px 16px 56px}
  .acc-fields{grid-template-columns:1fr}
  .acc-row{grid-template-columns:auto minmax(0,1fr)}
@@ -346,9 +348,9 @@ const MODULES=[
  {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'Checklist do líder',visual:'tasks',
   desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
   features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
- {key:'compras',status:'soon',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
-  desc:'O que cada área da academia precisa — e o que já foi resolvido.',
-  features:['Pedidos por área: musculação, cardio, vestiário…','Status: pendente, comprado ou feito','Histórico de manutenção de cada área']},
+ {key:'compras',status:'live',src:'sistema/compras.html',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
+  desc:'O que cada unidade precisa comprar ou consertar, com foto, link, valor e prioridade.',
+  features:['Pedidos por unidade e por área da academia','Foto, link da compra e valor de cada item','Prioridade: do urgente ao quando der','Andamento: pendente, comprado, recebido']},
  {key:'marketing',status:'soon',icon:'mkt',tag:'Conteúdo',title:'Marketing',visual:'mkt',
   desc:'Termômetro de gravações: qual aula está há mais tempo sem conteúdo.',
   features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']},
@@ -361,7 +363,7 @@ const ROLES=[['viewer','Visualizador','só visualiza os módulos'],['editor','Ed
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visibleModules=()=>MODULES.filter(m=>!m.adminOnly||profile?.role==='admin');
 const TZ='America/Sao_Paulo';
-let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null},clockTimer=null,accData=[];
+let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null,req:null},clockTimer=null,accData=[];
 
 function toast(text){const t=el('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
 function tick(){
@@ -402,8 +404,11 @@ const VISUALS={
   return `<div class="vz-head"><span>Suas tarefas</span><b class="${k.late?'hot':''}">${k.late?k.late+' atrasada'+(k.late===1?'':'s'):k.today+' para hoje'}</b></div>`+k.next.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>34?x.title.slice(0,34)+'…':x.title)}</b></div><span class="st ${x.late?'p':'c'}">${esc(x.when)}</span></div>`).join('');
  },
  maint(){
-  const rows=[['Vestiário','Trocar chuveiro 2','p','Pendente'],['Musculação','Cabo do crossover','c','Comprado'],['Cardio','Revisão da esteira 3','f','Feito'],['Recepção','Bobina da catraca','p','Pendente']];
-  return '<div class="vz-head"><span>Pedidos da semana</span><b>2 pendentes</b></div>'+rows.map((r,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${r[0]}</b><span>${r[1]}</span></div><span class="st ${r[2]}">${r[3]}</span></div>`).join('');
+  const r=stats.req;
+  if(!r)return '<div class="vz-head"><span>Pedidos em aberto</span><b>carregando…</b></div>';
+  const PC={urgente:['Urgente','p'],alta:['Alta','c'],media:['Média','c'],baixa:['Baixa','f']};
+  if(!r.top.length)return '<div class="vz-head"><span>Pedidos em aberto</span><b>nenhum</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Quando alguém registrar uma compra ou um reparo, os mais urgentes aparecem aqui.</p>';
+  return `<div class="vz-head"><span>Mais urgentes agora</span><b class="${r.urgent?'hot':''}">${r.open} em aberto</b></div>`+r.top.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>30?x.title.slice(0,30)+'…':x.title)}</b><span>${esc(x.unit)}${x.area?' · '+esc(x.area):''}</span></div><span class="st ${PC[x.priority][1]}">${PC[x.priority][0]}</span></div>`).join('');
  },
  mkt(){
   const rows=[['Zumba',41,'#ff5a4f'],['Jump',26,'#ff9f2e'],['Muay Thai',14,'#fff000'],['Pilates',4,'#3ddc84']];
@@ -455,6 +460,7 @@ function metaText(m){
  if(m.key==='hierarquia')return stats.members===null?'Abrir módulo':memberLabel(stats.members);
  if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
  if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
+ if(m.key==='compras'){const r=stats.req;if(!r)return 'Abrir módulo';return r.open?`${r.open} em aberto`+(r.urgent?` · ${r.urgent} urgente${r.urgent===1?'':'s'}`:''):'Nada em aberto'}
  if(m.key==='checklist'){const k=stats.tasks;if(!k)return 'Abrir checklist';return k.late?`${k.late} atrasada${k.late===1?'':'s'}`+(k.today?` · ${k.today} para hoje`:''):k.today?`${k.today} para hoje`:'Nada pendente hoje'}
  return 'Abrir módulo';
 }
@@ -472,7 +478,7 @@ async function loadStats(){
   const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
   if(!error&&typeof count==='number'){stats.members=count;refreshMeta('hierarquia')}
  }catch{}
- loadTasks();
+ loadTasks();loadReqStats();
  if(profile?.role!=='admin')return;
  loadEvoStats();
  try{
@@ -480,7 +486,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261111a';
+const VERSION='20261111b';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -493,6 +499,16 @@ async function loadEvoStats(){
   const mes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][+ref.slice(5)-1];
   stats.evo={label:mes+'/'+ref.slice(0,4),units:[[1,'Casa Branca'],[2,'Santa Tereza'],[3,'Macedônia']].map(([u,name])=>{const cur=get(u,ref),pv=get(u,prev);return {name,cur,prev:pv,pct:cur!=null&&pv?(cur/pv-1)*100:null}}).filter(u=>u.cur!=null)};
   refreshMeta('resultados');
+ }catch{}
+}
+async function loadReqStats(){
+ if(!profile)return;
+ try{
+  const {data,error}=await client.from('boha_requests').select('title,unit,area,priority,created_at').neq('status','concluido').limit(1000);
+  if(error||!Array.isArray(data))return;
+  const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},ord={urgente:0,alta:1,media:2,baixa:3};
+  const top=[...data].sort((a,b)=>ord[a.priority]-ord[b.priority]||a.created_at.localeCompare(b.created_at)).slice(0,4).map(x=>({title:x.title,unit:UN[x.unit]||x.unit,area:x.area,priority:x.priority}));
+  stats.req={open:data.length,urgent:data.filter(x=>x.priority==='urgente').length,top};refreshMeta('compras');
  }catch{}
 }
 async function loadTasks(){
@@ -539,7 +555,7 @@ function startReminders(){
  clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks();loadNotices()}},20000);startReminders.last=Date.now();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sistema/sw.js').then(r=>{swReg=r}).catch(()=>{});
 }
-window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices()}});
+window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices();loadReqStats()}});
 let notices=[],seenAt=null,npOpen=false,npSeenRef=null,npCompose=false,lastBell=0,npAnchor=null;
 const NI={
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',17),
@@ -641,7 +657,7 @@ async function route(){
  if(!profile)return;
  const key=location.hash.slice(1);
  const m=visibleModules().find(x=>x.key===key&&x.status==='live');
- if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();return}
+ if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();return}
  if(currentView===key)return;
  currentView=key;
  if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;setFrame();el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
@@ -675,7 +691,7 @@ function enterHub(me,session){
 }
 async function showSession(session){
  if(!session){
-  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null};clearInterval(clockTimer);
+  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};clearInterval(clockTimer);
   accData=[];el('accInvite').innerHTML='';clearInterval(remTimer);openTasks=[];firing=new Set();el('alerts').innerHTML='';closePanel();notices=[];seenAt=null;lastBell=0;
   el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('login').hidden=false;return;
  }
