@@ -131,6 +131,12 @@ button{font:inherit;cursor:pointer}
 iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 
 .card.wide{grid-column:1/-1;min-height:0}
+#alerts{position:fixed;top:14px;right:14px;z-index:30;display:grid;gap:10px;width:min(380px,calc(100vw - 28px))}
+.alert{background:#17160b;border:1px solid var(--y);border-radius:16px;padding:14px 16px;box-shadow:0 18px 40px rgba(0,0,0,.6);animation:fadeUp .35s var(--ease)}
+.alert small{display:block;color:var(--y);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.alert b{display:block;font-size:16px;margin:4px 0 10px;overflow-wrap:anywhere}
+.alert-actions{display:flex;gap:8px;align-items:center}
+.alert .btn-y{padding:8px 14px;font-size:13px}
 .bar2{position:sticky;top:0;z-index:5;height:56px;padding:0 20px;display:flex;align-items:center;gap:14px;background:#111;border-bottom:1px solid var(--line);font-size:13px}
 .bar2 .logo-img{height:24px;display:block}
 .bar2 .sep{width:1px;height:22px;background:var(--line2)}
@@ -245,6 +251,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
   <div class="acc-card"><div class="acc-top"><h2 class="display">Pessoas com acesso</h2><span id="accCount"></span></div><div id="accList"></div></div>
  </div>
 </section>
+<div id="alerts" aria-live="assertive"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -288,22 +295,26 @@ const ICONS={
  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>',16),
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',16),
  cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26),
- key:svg('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M18 5l2 2"/>')
+ key:svg('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M18 5l2 2"/>'),
+ check:svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12.5l3 3 5-6"/>')
 };
 const MODULES=[
  {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
   desc:'Organograma, funções e rotinas de quem faz a Boha acontecer.',
   features:['Organograma completo da equipe','Turnos e responsabilidades de cada um','Fotos e observações de cada pessoa']},
- {key:'vendas',status:'soon',icon:'sales',tag:'Comercial',title:'Vendas',visual:'sales',
-  desc:'Matrículas e faturamento, unidade por unidade, em tempo real.',
-  features:['Matrículas por dia e por mês','Comparativo entre as 3 unidades','Meta do mês e quanto falta']},
+ {key:'resultados',status:'live',adminOnly:true,src:'sistema/resultados.html',icon:'sales',tag:'Gestão',title:'Resultados',visual:'results',
+  desc:'Clientes, vendas e financeiro das 3 unidades — comparando com o mesmo mês do ano passado.',
+  features:['Clientes ativos, churn, cancelamentos e renovações','Contratos vendidos, vendas e canais','Recebimentos, gastos e inadimplência','Importação mensal dos dados do EVO']},
+ {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'Checklist do líder',visual:'tasks',
+  desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
+  features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'compras',status:'soon',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
   desc:'O que cada área da academia precisa — e o que já foi resolvido.',
   features:['Pedidos por área: musculação, cardio, vestiário…','Status: pendente, comprado ou feito','Histórico de manutenção de cada área']},
  {key:'marketing',status:'soon',icon:'mkt',tag:'Conteúdo',title:'Marketing',visual:'mkt',
   desc:'Termômetro de gravações: qual aula está há mais tempo sem conteúdo.',
   features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']},
- {key:'acessos',status:'live',adminOnly:true,wide:true,icon:'key',tag:'Administração',title:'Gestão de acessos',visual:'access',
+ {key:'acessos',status:'live',adminOnly:true,icon:'key',tag:'Administração',title:'Gestão de acessos',visual:'access',
   desc:'Libere, ajuste ou remova o acesso de cada pessoa da equipe — só administradores veem esta área.',
   features:['Liberar acesso com nome, e-mail e perfil','Convite pronto pra mandar no WhatsApp','Trocar perfil ou remover acesso na hora']}
 ];
@@ -312,7 +323,7 @@ const ROLES=[['viewer','Visualizador','só visualiza os módulos'],['editor','Ed
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visibleModules=()=>MODULES.filter(m=>!m.adminOnly||profile?.role==='admin');
 const TZ='America/Sao_Paulo';
-let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null},clockTimer=null,accData=[];
+let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null},clockTimer=null,accData=[];
 
 function toast(text){const t=el('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
 function tick(){
@@ -341,10 +352,16 @@ const VISUALS={
   });
   return s+`</svg><div class="vz-stat"><b>${n===null?'—':n}</b><span>${n===null?'carregando equipe…':n===1?'pessoa cadastrada no organograma':'pessoas cadastradas no organograma'}</span></div>`;
  },
- sales(){
-  const h=[38,52,46,64,58,72,61,84,76,92,88,104];
-  const bars=h.map((v,i)=>`<rect class="sb" x="${14+i*23.5}" y="${130-v}" width="14" height="${v}" rx="3" fill="${i===11?'#fff000':'#2c2c2c'}" style="animation-delay:${i*40}ms"/>`).join('');
-  return `<div class="vz-head"><span>Matrículas · 12 meses</span><b class="up">▲ 18%</b></div><svg viewBox="0 0 300 136" class="vz" aria-hidden="true"><line x1="8" x2="292" y1="22" y2="22" stroke="#fff000" stroke-opacity=".45" stroke-dasharray="4 4"/><text x="292" y="15" text-anchor="end" fill="#fff000" fill-opacity=".75" font-size="9" font-family="Inter,Arial" font-weight="700" letter-spacing="1">META</text>${bars}<line x1="8" x2="292" y1="130.5" y2="130.5" stroke="#2a2a2a"/></svg><div class="vz-progress"><span>Meta do mês</span><div class="bar"><i style="width:78%;background:#fff000"></i></div><b>78%</b></div>`;
+ results(){
+  const e=stats.evo;
+  if(!e)return '<div class="vz-head"><span>Clientes ativos</span><b>carregando…</b></div>';
+  return `<div class="vz-head"><span>Clientes ativos · ${e.label}</span><b>× ano anterior</b></div>`+e.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.prev==null?'sem ano anterior':'antes: '+u.prev.toLocaleString('pt-BR')}</span></div><span style="display:flex;gap:10px;align-items:center"><b style="font-size:16px">${u.cur.toLocaleString('pt-BR')}</b>${u.pct==null?'':`<span class="st ${u.pct<0?'p':'f'}">${u.pct<0?'▼':'▲'} ${Math.abs(u.pct).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</span>`}</span></div>`).join('');
+ },
+ tasks(){
+  const k=stats.tasks;
+  if(!k)return '<div class="vz-head"><span>Suas tarefas</span><b>carregando…</b></div>';
+  if(!k.next.length)return '<div class="vz-head"><span>Suas tarefas</span><b>nada pendente</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Abra o checklist e anote a primeira tarefa do dia.</p>';
+  return `<div class="vz-head"><span>Suas tarefas</span><b class="${k.late?'hot':''}">${k.late?k.late+' atrasada'+(k.late===1?'':'s'):k.today+' para hoje'}</b></div>`+k.next.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>34?x.title.slice(0,34)+'…':x.title)}</b></div><span class="st ${x.late?'p':'c'}">${esc(x.when)}</span></div>`).join('');
  },
  maint(){
   const rows=[['Vestiário','Trocar chuveiro 2','p','Pendente'],['Musculação','Cabo do crossover','c','Comprado'],['Cardio','Revisão da esteira 3','f','Feito'],['Recepção','Bobina da catraca','p','Pendente']];
@@ -399,6 +416,8 @@ function metaText(m){
  if(m.status!=='live')return 'Em construção';
  if(m.key==='hierarquia')return stats.members===null?'Abrir módulo':memberLabel(stats.members);
  if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
+ if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
+ if(m.key==='checklist'){const k=stats.tasks;if(!k)return 'Abrir checklist';return k.late?`${k.late} atrasada${k.late===1?'':'s'}`+(k.today?` · ${k.today} para hoje`:''):k.today?`${k.today} para hoje`:'Nada pendente hoje'}
  return 'Abrir módulo';
 }
 function refreshMeta(key){
@@ -415,12 +434,75 @@ async function loadStats(){
   const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
   if(!error&&typeof count==='number'){stats.members=count;refreshMeta('hierarquia')}
  }catch{}
+ loadTasks();
  if(profile?.role!=='admin')return;
+ loadEvoStats();
  try{
   const {data,error}=await client.rpc('boha_access_list');
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
+const VERSION='20261111a';
+function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
+const localISO=d=>d.toLocaleDateString('sv-SE');
+let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
+async function loadEvoStats(){
+ try{
+  const {data,error}=await client.from('boha_evo').select('unit,period,status,data');
+  if(error||!data||!data.length)return;
+  const closed=[...new Set(data.filter(r=>r.status==='fechado').map(r=>r.period))].sort(),ref=closed[closed.length-1];if(!ref)return;
+  const prev=(+ref.slice(0,4)-1)+ref.slice(4),get=(u,p)=>{const r=data.find(x=>x.unit===u&&x.period===p);return r&&typeof r.data.a==='number'?r.data.a:null};
+  const mes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][+ref.slice(5)-1];
+  stats.evo={label:mes+'/'+ref.slice(0,4),units:[[1,'Casa Branca'],[2,'Santa Tereza'],[3,'Macedônia']].map(([u,name])=>{const cur=get(u,ref),pv=get(u,prev);return {name,cur,prev:pv,pct:cur!=null&&pv?(cur/pv-1)*100:null}}).filter(u=>u.cur!=null)};
+  refreshMeta('resultados');
+ }catch{}
+}
+async function loadTasks(){
+ if(!profile)return;
+ try{
+  const {data,error}=await client.from('boha_tasks').select('id,title,due_date,due_time,notified_at').is('done_at',null);
+  if(error||!Array.isArray(data))return;
+  openTasks=data;
+  const now=new Date(),t0=localISO(now),hm=now.toTimeString().slice(0,5),late=t=>t.due_date&&(t.due_date<t0||(t.due_date===t0&&t.due_time&&t.due_time<hm));
+  const sorted=data.filter(t=>t.due_date).sort((a,b)=>a.due_date.localeCompare(b.due_date)||(a.due_time||'99').localeCompare(b.due_time||'99'));
+  stats.tasks={today:data.filter(t=>t.due_date===t0&&!late(t)).length,late:data.filter(late).length,next:sorted.slice(0,4).map(t=>({title:t.title,late:late(t),when:t.due_date===t0?(t.due_time||'hoje'):t.due_date.slice(8)+'/'+t.due_date.slice(5,7)+(t.due_time?' '+t.due_time:'')}))};
+  refreshMeta('checklist');checkReminders();
+ }catch{}
+}
+function beep(){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.2,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.5);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.55);setTimeout(()=>c.close(),800)}catch{}}
+function showAlert(t){
+ const box=el('alerts'),a=document.createElement('div');a.className='alert';a.setAttribute('role','alert');
+ const txt=document.createElement('div'),s=document.createElement('small'),b=document.createElement('b');s.textContent='⏰ Agora · marcada para '+t.due_time;b.textContent=t.title;txt.append(s,b);
+ const go=document.createElement('button');go.className='btn-y';go.textContent='Abrir checklist';go.onclick=()=>{a.remove();if(location.hash==='#checklist'){try{el('dashboard').contentWindow.bohaReload()}catch{}}else location.hash='checklist'};
+ const ok=document.createElement('button');ok.className='ghost sm';ok.textContent='Ok';ok.onclick=()=>a.remove();
+ const row=document.createElement('div');row.className='alert-actions';row.append(go,ok);a.append(txt,row);box.appendChild(a);
+}
+async function notifySystem(t){
+ try{
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const title='⏰ '+t.title,opt={body:'Tarefa marcada para '+t.due_time+' — Checklist do líder',tag:'boha-'+t.id,icon:'assets/favicon/favicon-oficial.png'};
+  if(swReg&&swReg.active)await swReg.showNotification(title,opt);
+  else{const n=new Notification(title,opt);n.onclick=()=>{window.focus();location.hash='checklist';n.close()}}
+ }catch{}
+}
+function checkReminders(){
+ if(!profile)return;
+ const now=Date.now();
+ for(const t of openTasks){
+  if(!t.due_time||!t.due_date||t.notified_at||firing.has(t.id))continue;
+  const due=new Date(t.due_date+'T'+t.due_time+':00').getTime();
+  if(isNaN(due)||now<due)continue;
+  firing.add(t.id);t.notified_at=new Date().toISOString();
+  client.from('boha_tasks').update({notified_at:t.notified_at}).eq('id',t.id).then(()=>{},()=>{});
+  if(now-due<6*36e5){showAlert(t);beep();notifySystem(t)}
+ }
+}
+function startReminders(){
+ clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks()}},20000);startReminders.last=Date.now();
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('sistema/sw.js').then(r=>{swReg=r}).catch(()=>{});
+}
+window.addEventListener('focus',()=>{if(profile)loadTasks()});
+window.bohaCtx={client,get profile(){return profile},refreshReminders:loadTasks,toast};
 function openModule(m){
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
  location.hash=m.key;
@@ -430,11 +512,12 @@ async function route(){
  if(!profile)return;
  const key=location.hash.slice(1);
  const m=visibleModules().find(x=>x.key===key&&x.status==='live');
- if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;el('dashboard').srcdoc='';el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}return}
+ if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();return}
  if(currentView===key)return;
  currentView=key;
- if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;el('dashboard').srcdoc='';el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
+ if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;setFrame();el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
  el('accessView').hidden=true;
+ if(m.src){el('moduleTitle').textContent=m.title;setFrame({src:m.src+'?v='+VERSION});el('hub').hidden=true;el('workspace').hidden=false;window.scrollTo(0,0);return}
  let html=cache[m.content];
  if(!html){
   toast(`Abrindo ${m.title}…`);
@@ -444,7 +527,7 @@ async function route(){
  }
  if(currentView!==key)return;
  el('moduleTitle').textContent=m.title;
- el('dashboard').srcdoc=html;
+ setFrame({html});
  el('hub').hidden=true;el('workspace').hidden=false;window.scrollTo(0,0);
 }
 function enterHub(me,session){
@@ -459,13 +542,13 @@ function enterHub(me,session){
  activeKey=null;el('preview').innerHTML=emptyPreview();
  tick();clearInterval(clockTimer);clockTimer=setInterval(tick,30000);
  el('login').hidden=true;message('');
- route();loadStats();
+ route();loadStats();startReminders();
 }
 async function showSession(session){
  if(!session){
-  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null};clearInterval(clockTimer);
-  accData=[];el('accInvite').innerHTML='';
-  el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;el('dashboard').srcdoc='';el('login').hidden=false;return;
+  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null};clearInterval(clockTimer);
+  accData=[];el('accInvite').innerHTML='';clearInterval(remTimer);openTasks=[];firing=new Set();el('alerts').innerHTML='';
+  el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('login').hidden=false;return;
  }
  if(profile&&profile.uid===session.user.id)return;
  message('Carregando sua área...');
