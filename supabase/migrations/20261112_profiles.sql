@@ -2,6 +2,9 @@
 alter table public.boha_access drop constraint if exists boha_access_role_check;
 alter table public.boha_access add constraint boha_access_role_check
   check (role in ('admin','dono','gerente','marketing','recepcao','editor','viewer'));
+alter table public.boha_notices drop constraint if exists boha_notices_audience_check;
+alter table public.boha_notices add constraint boha_notices_audience_check
+  check (audience is null or audience <@ array['admin','dono','gerente','marketing','recepcao','editor','viewer']::text[]);
 
 create or replace function public.boha_can(p_module text) returns boolean
 language sql stable security definer set search_path = '' as $$

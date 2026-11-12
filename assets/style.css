@@ -505,6 +505,23 @@ a.unidade-info-item:hover{color:var(--white);}
   .modalidades-carrossel .carrossel-prev,.modalidades-carrossel .carrossel-next{display:none;}
 }
 
+/* Grade semanal na home */
+.home-grade-switch{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:28px 0 18px}
+.home-grade-switch button{font:700 14px Inter,sans-serif;color:var(--white);background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px 20px;cursor:pointer;min-width:170px;text-align:left}
+.home-grade-switch button:hover{border-color:#777}
+.home-grade-switch button[aria-pressed="true"]{border-color:var(--yellow);background:#24230e;color:var(--yellow)}
+.home-grade-switch button:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+.home-grade{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.home-grade-day{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px;min-width:0}
+.home-grade-day h3{font-size:21px;color:var(--yellow);margin:0 0 12px}
+.home-grade-slot{border-top:1px solid var(--card-border);padding:9px 0}
+.home-grade-slot time{display:block;color:var(--muted);font-size:11px;font-weight:700}
+.home-grade-slot strong{display:block;font-size:12px;line-height:1.3;margin-top:3px}
+.home-grade-empty{color:var(--muted);font-size:12px}
+.home-grade-note{color:var(--muted);font-size:12px;text-align:center;margin-top:15px}
+@media(max-width:900px){.home-grade{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.home-grade{grid-template-columns:repeat(2,minmax(0,1fr))}.home-grade-switch button{min-width:0;flex:1}.home-grade-day{padding:11px}.home-grade-day h3{font-size:19px}}
+
 /* Oferta em 2 colunas (páginas de pré-venda, ex. Spinning) */
 .oferta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
 @media (max-width:900px){.oferta-grid{grid-template-columns:1fr;}}

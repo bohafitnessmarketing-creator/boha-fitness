@@ -32,6 +32,7 @@ button{font:inherit;cursor:pointer}
 .topbar .logo-img{height:30px;display:block}
 .topbar-right{display:flex;align-items:center;gap:14px}
 .user{display:flex;align-items:center;gap:10px}
+.user-menu{background:none;border:0;color:inherit;cursor:pointer;border-radius:10px;padding:3px 5px}.user-menu:hover,.user-menu:focus-visible{background:#222;outline:2px solid var(--y);outline-offset:2px}.profile-menu{position:fixed;right:18px;top:62px;z-index:60;width:min(300px,calc(100vw - 24px));background:#191919;border:1px solid #494949;border-radius:15px;padding:13px;box-shadow:0 22px 60px rgba(0,0,0,.55)}.profile-menu h3{font:400 22px/1 Anton,Impact,sans-serif;text-transform:uppercase;margin:3px 4px 9px}.profile-menu p{color:var(--muted);font-size:11px;margin:4px 4px 10px}.profile-menu button{display:block;width:100%;padding:10px 12px;border:1px solid transparent;border-radius:9px;background:none;color:var(--text);font:700 13px Inter,sans-serif;text-align:left;cursor:pointer}.profile-menu button:hover,.profile-menu button[aria-pressed="true"]{border-color:var(--y);background:#292812;color:var(--y)}.preview-flag{position:fixed;z-index:55;left:16px;bottom:16px;background:#fff000;color:#111;border-radius:11px;box-shadow:0 12px 36px rgba(0,0,0,.5);padding:10px 13px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800}.preview-flag button{border:1px solid #111;background:none;border-radius:7px;padding:5px 8px;font:800 11px Inter,sans-serif;cursor:pointer}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--y);color:#111;font-weight:800;display:grid;place-items:center;font-size:15px}
 .user b{display:block;font-size:14px;line-height:1.2}
 .user small{color:var(--muted);font-size:12px}
@@ -294,7 +295,7 @@ html.mtile .pv-empty h3{font-size:20px}
   <img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness">
   <div class="topbar-right">
    <button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button>
-   <div class="user"><span class="avatar" id="avatar"></span><div><b id="userName"></b><small id="userRole"></small></div></div>
+   <button type="button" class="user user-menu" data-profile-menu aria-label="Abrir menu do perfil" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="avatar"></span><span><b id="userName"></b><small id="userRole"></small></span></button>
    <button type="button" class="ghost" id="logout">Sair</button>
   </div>
  </header>
@@ -312,9 +313,9 @@ html.mtile .pv-empty h3{font-size:20px}
  </div>
 </section>
 
-<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><span id="identity"></span><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
+<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><button type="button" class="ghost" data-profile-menu aria-haspopup="menu" aria-expanded="false">Perfil ▾</button><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
 <section id="accessView" hidden>
- <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout3">Sair</button></div>
+ <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="ghost" data-profile-menu aria-haspopup="menu" aria-expanded="false">Perfil ▾</button><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout3">Sair</button></div>
  <div class="acc-wrap">
   <div class="acc-head"><p class="eyebrow">Somente administradores</p><h1 class="display">Gestão de <span class="accent">acessos</span></h1><p class="sub">Libere o e-mail da pessoa aqui, mande o convite pelo WhatsApp e ela mesma cria a senha no primeiro acesso. Você nunca precisa saber a senha de ninguém.</p></div>
   <form class="acc-card" id="accForm" autocomplete="off">
@@ -334,6 +335,7 @@ html.mtile .pv-empty h3{font-size:20px}
  </div>
 </section>
 <section id="notifPanel" class="np" role="dialog" aria-labelledby="npTitle" tabindex="-1" hidden><header class="np-h"><b id="npTitle">Notificações</b><button type="button" class="np-x" id="npClose" aria-label="Fechar notificações">✕</button></header><div class="np-body" id="npBody"></div><footer class="np-f" id="npFoot" hidden></footer></section>
+<div id="profileMenu" class="profile-menu" role="menu" aria-label="Testar perfil" hidden></div><div id="previewFlag" class="preview-flag" hidden></div>
 <div id="alerts" aria-live="assertive"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -412,11 +414,12 @@ const MODULES=[
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Hierarquia, Resultados, Compras e Checklist'],['dono','Dono','Hierarquia, Resultados e Compras'],['marketing','Marketing','Termômetro e futuros módulos de Marketing'],['recepcao','Recepção','Hierarquia, Checklist e Manuais (em breve)'],['admin','Administrador','todos os módulos e Gestão de acessos']];
 const ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist'],marketing:['marketing'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
-const canModule=key=>!!profile?.role&&(ROLE_MODULES[profile.role]===null||ROLE_MODULES[profile.role]?.includes(key));
+const effectiveRole=()=>previewRole||profile?.role;
+const canModule=key=>!!effectiveRole()&&(ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visibleModules=()=>MODULES.filter(m=>canModule(m.key));
 const TZ='America/Sao_Paulo';
-let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null,req:null},clockTimer=null,accData=[];
+let profile=null,previewRole=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null,req:null},clockTimer=null,accData=[];
 
 function toast(text){const t=el('toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2800)}
 function tick(){
@@ -570,7 +573,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261112i';
+const VERSION='20261112k';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -624,7 +627,7 @@ async function notifySystem(t){
  }catch{}
 }
 function checkReminders(){
- if(!profile)return;
+ if(!profile||!canModule('checklist'))return;
  const now=Date.now();
  for(const t of openTasks){
   if(!t.due_time||!t.due_date||t.notified_at||firing.has(t.id))continue;
@@ -650,13 +653,15 @@ const NI={
 const after=(a,b)=>!b||new Date(a)>new Date(b);
 function relTime(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return 'agora';if(s<3600)return 'há '+Math.floor(s/60)+' min';if(s<86400)return 'há '+Math.floor(s/3600)+' h';if(s<172800)return 'ontem';return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:TZ})}
 function taskBuckets(){
+ if(!canModule('checklist'))return {late:[],today:[]};
  const now=new Date(),t0=localISO(now),hm=now.toTimeString().slice(0,5);
  const late=openTasks.filter(t=>t.due_date&&(t.due_date<t0||(t.due_date===t0&&t.due_time&&t.due_time<=hm)));
  const today=openTasks.filter(t=>t.due_date===t0&&!late.includes(t));
  const ord=(a,b)=>a.due_date.localeCompare(b.due_date)||(a.due_time||'99').localeCompare(b.due_time||'99');
  return {late:late.sort(ord),today:today.sort(ord)};
 }
-function unreadCount(){return notices.filter(n=>after(n.created_at,seenAt)).length}
+const shownNotices=()=>notices.filter(n=>!n.audience?.length||n.audience.includes(effectiveRole()));
+function unreadCount(){return shownNotices().filter(n=>after(n.created_at,seenAt)).length}
 function updateBell(){
  if(!profile)return;
  const n=unreadCount()+taskBuckets().late.length;
@@ -666,7 +671,7 @@ function updateBell(){
 async function loadNotices(){
  if(!profile)return;
  try{
-  const [n,s]=await Promise.all([client.from('boha_notices').select('id,created_at,title,body,module').order('created_at',{ascending:false}).limit(30),client.from('boha_notice_seen').select('seen_at').maybeSingle()]);
+  const [n,s]=await Promise.all([client.from('boha_notices').select('id,created_at,title,body,module,audience').order('created_at',{ascending:false}).limit(30),client.from('boha_notice_seen').select('seen_at').maybeSingle()]);
   if(!n.error&&Array.isArray(n.data))notices=n.data;
   if(!s.error)seenAt=s.data?s.data.seen_at:seenAt;
   updateBell();if(npOpen)renderPanel();
@@ -682,9 +687,9 @@ function renderPanel(){
   h+=today.map(t=>`<button type="button" class="np-item" data-go="checklist"><span class="np-ico today">${NI.clock}</span><span class="np-txt"><b>${esc(t.title)}</b><small>Hoje${t.due_time?' às '+t.due_time:''}</small></span><span class="np-go">${NI.chev}</span></button>`).join('');
  }
  h+='<p class="np-sec">Novidades do sistema</p>';
- h+=notices.length?notices.map(n=>{const un=after(n.created_at,npSeenRef),go=n.module&&canOpen(n.module);const inner=`<span class="np-ico news">${NI.news}</span><span class="np-txt"><b>${esc(n.title)}</b>${n.body?`<span>${esc(n.body)}</span>`:''}<small>${relTime(n.created_at)}${go?' · toque para abrir':''}</small></span>${go?`<span class="np-go">${NI.chev}</span>`:''}`;return go?`<button type="button" class="np-item ${un?'unread':''}" data-go="${esc(n.module)}">${inner}</button>`:`<div class="np-item ${un?'unread':''}">${inner}</div>`}).join(''):'<p class="np-empty">Nenhuma novidade por enquanto.</p>';
+ h+=shownNotices().length?shownNotices().map(n=>{const un=after(n.created_at,npSeenRef),go=n.module&&canOpen(n.module);const inner=`<span class="np-ico news">${NI.news}</span><span class="np-txt"><b>${esc(n.title)}</b>${n.body?`<span>${esc(n.body)}</span>`:''}<small>${relTime(n.created_at)}${go?' · toque para abrir':''}</small></span>${go?`<span class="np-go">${NI.chev}</span>`:''}`;return go?`<button type="button" class="np-item ${un?'unread':''}" data-go="${esc(n.module)}">${inner}</button>`:`<div class="np-item ${un?'unread':''}">${inner}</div>`}).join(''):'<p class="np-empty">Nenhuma novidade por enquanto.</p>';
  el('npBody').innerHTML=h;
- const f=el('npFoot');f.hidden=profile?.role!=='admin';
+ const f=el('npFoot');f.hidden=effectiveRole()!=='admin';
  if(!f.hidden&&!f.contains(document.activeElement))f.innerHTML=npCompose?`<form class="np-form" id="npForm"><input id="npT" maxlength="60" required placeholder="Título da novidade"><textarea id="npB" maxlength="600" required placeholder="O que mudou? O que a pessoa pode fazer agora?"></textarea><div class="row"><select id="npA" aria-label="Quem vê"><option value="">Todos</option><option value="admin">Só administradores</option><option value="dono">Só donos</option><option value="gerente">Só gerentes</option><option value="marketing">Só Marketing</option><option value="recepcao">Só recepção</option></select><select id="npM" aria-label="Área"><option value="">Sem link</option>${visibleModules().filter(m=>m.status==='live').map(m=>`<option value="${m.key}">${esc(m.title)}</option>`).join('')}</select></div><div class="row"><button type="submit" class="btn-y">Publicar</button><button type="button" class="np-link" id="npCancel">Cancelar</button></div></form>`:'<button type="button" class="np-link" id="npNew">+ Publicar novidade para a equipe</button>';
 }
 function placePanel(btn){
@@ -700,7 +705,7 @@ function openPanel(btn){
  npOpen=true;npAnchor=btn;npSeenRef=seenAt;npCompose=false;renderPanel();
  const p=el('notifPanel');p.hidden=false;placePanel(btn);
  document.querySelectorAll('[data-bell]').forEach(b=>b.setAttribute('aria-expanded','true'));
- p.focus({preventScroll:true});markSeen();
+ p.focus({preventScroll:true});if(!previewRole)markSeen();
 }
 function closePanel(){
  if(!npOpen)return;npOpen=false;el('notifPanel').hidden=true;
@@ -735,7 +740,12 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile},refreshReminders:loadTasks,toast};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},refreshReminders:loadTasks,toast};
+function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
+function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
+function setPreview(role){if(profile?.role!=='admin'||!ROLES.some(r=>r[0]===role))return;previewRole=role==='admin'?null:role;closeProfileMenu();closePanel();history.replaceState(null,'',location.pathname+location.search);currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();el('userRole').textContent=previewRole?'Prévia: '+ROLE_LABEL[previewRole]:ROLE_LABEL[profile.role];const flag=el('previewFlag');flag.hidden=!previewRole;flag.innerHTML=previewRole?`<span>Prévia: ${ROLE_LABEL[previewRole]}</span><button type="button" data-preview="admin">Sair da prévia</button>`:'';renderModules();route();updateBell()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]');if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 function openModule(m){
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
  location.hash=m.key;
@@ -771,6 +781,7 @@ function enterHub(me,session){
  el('avatar').textContent=name.charAt(0).toUpperCase();
  el('firstName').textContent=name.split(' ')[0];
  el('identity').textContent=name;
+ document.querySelectorAll('#workspace [data-profile-menu],#accessView [data-profile-menu]').forEach(b=>b.hidden=me.role!=='admin');
  updateMode();renderModules();
  activeKey=null;el('preview').innerHTML=emptyPreview();
  tick();clearInterval(clockTimer);clockTimer=setInterval(tick,30000);
@@ -779,7 +790,7 @@ function enterHub(me,session){
 }
 async function showSession(session){
  if(!session){
-  profile=null;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};clearInterval(clockTimer);
+  profile=null;previewRole=null;closeProfileMenu();el('previewFlag').hidden=true;currentView=null;activeKey=null;cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};clearInterval(clockTimer);
   accData=[];el('accInvite').innerHTML='';clearInterval(remTimer);openTasks=[];firing=new Set();el('alerts').innerHTML='';closePanel();notices=[];seenAt=null;lastBell=0;
   el('hub').hidden=true;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('login').hidden=false;return;
  }

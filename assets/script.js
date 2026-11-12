@@ -98,10 +98,12 @@ var DIAS_SEMANA = [
     }
 
     var dados = HORARIOS_POR_UNIDADE[unidadeKey] || {};
+    var nomes = {'H.I.T':'HIIT','G.A.P':'GAP','A.B.S':'ABS','Muay-Thai':'Muay Thai'};
+    var aulaCanonica = nomes[aula] || aula;
     var linhas = [];
     DIAS_SEMANA.forEach(function(d){
       (dados[d.key] || []).forEach(function(item){
-        if (item.aula === aula) linhas.push(d.abrev + ' · ' + item.hora);
+        if (item.aula === aulaCanonica) linhas.push(d.abrev + ' · ' + item.hora);
       });
     });
     return linhas;
@@ -683,4 +685,26 @@ var DIAS_SEMANA = [
     var mensagem = 'Olá! Me chamo ' + nome + ', sou ' + perfilEscolhido + ' e quero garantir minha vaga na aula de Spinning na unidade ' + UNIDADE_FIXA + '. Vi a promoção no site!';
     window.open('https://wa.me/5511991195832?text=' + encodeURIComponent(mensagem), '_blank', 'noopener');
   });
+})();
+// Grade semanal pública da home, com troca entre as duas unidades que oferecem aulas coletivas.
+(function(){
+  var grade=document.getElementById('homeGrade');
+  if(!grade||typeof HORARIOS_POR_UNIDADE==='undefined')return;
+  var buttons=document.querySelectorAll('[data-grade-unit]');
+  var days=[['segunda','Seg'],['terca','Ter'],['quarta','Qua'],['quinta','Qui'],['sexta','Sex'],['sabado','Sáb']];
+  function render(unit){
+    var data=HORARIOS_POR_UNIDADE[unit]||{};
+    buttons.forEach(function(btn){btn.setAttribute('aria-pressed',String(btn.getAttribute('data-grade-unit')===unit))});
+    grade.replaceChildren();
+    days.forEach(function(day){
+      var section=document.createElement('section'),title=document.createElement('h3');
+      section.className='home-grade-day';title.textContent=day[1];section.appendChild(title);
+      var slots=data[day[0]]||[];
+      if(!slots.length){var empty=document.createElement('p');empty.className='home-grade-empty';empty.textContent='Sem aulas';section.appendChild(empty)}
+      slots.forEach(function(slot){var row=document.createElement('div'),time=document.createElement('time'),name=document.createElement('strong');row.className='home-grade-slot';time.textContent=slot.hora.replace('h',':');time.dateTime=slot.hora.replace('h',':');name.textContent=slot.aula;row.appendChild(time);row.appendChild(name);section.appendChild(row)});
+      grade.appendChild(section);
+    });
+  }
+  buttons.forEach(function(btn){btn.addEventListener('click',function(){render(btn.getAttribute('data-grade-unit'))})});
+  render('casa-branca');
 })();
