@@ -188,7 +188,7 @@ const KIND={compra:'Compra',manutencao:'Manutenção'};
 const IMG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>';
 const LINK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>';
 let ROWS=[],AREAS=[],URLS={},S={unit:'cb',status:'open',kind:'all',area:'all',q:'',view:'prio'},EDIT=null,PH={blob:null,remove:false,url:null},lastFocus=null,ROLE='viewer';
-const canEdit=()=>ROLE==='admin'||ROLE==='editor',canDelete=()=>ROLE==='admin';
+const canEdit=()=>['admin','dono','gerente','editor'].includes(ROLE),canDelete=()=>ROLE==='admin';
 const brl=v=>v==null?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const isOpen=r=>r.status!=='concluido',total=r=>r.price==null?null:Number(r.price)*r.qty;
 const days=r=>Math.max(0,Math.floor((Date.now()-new Date(r.created_at))/864e5));

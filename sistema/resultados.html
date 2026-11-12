@@ -622,6 +622,7 @@ async function load(){
 }
 (async()=>{
  if(!CTX||!CTX.client){$('view').innerHTML='<div class="state">Abra este painel pelo <a href="../equipe.html#resultados" style="color:var(--y)">sistema interno da Boha</a>.</div>';$('btnImport').hidden=$('btnQuality').hidden=true;return}
+ if(CTX.profile?.role!=='admin')$('btnImport').hidden=true;
  try{await load()}catch{$('view').innerHTML='<div class="state">Não foi possível carregar os dados. Seu perfil pode não ter acesso a esta área.</div>'}
 })();
 </script></body></html>

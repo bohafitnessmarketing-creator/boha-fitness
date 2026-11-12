@@ -328,6 +328,7 @@ html.mtile .pv-empty h3{font-size:20px}
    <p class="acc-hint" id="accRoleHint"></p>
    <div id="accInvite"></div>
   </form>
+  <div class="acc-card"><div class="acc-top"><h2 class="display">O que cada perfil vê</h2><span>Você pode trocar o perfil de cada pessoa abaixo</span></div><div style="display:grid;gap:9px;margin-top:14px;font-size:13px;color:var(--muted)"><div><b style="color:var(--y)">Administrador</b> · Todas as áreas e Gestão de acessos</div><div><b style="color:var(--y)">Dono</b> · Hierarquia, Resultados e Compras &amp; Manutenção</div><div><b style="color:var(--y)">Gerente</b> · Hierarquia, Resultados, Compras &amp; Manutenção e Checklist</div><div><b style="color:var(--y)">Marketing</b> · Termômetro das gravações e futuros módulos de Marketing</div><div><b style="color:var(--y)">Recepção</b> · Hierarquia, Checklist e Manuais (em breve)</div></div></div>
   <div id="accRequests"></div>
   <div class="acc-card"><div class="acc-top"><h2 class="display">Pessoas com acesso</h2><span id="accCount"></span></div><div id="accList"></div></div>
  </div>
@@ -372,13 +373,15 @@ const svg=(body,size=22)=>`<svg viewBox="0 0 24 24" width="${size}" height="${si
 const ICONS={
  org:svg('<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2.5h12V16"/>'),
  sales:svg('<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'),
+ quality:svg('<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/>'),
  maint:svg('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>'),
  mkt:svg('<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/>'),
  arrow:svg('<path d="M5 12h14M13 6l6 6-6 6"/>',16),
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',16),
  cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26),
  key:svg('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M18 5l2 2"/>'),
- check:svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12.5l3 3 5-6"/>')
+ check:svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12.5l3 3 5-6"/>'),
+ book:svg('<path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/>')
 };
 const MODULES=[
  {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
@@ -387,23 +390,31 @@ const MODULES=[
  {key:'resultados',status:'live',adminOnly:true,src:'sistema/resultados.html',icon:'sales',tag:'Gestão',title:'Resultados',visual:'results',
   desc:'Clientes, vendas e financeiro das 3 unidades — comparando com o mesmo mês do ano passado.',
   features:['Clientes ativos, churn, cancelamentos e renovações','Contratos vendidos, vendas e canais','Recebimentos, gastos e inadimplência','Importação mensal dos dados do EVO']},
+ {key:'qualidade',status:'live',adminOnly:true,src:'sistema/avaliacao-professores.html',icon:'quality',tag:'Equipe',title:'Qualidade dos Professores',visual:'quality',
+  desc:'Avaliações dos alunos por professor e unidade, com distribuição das respostas.',
+  features:['Compare Casa Branca, Santa Tereza e Macedônia','Veja respostas de péssimo a ótimo','Abra o detalhe de cada professor']},
  {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'Checklist do líder',visual:'tasks',
   desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
   features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'compras',status:'live',src:'sistema/compras.html',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
   desc:'O que cada unidade precisa comprar ou consertar, com foto, link, valor e prioridade.',
   features:['Pedidos por unidade e por área da academia','Foto, link da compra e valor de cada item','Prioridade: do urgente ao quando der','Andamento: pendente, comprado, recebido']},
- {key:'marketing',status:'soon',icon:'mkt',tag:'Conteúdo',title:'Marketing',visual:'mkt',
-  desc:'Termômetro de gravações: qual aula está há mais tempo sem conteúdo.',
-  features:['Data da última gravação de cada aula','Alerta automático das aulas atrasadas','Rodízio de gravação sempre organizado']},
+ {key:'marketing',status:'live',src:'sistema/termometro-aulas.html',icon:'mkt',tag:'Conteúdo',title:'Termômetro das gravações das aulas coletivas',visual:'mkt',
+  desc:'Postagens registradas e horários das aulas coletivas de Casa Branca e Santa Tereza.',
+  features:['Veja a última postagem registrada por modalidade','Filtre por unidade, dia e situação','Consulte os horários semanais de cada aula']},
+ {key:'manuais',status:'soon',icon:'book',tag:'Equipe',title:'Manuais',visual:'manual',
+  desc:'Orientações e materiais de trabalho para a recepção. Em preparação.',
+  features:['Manuais organizados por assunto','Consulta rápida no dia a dia','Conteúdo em preparação']},
  {key:'acessos',status:'live',adminOnly:true,icon:'key',tag:'Administração',title:'Gestão de acessos',visual:'access',
   desc:'Libere, ajuste ou remova o acesso de cada pessoa da equipe — só administradores veem esta área.',
   features:['Liberar acesso com nome, e-mail e perfil','Convite pronto pra mandar no WhatsApp','Trocar perfil ou remover acesso na hora']}
 ];
-const ROLE_LABEL={admin:'Administrador',editor:'Editor',viewer:'Visualizador'};
-const ROLES=[['viewer','Visualizador','só visualiza os módulos'],['editor','Editor','vê e edita os módulos'],['admin','Administrador','vê e edita tudo e gerencia acessos']];
+const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
+const ROLES=[['gerente','Gerente','Hierarquia, Resultados, Compras e Checklist'],['dono','Dono','Hierarquia, Resultados e Compras'],['marketing','Marketing','Termômetro e futuros módulos de Marketing'],['recepcao','Recepção','Hierarquia, Checklist e Manuais (em breve)'],['admin','Administrador','todos os módulos e Gestão de acessos']];
+const ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist'],marketing:['marketing'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+const canModule=key=>!!profile?.role&&(ROLE_MODULES[profile.role]===null||ROLE_MODULES[profile.role]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const visibleModules=()=>MODULES.filter(m=>!m.adminOnly||profile?.role==='admin');
+const visibleModules=()=>MODULES.filter(m=>canModule(m.key));
 const TZ='America/Sao_Paulo';
 let profile=null,currentView=null,activeKey=null,cache={},stats={members:null,access:null,evo:null,tasks:null,req:null},clockTimer=null,accData=[];
 
@@ -418,6 +429,8 @@ function tick(){
 }
 
 const VISUALS={
+ manual(){return '<div class="vz-head"><span>Manuais da equipe</span><b>em breve</b></div><p style="margin:15px 0;color:var(--muted);font-size:13px">A recepção encontrará aqui os materiais e orientações do dia a dia.</p>'},
+ quality(){return '<div class="vz-head"><span>Opinião dos alunos</span><b>3 unidades</b></div>'+['Casa Branca','Santa Tereza','Macedônia'].map((name,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${name}</b><span>Respostas por professor</span></div><span class="st c">Ver avaliação →</span></div>`).join('')},
  access(){
   const a=stats.access;
   const box=(v,l,c)=>`<div style="flex:1;background:#151515;border:1px solid #232323;border-radius:12px;padding:12px"><b style="display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;color:${c}">${a?v:'—'}</b><span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700">${l}</span></div>`;
@@ -452,10 +465,7 @@ const VISUALS={
   if(!r.top.length)return '<div class="vz-head"><span>Pedidos em aberto</span><b>nenhum</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Quando alguém registrar uma compra ou um reparo, os mais urgentes aparecem aqui.</p>';
   return `<div class="vz-head"><span>Mais urgentes agora</span><b class="${r.urgent?'hot':''}">${r.open} em aberto</b></div>`+r.top.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>30?x.title.slice(0,30)+'…':x.title)}</b><span>${esc(x.unit)}${x.area?' · '+esc(x.area):''}</span></div><span class="st ${PC[x.priority][1]}">${PC[x.priority][0]}</span></div>`).join('');
  },
- mkt(){
-  const rows=[['Zumba',41,'#ff5a4f'],['Jump',26,'#ff9f2e'],['Muay Thai',14,'#fff000'],['Pilates',4,'#3ddc84']];
-  return '<div class="vz-head"><span>Dias sem gravar</span><b class="hot">Próxima: Zumba</b></div>'+rows.map((r,i)=>`<div class="trow"><span>${r[0]}</span><div class="bar"><i style="width:${Math.round(r[1]/45*100)}%;background:${r[2]};animation-delay:${i*90}ms"></i></div><b style="color:${r[2]}">${r[1]}d</b></div>`).join('')+'<div class="legend"><span><i style="background:#3ddc84"></i>em dia</span><span><i style="background:#fff000"></i>atenção</span><span><i style="background:#ff5a4f"></i>atrasada</span></div>';
- }
+ mkt(){return '<div class="vz-head"><span>Aulas coletivas</span><b>2 unidades</b></div>'+['Casa Branca','Santa Tereza'].map((n,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${n}</b><span>Postagens e grade semanal</span></div><span class="st c">Ver horários →</span></div>`).join('')+'<p style="color:var(--muted);font-size:12px;margin:12px 0 0">Compare modalidades e planeje as próximas gravações.</p>'},
 };
 
 function previewHTML(m){
@@ -560,7 +570,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261112g';
+const VERSION='20261112h';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -675,7 +685,7 @@ function renderPanel(){
  h+=notices.length?notices.map(n=>{const un=after(n.created_at,npSeenRef),go=n.module&&canOpen(n.module);const inner=`<span class="np-ico news">${NI.news}</span><span class="np-txt"><b>${esc(n.title)}</b>${n.body?`<span>${esc(n.body)}</span>`:''}<small>${relTime(n.created_at)}${go?' · toque para abrir':''}</small></span>${go?`<span class="np-go">${NI.chev}</span>`:''}`;return go?`<button type="button" class="np-item ${un?'unread':''}" data-go="${esc(n.module)}">${inner}</button>`:`<div class="np-item ${un?'unread':''}">${inner}</div>`}).join(''):'<p class="np-empty">Nenhuma novidade por enquanto.</p>';
  el('npBody').innerHTML=h;
  const f=el('npFoot');f.hidden=profile?.role!=='admin';
- if(!f.hidden&&!f.contains(document.activeElement))f.innerHTML=npCompose?`<form class="np-form" id="npForm"><input id="npT" maxlength="60" required placeholder="Título da novidade"><textarea id="npB" maxlength="600" required placeholder="O que mudou? O que a pessoa pode fazer agora?"></textarea><div class="row"><select id="npA" aria-label="Quem vê"><option value="">Todos</option><option value="admin">Só administradores</option><option value="editor">Só editores</option><option value="viewer">Só visualizadores</option></select><select id="npM" aria-label="Área"><option value="">Sem link</option>${visibleModules().filter(m=>m.status==='live').map(m=>`<option value="${m.key}">${esc(m.title)}</option>`).join('')}</select></div><div class="row"><button type="submit" class="btn-y">Publicar</button><button type="button" class="np-link" id="npCancel">Cancelar</button></div></form>`:'<button type="button" class="np-link" id="npNew">+ Publicar novidade para a equipe</button>';
+ if(!f.hidden&&!f.contains(document.activeElement))f.innerHTML=npCompose?`<form class="np-form" id="npForm"><input id="npT" maxlength="60" required placeholder="Título da novidade"><textarea id="npB" maxlength="600" required placeholder="O que mudou? O que a pessoa pode fazer agora?"></textarea><div class="row"><select id="npA" aria-label="Quem vê"><option value="">Todos</option><option value="admin">Só administradores</option><option value="dono">Só donos</option><option value="gerente">Só gerentes</option><option value="marketing">Só Marketing</option><option value="recepcao">Só recepção</option></select><select id="npM" aria-label="Área"><option value="">Sem link</option>${visibleModules().filter(m=>m.status==='live').map(m=>`<option value="${m.key}">${esc(m.title)}</option>`).join('')}</select></div><div class="row"><button type="submit" class="btn-y">Publicar</button><button type="button" class="np-link" id="npCancel">Cancelar</button></div></form>`:'<button type="button" class="np-link" id="npNew">+ Publicar novidade para a equipe</button>';
 }
 function placePanel(btn){
  const p=el('notifPanel'),r=btn.getBoundingClientRect(),w=p.offsetWidth;
@@ -796,7 +806,7 @@ window.addEventListener('hashchange',route);
 window.addEventListener('popstate',route);
 const firstName=s=>String(s||'').trim().split(/\s+/)[0]||'';
 const dateBR=d=>d?new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',timeZone:TZ}).format(new Date(d)):'';
-const roleOptions=sel=>ROLES.map(([v,l])=>`<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('');
+const roleOptions=sel=>ROLES.map(([v,l])=>`<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('')+(sel==='editor'||sel==='viewer'?`<option value="${sel}" selected>${ROLE_LABEL[sel]}</option>`:'');
 function inviteText(name,email){const n=firstName(name);return `Oi${n?', '+n:''}! Seu acesso ao sistema interno da Boha Fitness foi liberado 💪\n\n1. Entra em ${location.origin+location.pathname}\n2. Toca em "Criar meu primeiro acesso"\n3. Coloca seu nome, este e-mail: ${email}\n   e crie uma senha só sua (mínimo 10 caracteres)\n4. Confirma o cadastro pelo link que chega no seu e-mail\n5. Volta na página e clica em Entrar 😉`}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch{}a.remove();return ok}}
 function showInvite(name,email){const t=inviteText(name,email);el('accInvite').innerHTML=`<div class="invite"><b>Acesso liberado para ${esc(name||email)}.</b> Agora é só mandar o convite — a pessoa cria a própria senha:<pre>${esc(t)}</pre><div class="row"><button type="button" class="btn-y" data-act="copy" data-email="${esc(email)}" data-name="${esc(name)}">Copiar convite</button><a class="ghost" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener noreferrer">Abrir no WhatsApp</a></div></div>`}
@@ -819,8 +829,8 @@ async function loadAccess(){
  try{const {data,error}=await client.rpc('boha_access_list');if(error)throw error;accData=data||[];renderAccess()}
  catch{el('accList').innerHTML='<p class="acc-empty">Não foi possível carregar os acessos. Atualize a página.</p>'}
 }
-function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=`${r[1]}: ${r[2]}. Os perfis por área (Gerência, Marketing, Recepção, Professor) entram nesta lista assim que forem definidos.`}
-el('accRole').innerHTML=roleOptions('viewer');el('accRole').onchange=roleHint;roleHint();
+function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=r?`${r[1]}: ${r[2]}.`:''}
+el('accRole').innerHTML=roleOptions('gerente');el('accRole').onchange=roleHint;roleHint();
 el('accForm').onsubmit=async e=>{
  e.preventDefault();
  const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value;
