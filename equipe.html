@@ -224,7 +224,10 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
 @keyframes rise{from{transform:scaleY(0)}}
 @keyframes ping{75%,100%{transform:scale(1.6);opacity:0}}
 
-@media (max-width:1020px),(hover:none){.hub-grid{grid-template-columns:1fr}.preview{display:none}.card-features{display:block}}
+@media (max-width:1020px){.hub-grid{grid-template-columns:1fr}.preview{display:none}}
+@media (hover:none) and (pointer:coarse){html:not(.has-mouse) .hub-grid{grid-template-columns:1fr}html:not(.has-mouse) .preview{display:none}html:not(.has-mouse) .card-features{display:block}}
+.pv-pop{position:fixed;z-index:15;width:min(380px,calc(100vw - 24px));max-height:calc(100vh - 20px);overflow:hidden;background:linear-gradient(180deg,#161616,#0f0f0f);border:1px solid var(--line2);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.65);pointer-events:none}
+.pv-pop[hidden]{display:none}
 @media (max-width:640px){
  .login{margin:16px;padding:24px}
  .topbar{padding:10px 16px}.topbar .logo-img{height:26px}.user div{display:none}
@@ -428,12 +431,29 @@ function previewHTML(m){
  </div>`;
 }
 function emptyPreview(){return `<div class="pv pv-empty"><span class="pv-ring">${ICONS.cursor}</span><h3 class="display">Explore as áreas</h3><p>Passe o mouse sobre um card pra ver uma prévia do que tem dentro.</p></div>`}
-function showPreview(m){
- if(activeKey===m.key)return;
- activeKey=m.key;
- document.querySelectorAll('.card').forEach(c=>c.classList.toggle('is-active',c.dataset.key===m.key));
- el('preview').innerHTML=previewHTML(m);
+function fallbackPreview(m){return `<div class="pv"><div class="pv-head"><span class="card-icon">${ICONS[m.icon]}</span><div><span class="card-tag">${m.tag}</span><h3 class="display">${m.title}</h3></div></div><p class="pv-label" style="margin-top:16px">O que você encontra aqui</p><ul class="pv-list">${m.features.map(f=>`<li>${f}</li>`).join('')}</ul></div>`}
+function sideVisible(){const p=el('preview');return !!p&&p.offsetParent!==null&&getComputedStyle(p).display!=='none'}
+function hidePop(){const p=el('pvPop');if(p)p.hidden=true}
+function showPop(m,card){
+ let pop=el('pvPop');if(!pop){pop=document.createElement('div');pop.id='pvPop';pop.className='pv-pop';pop.setAttribute('aria-hidden','true');document.body.appendChild(pop)}
+ let html;try{html=previewHTML(m)}catch{html=fallbackPreview(m)}
+ pop.innerHTML=html;pop.hidden=false;
+ const r=card.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight,vw=window.innerWidth,vh=window.innerHeight;
+ let left=r.right+12;if(left+w>vw-12){left=r.left-w-12}
+ let top=Math.max(10,Math.min(r.top,vh-h-10));
+ if(left<12){left=Math.max(12,Math.min(vw-w-12,r.left));top=r.bottom+10;if(top+h>vh-10)top=Math.max(10,r.top-h-10)}
+ pop.style.left=Math.round(left)+'px';pop.style.top=Math.round(top)+'px';
 }
+function showPreview(m,card){
+ document.querySelectorAll('.card').forEach(c=>c.classList.toggle('is-active',c.dataset.key===m.key));
+ const coarse=window.matchMedia('(hover:none) and (pointer:coarse)').matches&&!document.documentElement.classList.contains('has-mouse');
+ if(!sideVisible()){if(!coarse){const c=card||document.querySelector(`.card[data-key="${m.key}"]`);if(c)showPop(m,c)}return}
+ hidePop();
+ if(activeKey===m.key)return;
+ let html;try{html=previewHTML(m)}catch{html=fallbackPreview(m)}
+ activeKey=m.key;el('preview').innerHTML=html;
+}
+
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
 function renderModules(){
  const wrap=el('modules');wrap.innerHTML='';
@@ -446,9 +466,11 @@ function renderModules(){
    <p>${m.desc}</p>
    <ul class="card-features">${m.features.map(f=>`<li>${f}</li>`).join('')}</ul>
    <div class="card-foot"><span data-meta="${m.key}">${metaText(m)}</span><span class="card-arrow">${live?ICONS.arrow:ICONS.clock}</span></div>`;
-  b.addEventListener('mouseenter',()=>showPreview(m));
-  b.addEventListener('focus',()=>showPreview(m));
-  b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')});
+  b.addEventListener('mouseenter',()=>showPreview(m,b));
+  b.addEventListener('mouseleave',hidePop);
+  b.addEventListener('focus',()=>showPreview(m,b));
+  b.addEventListener('blur',hidePop);
+  b.addEventListener('mousemove',e=>{if(sideVisible()){if(activeKey!==m.key)showPreview(m,b)}else{const pp=el('pvPop');if(!pp||pp.hidden)showPreview(m,b)}const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')});
   b.addEventListener('click',()=>openModule(m));
   wrap.appendChild(b);
  });
@@ -467,7 +489,7 @@ function metaText(m){
 function refreshMeta(key){
  const m=MODULES.find(x=>x.key===key),meta=document.querySelector(`[data-meta="${key}"]`);
  if(m&&meta)meta.textContent=metaText(m);
- if(activeKey===key&&m){activeKey=null;showPreview(m)}
+ if(activeKey===key&&m){activeKey=null;showPreview(m,document.querySelector(`.card[data-key="${key}"]`))}
 }
 function accessSummary(rows){
  const people=rows.filter(r=>r.role);
@@ -486,7 +508,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261111b';
+const VERSION='20261112a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -646,7 +668,9 @@ document.addEventListener('submit',async e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&npOpen)closePanel()});
 window.addEventListener('resize',()=>{if(npOpen&&npAnchor)placePanel(npAnchor)});
-window.addEventListener('hashchange',closePanel);
+window.addEventListener('hashchange',()=>{closePanel();hidePop()});
+window.addEventListener('scroll',hidePop,{passive:true});
+window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){document.documentElement.classList.add('has-mouse')}},{passive:true});
 window.bohaCtx={client,get profile(){return profile},refreshReminders:loadTasks,toast};
 function openModule(m){
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
