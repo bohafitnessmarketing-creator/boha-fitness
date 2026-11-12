@@ -780,7 +780,7 @@ function enterHub(me,session){
  el('userRole').textContent=ROLE_LABEL[me.role]||'Equipe';
  el('avatar').textContent=name.charAt(0).toUpperCase();
  el('firstName').textContent=name.split(' ')[0];
- el('identity').textContent=name;
+ const identity=el('identity');if(identity)identity.textContent=name;
  document.querySelectorAll('#workspace [data-profile-menu],#accessView [data-profile-menu]').forEach(b=>b.hidden=me.role!=='admin');
  updateMode();renderModules();
  activeKey=null;el('preview').innerHTML=emptyPreview();
