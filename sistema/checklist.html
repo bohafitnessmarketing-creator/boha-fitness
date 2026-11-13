@@ -89,7 +89,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const REPEAT={none:'Não repete',daily:'Todo dia',weekdays:'Seg a sex',weekly:'Toda semana'};
 const CHECK='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-let TASKS=[],openId=null,addMore=false,addDate='today',spawned={};
+let TASKS=[],EMPLOYEES=[],openId=null,addMore=false,addDate='today',spawned={};
 const iso=d=>d.toLocaleDateString('sv-SE');
 const today=()=>iso(new Date());
 const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
@@ -101,9 +101,11 @@ const sync=()=>{try{CTX.refreshReminders&&CTX.refreshReminders()}catch{}};
 
 async function load(){
  const since=new Date(Date.now()-14*864e5).toISOString().slice(0,19)+'Z';
- const {data,error}=await CTX.client.from('boha_tasks').select('*').or('done_at.is.null,done_at.gte.'+since);
- if(error)throw error;TASKS=data||[];render();
+ const [tasks,staff]=await Promise.all([CTX.client.from('boha_tasks').select('*').or('done_at.is.null,done_at.gte.'+since),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([])]);
+ if(tasks.error)throw tasks.error;TASKS=tasks.data||[];EMPLOYEES=staff||[];render();
 }
+const employeeName=id=>EMPLOYEES.find(x=>x.id===id)?.name||'';
+const employeeOptions=id=>`<option value="">Ninguém selecionado</option>${EMPLOYEES.map(x=>`<option value="${x.id}" ${x.id===id?'selected':''}>${esc(x.name)} · ${esc(x.unit_label)}</option>`).join('')}`;
 function notifHTML(){
  if(!('Notification' in window))return '<div class="notif"><span>Neste aparelho o aviso aparece <b>dentro do sistema</b>, enquanto ele estiver aberto, quando chegar a hora da tarefa.</span></div>';
  const p=Notification.permission;
@@ -117,8 +119,9 @@ function taskHTML(t){
  if(t.due_date&&(t.due_date!==today()||t.done_at))meta.push(`<span class="${late&&!t.due_time?'late':''}">${dateLabel(t.due_date)}</span>`);
  if(late)meta.push('<span class="late">atrasada</span>');
  if(t.repeat!=='none')meta.push('<span>↻ '+REPEAT[t.repeat]+'</span>');
+ if(t.employee_id&&employeeName(t.employee_id))meta.push(`<span>Falar com ${esc(employeeName(t.employee_id))}</span>`);
  let h=`<div class="task ${t.done_at?'done':''} ${open?'open':''}" data-id="${t.id}"><div class="t-row"><button class="chk" data-act="toggle" aria-label="${t.done_at?'Desmarcar':'Concluir'}: ${esc(t.title)}">${CHECK}</button><button class="t-body" data-act="open" aria-expanded="${open}"><span class="t-title">${esc(t.title)}</span>${meta.length?`<span class="t-meta">${meta.join('')}</span>`:''}${t.notes&&!open?`<span class="t-notes">${esc(t.notes.length>160?t.notes.slice(0,160)+'…':t.notes)}</span>`:''}</button></div>`;
- if(open)h+=`<div class="edit"><div><label class="lbl" for="eTitle">O que fazer</label><input class="inp" id="eTitle" maxlength="200" value="${esc(t.title)}"></div><div class="edit-grid"><div><label class="lbl" for="eDate">Dia</label><input class="inp" id="eDate" type="date" value="${esc(t.due_date||'')}"></div><div><label class="lbl" for="eTime">Hora do aviso</label><input class="inp" id="eTime" type="time" value="${esc(t.due_time||'')}"></div><div><label class="lbl" for="eRep">Repetir</label><select class="inp" id="eRep">${Object.entries(REPEAT).map(([k,v])=>`<option value="${k}" ${t.repeat===k?'selected':''}>${v}</option>`).join('')}</select></div></div><div><label class="lbl" for="eNotes">Detalhes</label><textarea class="inp" id="eNotes" maxlength="4000" placeholder="Com quem falar, o que levar, onde fica…">${esc(t.notes)}</textarea></div><div class="edit-actions"><button class="btn-g danger" data-act="del">Excluir</button><span style="display:flex;gap:8px"><button class="btn-g" data-act="open">Fechar</button><button class="btn-y" data-act="save">Salvar</button></span></div></div>`;
+ if(open)h+=`<div class="edit"><div><label class="lbl" for="eTitle">O que fazer</label><input class="inp" id="eTitle" maxlength="200" value="${esc(t.title)}"></div><div class="edit-grid"><div><label class="lbl" for="eDate">Dia</label><input class="inp" id="eDate" type="date" value="${esc(t.due_date||'')}"></div><div><label class="lbl" for="eTime">Hora do aviso</label><input class="inp" id="eTime" type="time" value="${esc(t.due_time||'')}"></div><div><label class="lbl" for="eRep">Repetir</label><select class="inp" id="eRep">${Object.entries(REPEAT).map(([k,v])=>`<option value="${k}" ${t.repeat===k?'selected':''}>${v}</option>`).join('')}</select></div></div><div><label class="lbl" for="eEmployee">Funcionário para conversar</label><select class="inp" id="eEmployee">${employeeOptions(t.employee_id)}</select></div><div><label class="lbl" for="eNotes">Detalhes</label><textarea class="inp" id="eNotes" maxlength="4000" placeholder="O que levar, onde fica…">${esc(t.notes)}</textarea></div><div class="edit-actions"><button class="btn-g danger" data-act="del">Excluir</button><span style="display:flex;gap:8px"><button class="btn-g" data-act="open">Fechar</button><button class="btn-y" data-act="save">Salvar</button></span></div></div>`;
  return h+'</div>';
 }
 const byTime=(a,b)=>(a.due_date||'9999').localeCompare(b.due_date||'9999')||(a.due_time||'99:99').localeCompare(b.due_time||'99:99')||a.created_at.localeCompare(b.created_at);
@@ -128,26 +131,26 @@ function render(){
  const doneToday=done.filter(t=>iso(new Date(t.done_at))===t0),tot=td.length+late.length+doneToday.length,pct=tot?Math.round(doneToday.length/tot*100):0;
  const name=(CTX.profile&&CTX.profile.name||'').split(' ')[0];
  const sec=(title,list,cls,hint)=>list.length?`<section class="sec ${cls||''}"><div class="sec-h"><h2 class="display">${title}</h2><span>${list.length}${hint?' · '+hint:''}</span></div>${list.map(taskHTML).join('')}</section>`:'';
- const keep={title:$('nTitle')?$('nTitle').value:'',time:$('nTime')?$('nTime').value:'',cdate:$('nDate')?$('nDate').value:'',notes:$('nNotes')?$('nNotes').value:'',rep:$('nRep')?$('nRep').value:'none'};
+ const keep={title:$('nTitle')?$('nTitle').value:'',time:$('nTime')?$('nTime').value:'',cdate:$('nDate')?$('nDate').value:'',notes:$('nNotes')?$('nNotes').value:'',rep:$('nRep')?$('nRep').value:'none',employee:$('nEmployee')?$('nEmployee').value:''};
  $('page').innerHTML=`<p class="eyebrow">A fazer</p><h1 class="display">${name?esc(name)+', ':''}seu dia</h1><p class="sub">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())} · só você vê esta lista.</p>
  <div class="progress"><div class="bar"><i style="width:${pct}%"></i></div><span>${tot?`<b>${doneToday.length} de ${tot}</b> feitas hoje`:'Nada marcado para hoje ainda'}</span></div>${notifHTML()}
  <form class="add" id="addForm" autocomplete="off"><div class="add-main"><input class="inp" id="nTitle" maxlength="200" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" required><button class="btn-y" type="submit">Adicionar</button></div>
  <div class="add-row"><button type="button" class="chip" data-d="today" aria-pressed="${addDate==='today'}">Hoje</button><button type="button" class="chip" data-d="tomorrow" aria-pressed="${addDate==='tomorrow'}">Amanhã</button><button type="button" class="chip" data-d="custom" aria-pressed="${addDate==='custom'}">Outro dia</button><button type="button" class="chip" data-d="none" aria-pressed="${addDate==='none'}">Sem data</button>${addDate==='custom'?`<input class="inp" id="nDate" type="date" aria-label="Dia" min="${t0}">`:''}${addDate!=='none'?'<input class="inp" id="nTime" type="time" aria-label="Hora do aviso" title="Hora do aviso (opcional)">':''}<button type="button" class="link" id="moreBtn">${addMore?'Menos opções':'Detalhes e repetição'}</button></div>
- ${addMore?`<div class="more"><div><label class="lbl" for="nNotes">Detalhes</label><textarea class="inp" id="nNotes" maxlength="4000" placeholder="Com quem falar, o que levar, onde fica…"></textarea></div><div><label class="lbl" for="nRep">Repetir</label><select class="inp" id="nRep" style="max-width:220px">${Object.entries(REPEAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div></div>`:''}</form>
+ ${addMore?`<div class="more"><div><label class="lbl" for="nEmployee">Funcionário para conversar</label><select class="inp" id="nEmployee">${employeeOptions('')}</select></div><div><label class="lbl" for="nNotes">Detalhes</label><textarea class="inp" id="nNotes" maxlength="4000" placeholder="O que levar, onde fica…"></textarea></div><div><label class="lbl" for="nRep">Repetir</label><select class="inp" id="nRep" style="max-width:220px">${Object.entries(REPEAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div></div>`:''}</form>
  ${sec('Atrasadas',late,'late','de dias anteriores')}${sec('Hoje',td)}${sec('Próximos dias',next)}${sec('Sem data',free)}
  ${!open.length?`<div class="empty"><b>${done.length?'Tudo feito por aqui 👏':'Sua lista está vazia'}</b>${done.length?'Adicione a próxima tarefa quando precisar.':'Escreva acima o que precisa fazer. Com uma hora marcada, o sistema te avisa.'}</div>`:''}
  ${done.length?`<details class="sec" ${render.doneOpen?'open':''} id="doneBox"><summary><h2 class="display">Concluídas</h2><span style="font-size:13px;color:var(--muted)">${done.length} nos últimos 14 dias · ver</span></summary>${done.map(taskHTML).join('')}</details>`:''}`;
- $('nTitle').value=keep.title;if($('nTime'))$('nTime').value=keep.time;if($('nDate'))$('nDate').value=keep.cdate||addDays(t0,2);if($('nNotes'))$('nNotes').value=keep.notes;if($('nRep'))$('nRep').value=keep.rep;
+ $('nTitle').value=keep.title;if($('nTime'))$('nTime').value=keep.time;if($('nDate'))$('nDate').value=keep.cdate||addDays(t0,2);if($('nNotes'))$('nNotes').value=keep.notes;if($('nRep'))$('nRep').value=keep.rep;if($('nEmployee'))$('nEmployee').value=keep.employee;
 }
 async function addTask(){
  const title=$('nTitle').value.trim();if(!title)return;
  const t0=today(),due_date=addDate==='today'?t0:addDate==='tomorrow'?addDays(t0,1):addDate==='custom'?($('nDate').value||null):null;
  if(addDate==='custom'&&!due_date){toast('Escolha o dia.');return}
- const row={title,due_date,due_time:due_date&&$('nTime')&&$('nTime').value?$('nTime').value:null,notes:$('nNotes')?$('nNotes').value.trim():'',repeat:$('nRep')?$('nRep').value:'none'};
+ const row={title,due_date,due_time:due_date&&$('nTime')&&$('nTime').value?$('nTime').value:null,notes:$('nNotes')?$('nNotes').value.trim():'',repeat:$('nRep')?$('nRep').value:'none',employee_id:$('nEmployee')?.value||null};
  if(row.repeat!=='none'&&!row.due_date){toast('Para repetir, a tarefa precisa de um dia.');return}
  const {data,error}=await CTX.client.from('boha_tasks').insert(row).select().single();
  if(error||!data){toast('Não foi possível salvar. Tente de novo.');return}
- TASKS.push(data);['nTitle','nTime','nNotes'].forEach(i=>{if($(i))$(i).value=''});if($('nRep'))$('nRep').value='none';
+ TASKS.push(data);['nTitle','nTime','nNotes'].forEach(i=>{if($(i))$(i).value=''});if($('nRep'))$('nRep').value='none';if($('nEmployee'))$('nEmployee').value='';
  if(addDate==='none'||addDate==='custom')addDate='today';render();$('nTitle').focus();sync();
  toast(row.due_time?`Anotado. Aviso ${dateLabel(row.due_date).toLowerCase()} às ${row.due_time}.`:'Anotado.');
 }
@@ -158,7 +161,7 @@ async function toggle(id){
  if(error){toast('Não foi possível atualizar.');return}
  Object.assign(t,patch);let msg=done?'Feito ✔':'Tarefa reaberta.';
  if(done&&t.repeat!=='none'){
-  const nx={title:t.title,notes:t.notes,due_date:nextDate(t),due_time:t.due_time,repeat:t.repeat};
+  const nx={title:t.title,notes:t.notes,due_date:nextDate(t),due_time:t.due_time,repeat:t.repeat,employee_id:t.employee_id||null};
   const r=await CTX.client.from('boha_tasks').insert(nx).select().single();
   if(!r.error&&r.data){TASKS.push(r.data);spawned[id]=r.data.id;msg=`Feito ✔ Próxima: ${dateLabel(nx.due_date).toLowerCase()}${nx.due_time?' às '+nx.due_time:''}.`}
  }else if(!done&&spawned[id]){
@@ -169,7 +172,7 @@ async function toggle(id){
 }
 async function saveEdit(id){
  const t=TASKS.find(x=>x.id===id),title=$('eTitle').value.trim();if(!t)return;if(!title){toast('A tarefa precisa de um nome.');return}
- const patch={title,due_date:$('eDate').value||null,due_time:$('eTime').value||null,repeat:$('eRep').value,notes:$('eNotes').value.trim()};
+ const patch={title,due_date:$('eDate').value||null,due_time:$('eTime').value||null,repeat:$('eRep').value,notes:$('eNotes').value.trim(),employee_id:$('eEmployee')?.value||null};
  if(patch.due_time&&!patch.due_date)patch.due_date=today();
  if(patch.repeat!=='none'&&!patch.due_date){toast('Para repetir, a tarefa precisa de um dia.');return}
  if(patch.due_date!==t.due_date||patch.due_time!==t.due_time)patch.notified_at=null;

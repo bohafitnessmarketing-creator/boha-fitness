@@ -6,6 +6,12 @@ Módulos que abrem dentro do hub (`equipe.html`), depois do login. Cada módulo 
 | --- | --- |
 | `resultados.html` | Dashboard de clientes, vendas e financeiro das 3 unidades (dados do EVO), comparando com o mesmo mês do ano anterior. |
 | `checklist.html` | Checklist do líder: tarefas pessoais com dia, hora, detalhes, repetição e aviso na hora marcada. |
+| `funcionarios.html` | Cadastro da equipe por unidade, com histórico, status, fotos e opção de uso em outros módulos. |
+| `calendario-editorial.html` | Calendário mensal de pautas, canais, status e responsáveis. |
+| `pesquisa-nps.html` | Registro anônimo de respostas NPS e acompanhamento por unidade. |
+| `pesquisa-clima.html` | Painel interno de respostas de clima, com filtros por mês, unidade e função. |
+| `avaliacao-professores.html` | Avaliação mensal dos professores, com pódio por unidade e geral. |
+| `termometro-aulas.html` | Acompanhamento de postagens e atribuição de professores na grade coletiva. |
 | `sw.js` | Service worker mínimo, só para exibir a notificação do checklist e abrir o sistema ao clicar. Não faz cache. |
 
 ## Onde ficam os dados

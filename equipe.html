@@ -354,6 +354,9 @@ function dataURL(blob){return new Promise((resolve,reject)=>{const reader=new Fi
 window.bohaAPI=async function(path,options={}){
  try{
  const method=(options.method||'GET').toUpperCase();
+ if(path==='/api/employees'&&method==='GET'){
+ const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return reply(data||[]);
+ }
  if(path==='/api/state'&&method==='GET'){
  const {data,error}=await client.from('boha_members').select('id,data');if(error)throw error;
  const state={};await Promise.all(data.map(async row=>{state[row.id]={...row.data};if(row.data.photo){const result=await client.storage.from('boha-photos').download(row.id+'.jpg');state[row.id].photo=result.error?'':await dataURL(result.data)}}));return reply(state);
@@ -387,6 +390,9 @@ const ICONS={
  book:svg('<path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/>')
 };
 const MODULES=[
+ {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'A fazer',visual:'tasks',
+  desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
+  features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
   desc:'Organograma, funções e rotinas de quem faz a Boha acontecer.',
   features:['Organograma completo da equipe','Turnos e responsabilidades de cada um','Fotos e observações de cada pessoa']},
@@ -396,15 +402,23 @@ const MODULES=[
  {key:'qualidade',status:'live',adminOnly:true,src:'sistema/avaliacao-professores.html',icon:'quality',tag:'Equipe',title:'Qualidade dos Professores',visual:'quality',
   desc:'Avaliações dos alunos por professor e unidade, com distribuição das respostas.',
   features:['Compare Casa Branca, Santa Tereza e Macedônia','Veja respostas de péssimo a ótimo','Abra o detalhe de cada professor']},
- {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'A fazer',visual:'tasks',
-  desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
-  features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'compras',status:'live',src:'sistema/compras.html',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
   desc:'O que cada unidade precisa comprar ou consertar, com foto, link, valor e prioridade.',
   features:['Pedidos por unidade e por área da academia','Foto, link da compra e valor de cada item','Prioridade: do urgente ao quando der','Andamento: pendente, comprado, recebido']},
  {key:'marketing',status:'live',src:'sistema/termometro-aulas.html',icon:'mkt',tag:'Conteúdo',title:'Termômetro das gravações das aulas coletivas',visual:'mkt',
   desc:'Postagens registradas e horários das aulas coletivas de Casa Branca e Santa Tereza.',
   features:['Veja a última postagem registrada por modalidade','Filtre por unidade, dia e situação','Consulte os horários semanais de cada aula']},
+ {key:'funcionarios',status:'live',src:'sistema/funcionarios.html',icon:'org',tag:'Equipe',title:'Banco de funcionários',visual:'org',
+  desc:'Cadastro por unidade, com perfil, cargo, foto e situação profissional.',
+  features:['Encontre funcionários ativos por unidade','Consulte ex-funcionários sem perder o histórico','Edite cadastro, cargo, permissão anotada e foto']},
+ {key:'calendario',status:'live',src:'sistema/calendario-editorial.html',icon:'mkt',tag:'Conteúdo',title:'Calendário editorial',visual:'mkt',
+  desc:'Organize pautas e publicações por data, canal e responsável.',
+  features:['Veja o mês e os próximos conteúdos','Atribua a produção a um funcionário ativo','Acompanhe ideias, agendamentos e publicações']},
+ {key:'nps',status:'live',src:'sistema/pesquisa-nps.html',icon:'quality',tag:'Experiência',title:'Pesquisa de NPS',visual:'quality',
+  desc:'Registre respostas anônimas e acompanhe satisfação por unidade.',
+  features:['Acompanhe NPS e distribuição de notas','Compare Casa Branca, Santa Tereza e Macedônia','Leia comentários sem armazenar nome ou contato']},
+ {key:'clima',status:'live',src:'sistema/pesquisa-clima.html',icon:'quality',tag:'Equipe',title:'Pesquisa de Clima',visual:'quality',
+  desc:'Acompanhe a pesquisa interna de clima por unidade e função.',features:['Consulte satisfação e respostas por pergunta']},
  {key:'manuais',status:'soon',icon:'book',tag:'Equipe',title:'Manuais',visual:'manual',
   desc:'Orientações e materiais de trabalho para a recepção. Em preparação.',
   features:['Manuais organizados por assunto','Consulta rápida no dia a dia','Conteúdo em preparação']},
@@ -574,7 +588,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261113c';
+const VERSION='20261113d';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -741,7 +755,7 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},canModule,refreshReminders:loadTasks,toast};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return data||[]}};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
 function setPreview(role){if(profile?.role!=='admin'||!ROLES.some(r=>r[0]===role))return;previewRole=role==='admin'?null:role;closeProfileMenu();closePanel();history.replaceState(null,'',location.pathname+location.search);currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();el('userRole').textContent=previewRole?'Prévia: '+ROLE_LABEL[previewRole]:ROLE_LABEL[profile.role];const flag=el('previewFlag');flag.hidden=!previewRole;flag.innerHTML=previewRole?`<span>Prévia: ${ROLE_LABEL[previewRole]}</span><button type="button" data-preview="admin">Sair da prévia</button>`:'';renderModules();route();updateBell()}
