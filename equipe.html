@@ -286,6 +286,7 @@ html.mtile .pv-empty h3{font-size:20px}
  .acc-actions{justify-content:flex-start}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.role-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.role-tabs button{background:#1b1b1b;border:1px solid #393939;border-radius:10px;color:#ddd;padding:10px 15px;cursor:pointer;font:inherit}.role-tabs button[aria-pressed="true"]{background:var(--y);border-color:var(--y);color:#111;font-weight:800}.role-module-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.role-module{display:flex;align-items:center;gap:12px;min-height:76px;padding:12px;background:#171717;border:1px solid #333;border-radius:12px;cursor:pointer}.role-module:has(input:checked){border-color:var(--y);background:#24220e}.role-module input{width:18px;height:18px;accent-color:var(--y)}.role-module .card-icon{flex:none}.role-module b,.role-module small{display:block}.role-module small{color:var(--muted);margin-top:3px}.role-save{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:18px}.role-save span{font-size:13px;color:var(--muted)}@media(max-width:600px){.role-save{align-items:stretch;flex-direction:column}.role-save button{width:100%}}
 </style></head>
 <body>
 <main id="login" class="login"><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><p>Área interna da equipe</p><form id="form"><div id="nameWrap" hidden><label for="fullName">Seu nome</label><input id="fullName" type="text" autocomplete="name" maxlength="60" placeholder="Como você quer ser chamado(a)"></div><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" minlength="10" required><button class="primary" id="enter" type="submit">Entrar</button><button id="register" type="button">Criar meu primeiro acesso</button><button id="backToLogin" type="button" class="linkish" hidden>Já tenho acesso — entrar</button></form><p id="message" role="status" aria-live="polite"></p><p class="hint">O acesso depende da autorização da gestão. No primeiro acesso, confirme o e-mail recebido.</p></main>
@@ -329,7 +330,7 @@ html.mtile .pv-empty h3{font-size:20px}
    <p class="acc-hint" id="accRoleHint"></p>
    <div id="accInvite"></div>
   </form>
-  <div class="acc-card"><div class="acc-top"><h2 class="display">O que cada perfil vê</h2><span>Você pode trocar o perfil de cada pessoa abaixo</span></div><div style="display:grid;gap:9px;margin-top:14px;font-size:13px;color:var(--muted)"><div><b style="color:var(--y)">Administrador</b> · Todas as áreas e Gestão de acessos</div><div><b style="color:var(--y)">Dono</b> · Hierarquia, Resultados e Compras &amp; Manutenção</div><div><b style="color:var(--y)">Gerente</b> · Hierarquia, Resultados, Compras &amp; Manutenção e Checklist</div><div><b style="color:var(--y)">Marketing</b> · Termômetro das gravações e futuros módulos de Marketing</div><div><b style="color:var(--y)">Recepção</b> · Hierarquia, Checklist e Manuais (em breve)</div></div></div>
+  <div class="acc-card"><div class="acc-top"><h2 class="display">Permissões dos perfis</h2><span>Escolha o que cada perfil pode abrir</span></div><p class="acc-hint">As mudanças valem para todas as pessoas do perfil. Administradores sempre têm acesso total e gerenciam os acessos.</p><div id="roleTabs" class="role-tabs" role="group" aria-label="Perfil a configurar"></div><div id="roleModuleList" class="role-module-list"></div><div class="role-save"><span id="roleSaveStatus" role="status"></span><button type="button" class="btn-y" id="roleSave" disabled>Salvar permissões</button></div></div>
   <div id="accRequests"></div>
   <div class="acc-card"><div class="acc-top"><h2 class="display">Pessoas com acesso</h2><span id="accCount"></span></div><div id="accList"></div></div>
  </div>
@@ -395,7 +396,7 @@ const MODULES=[
  {key:'qualidade',status:'live',adminOnly:true,src:'sistema/avaliacao-professores.html',icon:'quality',tag:'Equipe',title:'Qualidade dos Professores',visual:'quality',
   desc:'Avaliações dos alunos por professor e unidade, com distribuição das respostas.',
   features:['Compare Casa Branca, Santa Tereza e Macedônia','Veja respostas de péssimo a ótimo','Abra o detalhe de cada professor']},
- {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'Checklist do líder',visual:'tasks',
+ {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'A fazer',visual:'tasks',
   desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
   features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'compras',status:'live',src:'sistema/compras.html',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
@@ -412,10 +413,10 @@ const MODULES=[
   features:['Liberar acesso com nome, e-mail e perfil','Convite pronto pra mandar no WhatsApp','Trocar perfil ou remover acesso na hora']}
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
-const ROLES=[['gerente','Gerente','Hierarquia, Resultados, Compras e Checklist'],['dono','Dono','Hierarquia, Resultados e Compras'],['marketing','Marketing','Termômetro e futuros módulos de Marketing'],['recepcao','Recepção','Hierarquia, Checklist e Manuais (em breve)'],['admin','Administrador','todos os módulos e Gestão de acessos']];
-const ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist'],marketing:['marketing'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist'],marketing:['marketing'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
-const canModule=key=>!!effectiveRole()&&(ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
+const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visibleModules=()=>MODULES.filter(m=>canModule(m.key));
 const TZ='America/Sao_Paulo';
@@ -458,7 +459,7 @@ const VISUALS={
  tasks(){
   const k=stats.tasks;
   if(!k)return '<div class="vz-head"><span>Suas tarefas</span><b>carregando…</b></div>';
-  if(!k.next.length)return '<div class="vz-head"><span>Suas tarefas</span><b>nada pendente</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Abra o checklist e anote a primeira tarefa do dia.</p>';
+  if(!k.next.length)return '<div class="vz-head"><span>Suas tarefas</span><b>nada pendente</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Abra o módulo A fazer e anote a primeira tarefa do dia.</p>';
   return `<div class="vz-head"><span>Suas tarefas</span><b class="${k.late?'hot':''}">${k.late?k.late+' atrasada'+(k.late===1?'':'s'):k.today+' para hoje'}</b></div>`+k.next.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>34?x.title.slice(0,34)+'…':x.title)}</b></div><span class="st ${x.late?'p':'c'}">${esc(x.when)}</span></div>`).join('');
  },
  maint(){
@@ -548,7 +549,7 @@ function metaText(m){
  if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
  if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
  if(m.key==='compras'){const r=stats.req;if(!r)return 'Abrir módulo';return r.open?`${r.open} em aberto`+(r.urgent?` · ${r.urgent} urgente${r.urgent===1?'':'s'}`:''):'Nada em aberto'}
- if(m.key==='checklist'){const k=stats.tasks;if(!k)return 'Abrir checklist';return k.late?`${k.late} atrasada${k.late===1?'':'s'}`+(k.today?` · ${k.today} para hoje`:''):k.today?`${k.today} para hoje`:'Nada pendente hoje'}
+ if(m.key==='checklist'){const k=stats.tasks;if(!k)return 'Abrir A fazer';return k.late?`${k.late} atrasada${k.late===1?'':'s'}`+(k.today?` · ${k.today} para hoje`:''):k.today?`${k.today} para hoje`:'Nada pendente hoje'}
  return 'Abrir módulo';
 }
 function refreshMeta(key){
@@ -573,7 +574,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261112k';
+const VERSION='20261113a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -614,14 +615,14 @@ function beep(){try{const C=window.AudioContext||window.webkitAudioContext,c=new
 function showAlert(t){
  const box=el('alerts'),a=document.createElement('div');a.className='alert';a.setAttribute('role','alert');
  const txt=document.createElement('div'),s=document.createElement('small'),b=document.createElement('b');s.textContent='⏰ Agora · marcada para '+t.due_time;b.textContent=t.title;txt.append(s,b);
- const go=document.createElement('button');go.className='btn-y';go.textContent='Abrir checklist';go.onclick=()=>{a.remove();if(location.hash==='#checklist'){try{el('dashboard').contentWindow.bohaReload()}catch{}}else location.hash='checklist'};
+ const go=document.createElement('button');go.className='btn-y';go.textContent='Abrir A fazer';go.onclick=()=>{a.remove();if(location.hash==='#checklist'){try{el('dashboard').contentWindow.bohaReload()}catch{}}else location.hash='checklist'};
  const ok=document.createElement('button');ok.className='ghost sm';ok.textContent='Ok';ok.onclick=()=>a.remove();
  const row=document.createElement('div');row.className='alert-actions';row.append(go,ok);a.append(txt,row);box.appendChild(a);
 }
 async function notifySystem(t){
  try{
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  const title='⏰ '+t.title,opt={body:'Tarefa marcada para '+t.due_time+' — Checklist do líder',tag:'boha-'+t.id,icon:'assets/favicon/favicon-oficial.png'};
+  const title='⏰ '+t.title,opt={body:'Tarefa marcada para '+t.due_time+' — A fazer',tag:'boha-'+t.id,icon:'assets/favicon/favicon-oficial.png'};
   if(swReg&&swReg.active)await swReg.showNotification(title,opt);
   else{const n=new Notification(title,opt);n.onclick=()=>{window.focus();location.hash='checklist';n.close()}}
  }catch{}
@@ -682,7 +683,7 @@ function renderPanel(){
  const {late,today}=taskBuckets(),t0=localISO(new Date());let h='';
  const dm=d=>d.slice(8)+'/'+d.slice(5,7);
  if(late.length||today.length){
-  h+='<p class="np-sec">Seu checklist</p>';
+  h+='<p class="np-sec">Suas tarefas</p>';
   h+=late.map(t=>`<button type="button" class="np-item" data-go="checklist"><span class="np-ico late">${NI.alert}</span><span class="np-txt"><b>${esc(t.title)}</b><small class="late">Atrasada · ${t.due_date===t0?'hoje':dm(t.due_date)}${t.due_time?' às '+t.due_time:''}</small></span><span class="np-go">${NI.chev}</span></button>`).join('');
   h+=today.map(t=>`<button type="button" class="np-item" data-go="checklist"><span class="np-ico today">${NI.clock}</span><span class="np-txt"><b>${esc(t.title)}</b><small>Hoje${t.due_time?' às '+t.due_time:''}</small></span><span class="np-go">${NI.chev}</span></button>`).join('');
  }
@@ -740,7 +741,7 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},refreshReminders:loadTasks,toast};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},canModule,refreshReminders:loadTasks,toast};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
 function setPreview(role){if(profile?.role!=='admin'||!ROLES.some(r=>r[0]===role))return;previewRole=role==='admin'?null:role;closeProfileMenu();closePanel();history.replaceState(null,'',location.pathname+location.search);currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();el('userRole').textContent=previewRole?'Prévia: '+ROLE_LABEL[previewRole]:ROLE_LABEL[profile.role];const flag=el('previewFlag');flag.hidden=!previewRole;flag.innerHTML=previewRole?`<span>Prévia: ${ROLE_LABEL[previewRole]}</span><button type="button" data-preview="admin">Sair da prévia</button>`:'';renderModules();route();updateBell()}
@@ -782,7 +783,7 @@ function enterHub(me,session){
  el('firstName').textContent=name.split(' ')[0];
  const identity=el('identity');if(identity)identity.textContent=name;
  document.querySelectorAll('#workspace [data-profile-menu],#accessView [data-profile-menu]').forEach(b=>b.hidden=me.role!=='admin');
- updateMode();renderModules();
+ updateMode();renderModules();loadRoleModules();
  activeKey=null;el('preview').innerHTML=emptyPreview();
  tick();clearInterval(clockTimer);clockTimer=setInterval(tick,30000);
  el('login').hidden=true;message('');
@@ -818,6 +819,32 @@ window.addEventListener('popstate',route);
 const firstName=s=>String(s||'').trim().split(/\s+/)[0]||'';
 const dateBR=d=>d?new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',timeZone:TZ}).format(new Date(d)):'';
 const roleOptions=sel=>ROLES.map(([v,l])=>`<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('')+(sel==='editor'||sel==='viewer'?`<option value="${sel}" selected>${ROLE_LABEL[sel]}</option>`:'');
+let selectedRole='gerente',roleDraft=[];
+const configurableModules=MODULES.filter(m=>m.key!=='acessos');
+async function loadRoleModules(){
+ try{const {data,error}=await client.from('boha_role_modules').select('role,modules');if(error)throw error;
+  for(const row of data||[])if(Object.hasOwn(ROLE_MODULES,row.role)&&row.role!=='admin')ROLE_MODULES[row.role]=row.modules||[];
+  if(profile){renderModules();if(!canModule(location.hash.slice(1)))route();updateBell();}
+  if(profile?.role==='admin')renderRoleEditor();
+ }catch{if(profile?.role==='admin')el('roleSaveStatus').textContent='Não foi possível carregar as permissões. Atualize a página.'}
+}
+function renderRoleEditor(){
+ const tabs=el('roleTabs');if(!tabs)return;
+ tabs.innerHTML=ROLES.filter(r=>r[0]!=='admin').map(([key,label])=>`<button type="button" data-edit-role="${key}" aria-pressed="${selectedRole===key}">${label}</button>`).join('');
+ roleDraft=[...(ROLE_MODULES[selectedRole]||[])];renderRoleChoices();
+}
+function renderRoleChoices(){
+ el('roleModuleList').innerHTML=configurableModules.map(m=>`<label class="role-module"><input type="checkbox" data-role-module="${m.key}" ${roleDraft.includes(m.key)?'checked':''}><span class="card-icon">${ICONS[m.icon]}</span><span><b>${esc(m.title)}</b><small>${m.status==='soon'?'Em breve · ':''}${esc(m.tag)}</small></span></label>`).join('');
+ const changed=JSON.stringify([...roleDraft].sort())!==JSON.stringify([...(ROLE_MODULES[selectedRole]||[])].sort());
+ el('roleSave').disabled=!changed;el('roleSaveStatus').textContent=changed?'Alterações ainda não salvas.':`${ROLE_LABEL[selectedRole]} · ${roleDraft.length} ${roleDraft.length===1?'módulo':'módulos'} permitido${roleDraft.length===1?'':'s'}`;
+}
+el('roleTabs').addEventListener('click',e=>{const b=e.target.closest('[data-edit-role]');if(!b)return;selectedRole=b.dataset.editRole;renderRoleEditor()});
+el('roleModuleList').addEventListener('change',e=>{const c=e.target.closest('[data-role-module]');if(!c)return;roleDraft=configurableModules.filter(m=>el('roleModuleList').querySelector(`[data-role-module="${m.key}"]`).checked).map(m=>m.key);renderRoleChoices()});
+el('roleSave').onclick=async()=>{const b=el('roleSave');b.disabled=true;el('roleSaveStatus').textContent='Salvando…';
+ try{const {error}=await client.rpc('boha_role_modules_save',{p_role:selectedRole,p_modules:roleDraft});if(error)throw error;
+  ROLE_MODULES[selectedRole]=[...roleDraft];renderRoleEditor();toast(`Permissões de ${ROLE_LABEL[selectedRole]} salvas.`);
+ }catch(error){el('roleSaveStatus').textContent=error.message||'Não foi possível salvar.';b.disabled=false}
+};
 function inviteText(name,email){const n=firstName(name);return `Oi${n?', '+n:''}! Seu acesso ao sistema interno da Boha Fitness foi liberado 💪\n\n1. Entra em ${location.origin+location.pathname}\n2. Toca em "Criar meu primeiro acesso"\n3. Coloca seu nome, este e-mail: ${email}\n   e crie uma senha só sua (mínimo 10 caracteres)\n4. Confirma o cadastro pelo link que chega no seu e-mail\n5. Volta na página e clica em Entrar 😉`}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch{}a.remove();return ok}}
 function showInvite(name,email){const t=inviteText(name,email);el('accInvite').innerHTML=`<div class="invite"><b>Acesso liberado para ${esc(name||email)}.</b> Agora é só mandar o convite — a pessoa cria a própria senha:<pre>${esc(t)}</pre><div class="row"><button type="button" class="btn-y" data-act="copy" data-email="${esc(email)}" data-name="${esc(name)}">Copiar convite</button><a class="ghost" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener noreferrer">Abrir no WhatsApp</a></div></div>`}

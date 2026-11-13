@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Checklist do líder</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · A fazer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -129,7 +129,7 @@ function render(){
  const name=(CTX.profile&&CTX.profile.name||'').split(' ')[0];
  const sec=(title,list,cls,hint)=>list.length?`<section class="sec ${cls||''}"><div class="sec-h"><h2 class="display">${title}</h2><span>${list.length}${hint?' · '+hint:''}</span></div>${list.map(taskHTML).join('')}</section>`:'';
  const keep={title:$('nTitle')?$('nTitle').value:'',time:$('nTime')?$('nTime').value:'',cdate:$('nDate')?$('nDate').value:'',notes:$('nNotes')?$('nNotes').value:'',rep:$('nRep')?$('nRep').value:'none'};
- $('page').innerHTML=`<p class="eyebrow">Checklist do líder</p><h1 class="display">${name?esc(name)+', ':''}seu dia</h1><p class="sub">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())} · só você vê esta lista.</p>
+ $('page').innerHTML=`<p class="eyebrow">A fazer</p><h1 class="display">${name?esc(name)+', ':''}seu dia</h1><p class="sub">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,c=>c.toUpperCase())} · só você vê esta lista.</p>
  <div class="progress"><div class="bar"><i style="width:${pct}%"></i></div><span>${tot?`<b>${doneToday.length} de ${tot}</b> feitas hoje`:'Nada marcado para hoje ainda'}</span></div>${notifHTML()}
  <form class="add" id="addForm" autocomplete="off"><div class="add-main"><input class="inp" id="nTitle" maxlength="200" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" required><button class="btn-y" type="submit">Adicionar</button></div>
  <div class="add-row"><button type="button" class="chip" data-d="today" aria-pressed="${addDate==='today'}">Hoje</button><button type="button" class="chip" data-d="tomorrow" aria-pressed="${addDate==='tomorrow'}">Amanhã</button><button type="button" class="chip" data-d="custom" aria-pressed="${addDate==='custom'}">Outro dia</button><button type="button" class="chip" data-d="none" aria-pressed="${addDate==='none'}">Sem data</button>${addDate==='custom'?`<input class="inp" id="nDate" type="date" aria-label="Dia" min="${t0}">`:''}${addDate!=='none'?'<input class="inp" id="nTime" type="time" aria-label="Hora do aviso" title="Hora do aviso (opcional)">':''}<button type="button" class="link" id="moreBtn">${addMore?'Menos opções':'Detalhes e repetição'}</button></div>
@@ -198,7 +198,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='eTitl
 document.addEventListener('toggle',e=>{if(e.target.id==='doneBox')render.doneOpen=e.target.open},true);
 let lastDay=today();setInterval(()=>{if(document.hidden)return;const hasForm=document.activeElement&&['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName);if(!hasForm&&(today()!==lastDay||TASKS.some(t=>!t.done_at&&t.due_time))){lastDay=today();render()}},60000);
 (async()=>{
- if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra o checklist pelo <a href="../equipe.html#checklist" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra o módulo A fazer pelo <a href="../equipe.html#checklist" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
  try{await load();window.bohaReload=load}catch{$('page').innerHTML='<div class="state">Não foi possível carregar suas tarefas. Atualize a página.</div>'}
 })();
 </script></body></html>
