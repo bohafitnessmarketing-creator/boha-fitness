@@ -517,7 +517,7 @@ function showPreview(m,card){
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
 function renderModules(){
  const wrap=el('modules');wrap.innerHTML='';
- visibleModules().forEach((m,i)=>{
+ visibleModules().sort((a,b)=>a.key==='checklist'?-1:b.key==='checklist'?1:0).forEach((m,i)=>{
   const live=m.status==='live';
   const b=document.createElement('div');
   b.setAttribute('role','button');b.tabIndex=0;b.setAttribute('aria-label',`${m.title} — ${live?'disponível':'em breve'}`);
@@ -574,7 +574,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261113a';
+const VERSION='20261113b';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
