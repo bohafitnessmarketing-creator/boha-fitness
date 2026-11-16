@@ -387,7 +387,8 @@ const ICONS={
  cursor:svg('<path d="M5 3l6.5 17 2.4-7.1L21 10.5z"/>',26),
  key:svg('<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M18 5l2 2"/>'),
  check:svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12.5l3 3 5-6"/>'),
- book:svg('<path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/>')
+ book:svg('<path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/>'),
+ board:svg('<rect x="3" y="4" width="18" height="16" rx="2.5"/><rect x="6" y="8" width="5" height="3.2" rx=".6"/><rect x="6" y="13" width="5" height="3.2" rx=".6"/><rect x="13" y="8" width="5" height="3.2" rx=".6"/><rect x="13" y="13" width="5" height="3.2" rx=".6"/>')
 };
 const MODULES=[
  {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'A fazer',visual:'tasks',
@@ -405,6 +406,9 @@ const MODULES=[
  {key:'compras',status:'live',src:'sistema/compras.html',icon:'maint',tag:'Operação',title:'Compras & Manutenção',visual:'maint',
   desc:'O que cada unidade precisa comprar ou consertar, com foto, link, valor e prioridade.',
   features:['Pedidos por unidade e por área da academia','Foto, link da compra e valor de cada item','Prioridade: do urgente ao quando der','Andamento: pendente, comprado, recebido']},
+ {key:'mural',status:'live',src:'sistema/mural.html',icon:'board',tag:'Operação',title:'Mural do mês',visual:'mural',
+  desc:'O quadro de avisos de cada unidade, em versão digital: veja o mês atual e planeje o próximo.',
+  features:['Uma folha para cada porta-folha A4 do quadro','Anexe ou arraste a foto de cada folha','Navegue pelos meses e planeje o seguinte','Nota em cada folha para lembrar o que falta produzir']},
  {key:'marketing',status:'live',src:'sistema/termometro-aulas.html',icon:'mkt',tag:'Conteúdo',title:'Termômetro das gravações das aulas coletivas',visual:'mkt',
   desc:'Postagens registradas e horários das aulas coletivas de Casa Branca e Santa Tereza.',
   features:['Veja a última postagem registrada por modalidade','Filtre por unidade, dia e situação','Consulte os horários semanais de cada aula']},
@@ -428,7 +432,7 @@ const MODULES=[
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
-let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist'],marketing:['marketing'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural'],marketing:['marketing','mural'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -482,6 +486,14 @@ const VISUALS={
   const PC={urgente:['Urgente','p'],alta:['Alta','c'],media:['Média','c'],baixa:['Baixa','f']};
   if(!r.top.length)return '<div class="vz-head"><span>Pedidos em aberto</span><b>nenhum</b></div><p style="margin:6px 0 0;color:var(--muted);font-size:13px">Quando alguém registrar uma compra ou um reparo, os mais urgentes aparecem aqui.</p>';
   return `<div class="vz-head"><span>Mais urgentes agora</span><b class="${r.urgent?'hot':''}">${r.open} em aberto</b></div>`+r.top.map((x,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${esc(x.title.length>30?x.title.slice(0,30)+'…':x.title)}</b><span>${esc(x.unit)}${x.area?' · '+esc(x.area):''}</span></div><span class="st ${PC[x.priority][1]}">${PC[x.priority][0]}</span></div>`).join('');
+ },
+ mural(){
+  const m=stats.mural;
+  if(!m)return '<div class="vz-head"><span>Mural do mês</span><b>carregando…</b></div>';
+  const total=m.units.reduce((a,u)=>a+u.n,0);
+  return `<div class="vz-head"><span>Mural de ${esc(m.label)}</span><b>${total} de 24 folhas</b></div>`+m.units.map((u,i)=>{
+   const cells=Array.from({length:8},(_,k)=>`<i style="flex:1;height:8px;border-radius:2px;background:${k<u.n?'#fff000':'#2a2a2a'}"></i>`).join('');
+   return `<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.n} de 8 folhas com foto</span></div><span style="display:flex;gap:3px;width:84px">${cells}</span></div>`}).join('');
  },
  mkt(){return '<div class="vz-head"><span>Aulas coletivas</span><b>2 unidades</b></div>'+['Casa Branca','Santa Tereza'].map((n,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${n}</b><span>Postagens e grade semanal</span></div><span class="st c">Ver horários →</span></div>`).join('')+'<p style="color:var(--muted);font-size:12px;margin:12px 0 0">Compare modalidades e planeje as próximas gravações.</p>'},
 };
@@ -563,6 +575,7 @@ function metaText(m){
  if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
  if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
  if(m.key==='compras'){const r=stats.req;if(!r)return 'Abrir módulo';return r.open?`${r.open} em aberto`+(r.urgent?` · ${r.urgent} urgente${r.urgent===1?'':'s'}`:''):'Nada em aberto'}
+ if(m.key==='mural'){const k=stats.mural;if(!k)return 'Abrir módulo';const t=k.units.reduce((a,u)=>a+u.n,0);return t?`${t} de 24 folhas em ${k.label}`:`${k.label}: sem fotos ainda`}
  if(m.key==='checklist'){const k=stats.tasks;if(!k)return 'Abrir A fazer';return k.late?`${k.late} atrasada${k.late===1?'':'s'}`+(k.today?` · ${k.today} para hoje`:''):k.today?`${k.today} para hoje`:'Nada pendente hoje'}
  return 'Abrir módulo';
 }
@@ -580,7 +593,7 @@ async function loadStats(){
   const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
   if(!error&&typeof count==='number'){stats.members=count;refreshMeta('hierarquia')}
  }catch{}
- loadTasks();loadReqStats();
+ loadTasks();loadReqStats();loadMuralStats();
  if(profile?.role!=='admin')return;
  loadEvoStats();
  try{
@@ -588,7 +601,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261113e';
+const VERSION='20261116a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -601,6 +614,17 @@ async function loadEvoStats(){
   const mes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][+ref.slice(5)-1];
   stats.evo={label:mes+'/'+ref.slice(0,4),units:[[1,'Casa Branca'],[2,'Santa Tereza'],[3,'Macedônia']].map(([u,name])=>{const cur=get(u,ref),pv=get(u,prev);return {name,cur,prev:pv,pct:cur!=null&&pv?(cur/pv-1)*100:null}}).filter(u=>u.cur!=null)};
   refreshMeta('resultados');
+ }catch{}
+}
+async function loadMuralStats(){
+ if(!profile||!canModule('mural'))return;
+ try{
+  const ym=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit'}).format(new Date()),month=ym+'-01';
+  const {data,error}=await client.from('boha_mural_slots').select('unit,photo_path').eq('month',month);
+  if(error||!Array.isArray(data))return;
+  const label=new Date(month+'T12:00:00Z').toLocaleDateString('pt-BR',{month:'long',timeZone:'UTC'});
+  stats.mural={label,units:[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>({name,n:data.filter(r=>r.unit===k&&r.photo_path).length}))};
+  refreshMeta('mural');
  }catch{}
 }
 async function loadReqStats(){
@@ -657,7 +681,7 @@ function startReminders(){
  clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks();loadNotices()}},20000);startReminders.last=Date.now();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sistema/sw.js').then(r=>{swReg=r}).catch(()=>{});
 }
-window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices();loadReqStats()}});
+window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices();loadReqStats();loadMuralStats()}});
 let notices=[],seenAt=null,npOpen=false,npSeenRef=null,npCompose=false,lastBell=0,npAnchor=null;
 const NI={
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',17),
@@ -770,7 +794,7 @@ async function route(){
  if(!profile)return;
  const key=location.hash.slice(1);
  const m=visibleModules().find(x=>x.key===key&&x.status==='live');
- if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();return}
+ if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();loadMuralStats();return}
  if(currentView===key)return;
  currentView=key;
  if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;setFrame();el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
