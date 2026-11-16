@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Campanhas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;white-space:nowrap;text-align:center}
+.btn-y:disabled{opacity:.5;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:13px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s}
+.btn-g:hover{border-color:var(--y);color:var(--y)}.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}
+.page{max-width:1180px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hd h1{font-size:clamp(36px,5.2vw,62px);line-height:1;margin:12px 0 6px}
+.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:560px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.seg::-webkit-scrollbar{display:none}
+.seg button{padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}
+.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.nav{display:flex;align-items:center;gap:8px;margin-left:auto}.nav b{min-width:150px;text-align:center;font-weight:700}
+.arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:17px}.arrow:hover{border-color:var(--y);color:var(--y)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+.panel h2{font-size:24px;margin:0;line-height:1}.panel .ph{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px}.panel .ph p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin-top:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px}
+.kpi .l{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1.15;margin-top:3px}.kpi small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.d{font-weight:700;white-space:nowrap}.d.up{color:var(--good)}.d.down{color:var(--bad)}.d.flat{color:var(--muted)}
+.empty{padding:30px 16px;text-align:center;color:var(--muted)}.state{padding:60px 20px;text-align:center;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:4px 11px;border:1px solid var(--line2);color:#cfcfcf}
+.pill.planning{color:var(--y);border-color:rgba(255,240,0,.4);background:rgba(255,240,0,.06)}.pill.running{color:var(--good);border-color:rgba(61,220,132,.4);background:rgba(61,220,132,.08)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:12px;border:1px solid var(--line2);border-radius:99px;padding:3px 11px;color:#d0d0d0;white-space:nowrap}.chip.y{background:var(--y);border-color:var(--y);color:#111;font-weight:700;text-decoration:none}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.cols3 .t{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}.cols3 p{margin:0;font-size:14px;color:#e6e6e6;white-space:pre-line}
+.prog{height:8px;background:#222;border-radius:99px;overflow:hidden;margin-top:8px}.prog i{display:block;height:100%;background:var(--y);border-radius:99px;transition:width .5s var(--ease)}.prog i.ok{background:var(--good)}
+.goal{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:13px 15px}.goal .l{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.goal b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:28px;line-height:1.2;display:block}.goal small{color:var(--muted);font-size:12px}
+.tasks{display:grid;gap:7px;margin-top:10px}
+.task{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 10px}
+.task input[type=checkbox]{width:19px;height:19px;accent-color:var(--y);flex:none}.task .tt{flex:1;min-width:0;overflow-wrap:anywhere;font-size:14px}.task.done .tt{text-decoration:line-through;color:var(--muted)}
+.task select,.task input[type=date]{background:#1c1c1c;border:1px solid var(--line2);border-radius:8px;padding:4px 6px;font-size:12px;max-width:130px}.task .x{width:28px;height:28px;border-radius:8px;border:1px solid var(--line2);flex:none;display:grid;place-items:center;color:var(--muted)}.task .x:hover{border-color:var(--bad);color:var(--bad)}
+.addrow{display:flex;gap:8px;margin-top:10px}.addrow input{flex:1;min-width:0}
+.inp{width:100%;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px;outline:none}.inp:focus{border-color:var(--y)}
+textarea.inp{min-height:70px;resize:vertical}
+/* funil */
+.fstage{display:grid;grid-template-columns:170px minmax(0,1fr) 150px;gap:12px;align-items:center;margin-top:8px}
+.fstage .nm{font-size:13.5px;font-weight:600}.fstage .nm small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.ftrack{height:44px;background:#1b1b1b;border-radius:10px;overflow:hidden;position:relative}
+.ffill{height:100%;border-radius:10px;display:flex;align-items:center;padding:0 14px;font-family:Anton,Impact,sans-serif;font-size:22px;color:#111;transition:width .6s var(--ease);min-width:46px}
+.fside{font-size:12.5px;color:var(--muted)}.fside b{display:block;color:var(--text);font-size:15px}
+.fconv{margin:0 0 0 182px;font-size:12px;color:var(--muted)}
+.insight{background:linear-gradient(135deg,rgba(255,240,0,.09),rgba(255,240,0,.02));border:1px solid rgba(255,240,0,.3);border-radius:14px;padding:14px 16px;margin-top:14px}.insight b{color:var(--y)}.insight p{margin:4px 0 0;font-size:14px;color:#e8e8e8}
+.tw{overflow-x:auto;margin-top:6px}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:680px}th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+tbody tr[data-fid]{cursor:pointer}tbody tr[data-fid]:hover td{background:rgba(255,255,255,.03)}
+/* ideias */
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:12px}
+.icard{background:var(--panel2);border:1px solid #333;border-left:3px solid var(--y);border-radius:12px;padding:12px 13px;cursor:pointer}.icard:hover{border-color:#666;border-left-color:var(--y)}.icard.used{opacity:.6;border-left-color:var(--good)}
+.icard b{display:block;font-size:14px;line-height:1.3}.icard p{margin:5px 0 0;color:#bdbdbd;font-size:12.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.icard .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.icard .act{display:flex;gap:6px;margin-top:9px}
+.dates{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.date{border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:9px 11px}.date small{color:var(--y);font-weight:800;font-size:11px;letter-spacing:.06em;text-transform:uppercase}.date b{display:block;font-size:13.5px}.date span{color:var(--muted);font-size:12.5px}
+.hl{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:14px}
+.chips2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.chips2 button{border:1px solid var(--line2);border-radius:99px;padding:5px 12px;font-size:13px;color:var(--muted)}.chips2 button[aria-pressed=true]{border-color:var(--y);color:var(--y);background:rgba(255,240,0,.07)}
+.chartbox{position:relative;width:100%;margin-top:6px}.chartbox svg{display:block;width:100%;height:auto;overflow:visible}.chartbox:focus-visible{outline-offset:4px;border-radius:8px}
+.tip{position:absolute;z-index:5;pointer-events:none;min-width:150px;max-width:260px;background:#0e0e0e;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-size:12.5px;box-shadow:0 10px 30px rgba(0,0,0,.6);opacity:0;transition:opacity .12s}.tip.on{opacity:1}.tip .t{color:var(--muted);font-size:11.5px;margin-bottom:4px}.tip .v{font-weight:800;font-size:14px}.tip .n{color:var(--muted);font-size:12px;margin-top:2px}
+dialog{width:min(600px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:1px solid #444;border-radius:18px;background:#121212;color:#f4f4f4;padding:0;overflow:auto}dialog::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(3px)}
+.fm{padding:20px 22px 22px}.fm h2{font-size:26px;margin:0 0 4px}.fm .help{margin:0 0 6px;color:var(--muted);font-size:13px}
+.fm .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}.fm .full{grid-column:1/-1}
+.fm label{display:grid;gap:4px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}.fm label small{font-size:11px;text-transform:none;letter-spacing:0;font-weight:500;color:#7d7d7d}
+.fm .inp{text-transform:none;letter-spacing:0;font-weight:500}
+.chk{display:flex;flex-wrap:wrap;gap:6px}.chk label{display:inline-flex;grid-template-columns:none;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:99px;padding:5px 11px;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:#ddd;cursor:pointer}.chk input{accent-color:var(--y)}
+.fm .err{color:var(--bad);font-size:13px;margin:10px 0 0;min-height:18px}.fm .foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:760px){.page{padding:16px 16px 70px}.nav{margin-left:0;width:100%;justify-content:space-between}.cols3{grid-template-columns:1fr}.fstage{grid-template-columns:1fr;gap:4px}.fconv{margin-left:0}.fside{display:flex;gap:10px;align-items:baseline}.kpi b{font-size:26px}.task select,.task input[type=date]{max-width:100px}.task{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+
+<dialog id="cdlg" aria-labelledby="cTitle"><form class="fm" id="cform" novalidate>
+ <h2 class="display" id="cTitle">Planejar campanha</h2><p class="help">Uma campanha por mês, valendo para as três unidades.</p>
+ <div class="row"><label>Mês<select class="inp" id="c_month"></select></label><label>Situação<select class="inp" id="c_status"><option value="planning">Planejando</option><option value="running">No ar</option><option value="done">Encerrada</option></select></label></div>
+ <div class="row"><label class="full">Nome da campanha<input class="inp" id="c_name" maxlength="120" placeholder="Ex.: Black Friday Boha" autocomplete="off"></label></div>
+ <div class="row"><label class="full">Objetivo<small>O que queremos alcançar</small><textarea class="inp" id="c_objective" maxlength="400" placeholder="Ex.: Encher as turmas da manhã e bater a meta de matrículas"></textarea></label></div>
+ <div class="row"><label class="full">Oferta<small>O que estamos oferecendo, com prazo e condição</small><textarea class="inp" id="c_offer" maxlength="400" placeholder="Ex.: Plano anual com matrícula grátis até dia 30"></textarea></label></div>
+ <div class="row"><label class="full">Público<input class="inp" id="c_audience" maxlength="300" placeholder="Ex.: Quem já treinou antes e parou; moradores até 3 km"></label></div>
+ <div class="row"><div class="full"><label style="margin-bottom:5px">Canais</label><div class="chk" id="c_channels"></div></div></div>
+ <div class="row"><label>Começa em<input class="inp" type="date" id="c_start"></label><label>Termina em<input class="inp" type="date" id="c_end"></label></div>
+ <div class="row"><label>Meta de leads<input class="inp" id="c_gleads" inputmode="numeric" placeholder="Ex.: 400"></label><label>Meta de matrículas<input class="inp" id="c_gsales" inputmode="numeric" placeholder="Ex.: 60"></label></div>
+ <div class="row"><label>Verba (R$)<input class="inp" id="c_budget" inputmode="decimal" placeholder="Ex.: 1.500,00"></label><label>Responsável<select class="inp" id="c_owner"></select></label></div>
+ <div class="row"><label class="full">Link<small>Pasta de artes, post, briefing…</small><input class="inp" id="c_link" inputmode="url" maxlength="600" placeholder="https://"></label></div>
+ <div class="row"><label class="full">Observações<textarea class="inp" id="c_notes" maxlength="2000"></textarea></label></div>
+ <p class="err" id="c_err" role="alert"></p>
+ <div class="foot"><span><button type="button" class="btn-g danger" id="c_del" hidden>Excluir campanha</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="cdlg">Cancelar</button><button type="submit" class="btn-y" id="c_save">Salvar</button></span></div>
+</form></dialog>
+
+<dialog id="fdlg" aria-labelledby="fTitle"><form class="fm" id="fform" novalidate>
+ <h2 class="display" id="fTitle">Registrar semana do funil</h2>
+ <p class="help">Preencha uma vez por semana, por unidade, com o que aconteceu nos últimos 7 dias.</p>
+ <div class="row"><label>Unidade<select class="inp" id="f_unit"></select></label><label>Data do registro<input class="inp" type="date" id="f_date"></label></div>
+ <div class="row"><label>Leads<small>Contatos novos que chegaram (WhatsApp, Instagram, balcão, indicação)</small><input class="inp" id="f_leads" inputmode="numeric" placeholder="0"></label><label>Experimentais agendadas<small>Quantos marcaram aula experimental ou visita</small><input class="inp" id="f_booked" inputmode="numeric" placeholder="0"></label></div>
+ <div class="row"><label>Compareceram<small>Quantos foram de fato</small><input class="inp" id="f_done" inputmode="numeric" placeholder="0"></label><label>Matrículas<small>Quantos fecharam plano</small><input class="inp" id="f_sales" inputmode="numeric" placeholder="0"></label></div>
+ <div class="row"><label>Investimento (R$)<small>Anúncios e materiais da semana. Opcional</small><input class="inp" id="f_spend" inputmode="decimal" placeholder="Ex.: 350,00"></label><label>Observação<small>Opcional</small><input class="inp" id="f_note" maxlength="200"></label></div>
+ <p class="err" id="f_err" role="alert"></p>
+ <div class="foot"><span><button type="button" class="btn-g danger" id="f_del" hidden>Excluir registro</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="fdlg">Cancelar</button><button type="submit" class="btn-y" id="f_save">Salvar</button></span></div>
+</form></dialog>
+
+<dialog id="idlg" aria-labelledby="iTitle"><form class="fm" id="iform" novalidate>
+ <h2 class="display" id="iTitle">Nova ideia de campanha</h2>
+ <div class="row"><label class="full">Ideia<input class="inp" id="i_title" maxlength="160" autocomplete="off" placeholder="Ex.: Desafio 21 dias Boha"></label></div>
+ <div class="row"><label class="full">Como seria<textarea class="inp" id="i_note" maxlength="1000" placeholder="Oferta, mecânica, por que funcionaria…"></textarea></label></div>
+ <div class="row"><label>Melhor mês<select class="inp" id="i_month"></select></label><label>Situação<select class="inp" id="i_status"><option value="open">Aberta</option><option value="used">Já usada</option></select></label></div>
+ <div class="row"><label class="full">Link de referência<input class="inp" id="i_link" inputmode="url" maxlength="600" placeholder="https://"></label></div>
+ <p class="err" id="i_err" role="alert"></p>
+ <div class="foot"><span><button type="button" class="btn-g danger" id="i_del" hidden>Excluir</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="idlg">Cancelar</button><button type="submit" class="btn-y">Salvar ideia</button></span></div>
+</form></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},TZ='America/Sao_Paulo';
+const MNAME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],MAB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const CHANNELS=['Instagram','WhatsApp','Tráfego pago','Indicação','Panfleto / rua','Parcerias','Evento na unidade'];
+const TEMPLATE=['Definir oferta, regras e prazo','Criar artes e roteiros dos vídeos','Gravar os vídeos e Reels','Preparar a mensagem pronta do WhatsApp e os anúncios','Alinhar recepção e professores sobre a oferta','Acompanhar o funil toda semana e ajustar'];
+const DATES=[[1,'1º','Ano Novo','Pico natural de matrículas: ninguém começa o ano sem prometer treinar.'],[1,'—','Projeto verão','Desafio de 30 dias e depoimentos de alunos (com autorização).'],[2,'—','Volta às aulas','Rotina nova: turmas para antes ou depois da escola e do trabalho.'],[3,'8','Dia da Mulher','Aula especial, convidada e brinde.'],[3,'15','Dia do Consumidor','Oferta com prazo curto e vagas limitadas.'],[4,'6','Dia Mundial da Atividade Física','Aulão aberto e aula experimental sem custo.'],[4,'7','Dia Mundial da Saúde','Conteúdo educativo e avaliação física.'],[5,'1','Dia do Trabalhador','Plano para quem trabalha em turnos.'],[5,'2º dom','Dia das Mães','Voucher presente; plano mãe e filha(o).'],[6,'12','Dia dos Namorados','Plano casal: traga o parceiro(a).'],[7,'20','Dia do Amigo','Traga um amigo: os dois ganham.'],[8,'2º dom','Dia dos Pais','Voucher presente; plano pai e filho.'],[9,'1','Dia do Profissional de Educação Física','Homenagem aos professores e bastidores nas redes.'],[9,'15','Dia do Cliente','Reconhecer o aluno antigo: brinde e indicação premiada.'],[9,'—','Setembro Amarelo','Conteúdo sobre saúde mental e movimento.'],[10,'12','Dia das Crianças','Brinde ou aula para os filhos dos alunos.'],[10,'—','Outubro Rosa','Aula solidária e parceria local.'],[11,'—','Novembro Azul','Saúde do homem: avaliação e conteúdo.'],[11,'4ª sex','Black Friday','Maior oferta do ano: defina limite de vagas e prazo.'],[12,'25','Natal e fim de ano','Plano anual com condição de virada e desafio pós-festas.']];
+const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
+const curMonth=()=>today().slice(0,7);
+const addM=(m,n)=>{let y=+m.slice(0,4),mo=+m.slice(5,7)+n;y+=Math.floor((mo-1)/12);mo=((mo-1)%12+12)%12+1;return y+'-'+String(mo).padStart(2,'0')};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const mLabel=m=>cap(MNAME[+m.slice(5,7)-1])+' '+m.slice(0,4);
+const dm=d=>d?d.slice(8,10)+'/'+d.slice(5,7):'';const dmy=d=>d?dm(d)+'/'+d.slice(0,4):'';
+const num=v=>v==null?'—':Number(v).toLocaleString('pt-BR');
+const dec1=v=>Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const brl=v=>v==null?'—':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const brl0=v=>v==null?'—':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const pct=v=>v==null?'—':dec1(v)+'%';
+const safeUrl=u=>{try{const x=new URL(String(u).trim());return x.protocol==='https:'||x.protocol==='http:'?x.href:null}catch{return null}};
+const normUrl=raw=>{raw=raw.trim();if(!raw)return null;const u=safeUrl(/^https?:\/\//i.test(raw)?raw:'https://'+raw);return u&&u.length<=600?u:undefined};
+const parseInt0=s=>{s=String(s).replace(/[.\s]/g,'').trim();if(s==='')return 0;return /^\d{1,7}$/.test(s)?Number(s):NaN};
+const parseMoney=s=>{s=String(s).replace(/[R$\s]/g,'').trim();if(s==='')return null;s=s.replace(/\./g,'').replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>=0&&n<1e8?Math.round(n*100)/100:NaN};
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
+
+let CAMPS=[],TASKS=[],FUN=[],IDEAS=[],PEOPLE=[],S={tab:'mes',month:curMonth(),unit:'all',metric:'sales',ifilter:'open'},editC=null,editF=null,editI=null,ideaForC=null;
+const personName=id=>PEOPLE.find(p=>p.id===id)?.name||'';
+const campOf=m=>CAMPS.find(c=>c.month.slice(0,7)===m);
+const funOf=(m,unit='all')=>FUN.filter(r=>r.ref_date.slice(0,7)===m&&(unit==='all'||r.unit===unit));
+
+/* ---------- cálculos do funil ---------- */
+function fagg(rows){
+ const a={n:rows.length,leads:0,booked:0,done:0,sales:0,spend:null};
+ rows.forEach(r=>{a.leads+=r.leads;a.booked+=r.trials_booked;a.done+=r.trials_done;a.sales+=r.sales;if(r.spend!=null)a.spend=(a.spend||0)+Number(r.spend)});
+ a.cpl=a.spend!=null&&a.leads?a.spend/a.leads:null;a.cac=a.spend!=null&&a.sales?a.spend/a.sales:null;
+ a.conv=a.leads?a.sales/a.leads*100:null;a.r1=a.leads?a.booked/a.leads*100:null;a.r2=a.booked?a.done/a.booked*100:null;a.r3=a.done?a.sales/a.done*100:null;
+ return a;
+}
+let DLT_SFX=' vs mês anterior';
+function dlt(cur,prev,o={}){
+ if(cur==null||prev==null)return '<span class="d flat">sem mês anterior</span>';
+ const pp=o.pp,d=pp?cur-prev:(prev===0?null:(cur/prev-1)*100);if(d==null)return '<span class="d flat">sem mês anterior</span>';
+ const good=o.down?d<0:d>0,flat=o.neutral||Math.abs(d)<(pp?0.05:0.5),cls=flat?'flat':good?'up':'down';
+ return `<span class="d ${cls}">${Math.abs(d)<(pp?0.05:0.5)?'■':d>0?'▲':'▼'} ${d>0&&Math.abs(d)>=(pp?0.05:0.5)?'+':''}${dec1(Math.abs(d)<(pp?0.05:0.5)?0:d)}${pp?' p.p.':'%'}${DLT_SFX}</span>`;
+}
+
+/* ---------- gráfico simples ---------- */
+function niceScale(min,max,t=4){if(min===max){const p=Math.abs(min)*.1||1;min-=p;max+=p}const span=max-min,raw=span/t,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag,step=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*mag,lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step,ticks=[];for(let v=lo;v<=hi+step/1000;v+=step)ticks.push(+v.toFixed(10));return {lo,hi,ticks}}
+function drawChart(box,cfg){
+ const W=Math.max(280,box.clientWidth||680),H=W<520?240:290,m={l:W<520?46:56,r:20,t:14,b:30},iw=W-m.l-m.r,ih=H-m.t-m.b,n=cfg.xs.length,ys=cfg.ys,all=ys.filter(v=>v!=null);
+ if(!all.length){box.innerHTML='<div class="empty">Sem dados neste período.</div>';return}
+ const sc=niceScale(Math.min(0,...all),Math.max(...all,1),4),X=i=>m.l+i*iw/(n-1),Y=v=>m.t+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih;
+ let g=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(cfg.aria)}">`;
+ sc.ticks.forEach(t=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="#262626"/><text x="${m.l-8}" y="${Y(t)+4}" text-anchor="end" fill="#9b9b9b" font-size="11">${esc(cfg.yFmt(t))}</text>`});
+ cfg.xs.forEach((x,i)=>{g+=`<text x="${X(i)}" y="${H-8}" text-anchor="${i===0?'start':i===n-1?'end':'middle'}" fill="#9b9b9b" font-size="11">${esc(x)}</text>`});
+ let d='',pen=false;ys.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);pen=true});
+ g+=`<path d="${d}" fill="none" stroke="#fff000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+ ys.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="4" fill="#fff000" stroke="#141414" stroke-width="2"/>`});
+ g+=`<line id="xh" x1="0" x2="0" y1="${m.t}" y2="${m.t+ih}" stroke="#777" opacity="0"/><rect id="hit" x="${m.l-10}" y="${m.t}" width="${iw+20}" height="${ih}" fill="transparent"/></svg><div class="tip"></div>`;
+ box.innerHTML=g;const tip=box.querySelector('.tip'),xh=box.querySelector('#xh'),hit=box.querySelector('#hit');let cur=-1;
+ const show=i=>{if(i<0||i>=n)return;cur=i;xh.setAttribute('x1',X(i));xh.setAttribute('x2',X(i));xh.setAttribute('opacity','1');tip.textContent='';const t=document.createElement('div');t.className='t';t.textContent=cfg.titles[i];const v=document.createElement('div');v.className='v';v.textContent=ys[i]==null?'sem dados':cfg.yFmt(ys[i]);tip.append(t,v);if(cfg.extra&&cfg.extra(i)){const e=document.createElement('div');e.className='n';e.textContent=cfg.extra(i);tip.appendChild(e)}tip.classList.add('on');const x=X(i),tw=tip.offsetWidth;tip.style.left=Math.max(0,x+14+tw>W?x-14-tw:x+14)+'px';tip.style.top='6px'};
+ const idx=ev=>{const r=hit.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*(iw+20)-10;return Math.max(0,Math.min(n-1,Math.round(px/(iw/(n-1)))))};
+ hit.addEventListener('pointermove',ev=>show(idx(ev)));hit.addEventListener('pointerdown',ev=>show(idx(ev)));hit.addEventListener('pointerleave',()=>{tip.classList.remove('on');xh.setAttribute('opacity','0')});
+ box.tabIndex=0;box.addEventListener('keydown',ev=>{if(ev.key==='ArrowRight'){ev.preventDefault();show(Math.min(n-1,cur+1))}else if(ev.key==='ArrowLeft'){ev.preventDefault();show(Math.max(0,cur<0?n-1:cur-1))}});box.addEventListener('blur',()=>{tip.classList.remove('on');xh.setAttribute('opacity','0')});
+}
+let charts=[];
+
+/* ---------- telas ---------- */
+function head(){
+ const tabs=[['mes','Campanha do mês'],['funil','Funil de vendas'],['ideias','Ideias'],['balanco','Balanço']];
+ const nav=(S.tab==='mes'||S.tab==='funil')?`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><b>${mLabel(S.month)}</b><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div>`:'';
+ return `<header class="hd"><div><p class="eyebrow">Marketing · acompanhamento</p><h1 class="display">Campanhas</h1><p class="sub">Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu certo.</p></div></header>
+ <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${nav}</div>`;
+}
+const STATUS={planning:'Planejando',running:'No ar',done:'Encerrada'};
+function monthDates(m){const mo=+m.slice(5,7);return DATES.filter(d=>d[0]===mo)}
+function datesHTML(m){const ds=monthDates(m);return ds.length?`<div class="dates">${ds.map(d=>`<div class="date"><small>${esc(d[1])}</small><b>${esc(d[2])}</b><span>${esc(d[3])}</span></div>`).join('')}</div>`:''}
+
+function tabMes(){
+ const m=S.month,c=campOf(m),f=fagg(funOf(m));
+ if(!c){
+  const sug=IDEAS.filter(i=>i.status==='open'&&(!i.month_hint||i.month_hint===+m.slice(5,7))).slice(0,3);
+  return `<section class="panel"><div class="empty" style="padding:26px 10px"><p style="margin:0 0 4px;font-size:17px;color:var(--text)">Ainda não há campanha para ${mLabel(m)}.</p><p style="margin:0 0 14px">Defina tema, oferta e metas para o time saber o que está vendendo no mês.</p><button class="btn-y" data-newc>Planejar campanha de ${MNAME[+m.slice(5,7)-1]}</button></div></section>
+  ${sug.length?`<section class="panel"><div class="ph"><div><h2 class="display">Ideias guardadas que combinam</h2><p>Toque em "Planejar" para transformar em campanha deste mês.</p></div></div><div class="igrid">${sug.map(ideaCard).join('')}</div></section>`:''}
+  ${monthDates(m).length?`<section class="panel"><div class="ph"><div><h2 class="display">Datas para inspirar em ${MNAME[+m.slice(5,7)-1]}</h2><p>Ganchos que costumam funcionar para academia.</p></div></div>${datesHTML(m)}</section>`:''}`;
+ }
+ const tasks=TASKS.filter(t=>t.campaign_id===c.id).sort((a,b)=>a.sort-b.sort),doneN=tasks.filter(t=>t.done).length;
+ const gl=c.goal_leads,gs=c.goal_sales,bud=c.budget!=null?Number(c.budget):null;
+ const goal=(label,real,goalv,fmt)=>{const p=goalv?Math.min(100,real/goalv*100):null;return `<div class="goal"><span class="l">${label}</span><b>${fmt(real)}</b><small>${goalv!=null?`meta ${fmt(goalv)} · ${dec1(real/goalv*100)}%`:'sem meta definida'}</small>${p!=null?`<div class="prog"><i class="${p>=100?'ok':''}" style="width:${p}%"></i></div>`:''}</div>`};
+ const period=c.start_date||c.end_date?`${c.start_date?dmy(c.start_date):'…'} → ${c.end_date?dmy(c.end_date):'…'}`:'';
+ return `<section class="panel"><div class="ph"><div><span class="pill ${c.status}">${STATUS[c.status]}</span><h2 class="display" style="font-size:34px;margin-top:10px">${esc(c.name)}</h2><p>${[period,c.owner_id&&personName(c.owner_id)?'Responsável: '+esc(personName(c.owner_id)):''].filter(Boolean).join(' · ')}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">${safeUrl(c.link)?`<a class="chip y" href="${esc(safeUrl(c.link))}" target="_blank" rel="noopener noreferrer">▶ Abrir link</a>`:''}<button class="btn-g" data-editc>Editar</button></div></div>
+  ${c.channels.length?`<div class="chips">${c.channels.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>`:''}
+  <div class="cols3">${[['Objetivo',c.objective],['Oferta',c.offer],['Público',c.audience]].map(([t,v])=>`<div><div class="t">${t}</div><p>${v?esc(v):'<span style="color:var(--muted)">não preenchido</span>'}</p></div>`).join('')}</div>
+  ${c.notes?`<div style="margin-top:14px"><div class="cols3" style="margin:0;display:block"><div class="t">Observações</div><p>${esc(c.notes)}</p></div></div>`:''}</section>
+  <section class="panel"><div class="ph"><div><h2 class="display">Resultado até agora</h2><p>Vem do Funil de vendas: soma das 3 unidades em ${MNAME[+m.slice(5,7)-1]}.</p></div></div>
+  <div class="kpis" style="margin-top:0">${goal('Leads',f.leads,gl,num)}${goal('Matrículas',f.sales,gs,num)}${goal('Investimento',f.spend||0,bud,brl0)}<div class="goal"><span class="l">Custo por matrícula</span><b>${f.cac==null?'—':brl0(f.cac)}</b><small>${f.conv==null?'sem leads registrados':'conversão lead → matrícula '+pct(f.conv)}</small></div></div>${f.n?'':'<p class="empty" style="padding:14px 0 0">Registre as semanas no Funil de vendas para ver o resultado aqui.</p>'}</section>
+  <section class="panel"><div class="ph"><div><h2 class="display">Plano de ação</h2><p>${tasks.length?`${doneN} de ${tasks.length} feitas`:'Liste o que precisa acontecer para a campanha rodar.'}</p></div>${tasks.length?'':'<button class="btn-g" data-template>Usar checklist padrão</button>'}</div>
+  ${tasks.length?`<div class="prog"><i class="${doneN===tasks.length?'ok':''}" style="width:${doneN/tasks.length*100}%"></i></div>`:''}
+  <div class="tasks">${tasks.map(t=>`<div class="task ${t.done?'done':''}"><input type="checkbox" data-tdone="${t.id}" ${t.done?'checked':''} aria-label="Concluir ${esc(t.title)}"><span class="tt">${esc(t.title)}</span><select data-towner="${t.id}" aria-label="Responsável"><option value="">Sem responsável</option>${PEOPLE.map(p=>`<option value="${esc(p.id)}" ${t.owner_id===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select><input type="date" data-tdue="${t.id}" value="${esc(t.due_date||'')}" aria-label="Prazo"><button class="x" data-tdel="${t.id}" aria-label="Remover tarefa">✕</button></div>`).join('')}</div>
+  <form class="addrow" id="taskform" autocomplete="off"><input class="inp" id="newTask" maxlength="160" placeholder="Nova ação (ex.: gravar depoimentos dos alunos)" aria-label="Nova ação"><button class="btn-y">Adicionar</button></form></section>
+  ${monthDates(m).length?`<section class="panel"><div class="ph"><div><h2 class="display">Datas para inspirar em ${MNAME[+m.slice(5,7)-1]}</h2></div></div>${datesHTML(m)}</section>`:''}`;
+}
+
+function tabFunil(){
+ const m=S.month,u=S.unit,isCur=m===curMonth(),upto=+today().slice(8,10);DLT_SFX=isCur?' vs mesmo período do mês anterior':' vs mês anterior';const a=fagg(funOf(m,u)),p=fagg(funOf(addM(m,-1),u).filter(r=>!isCur||+r.ref_date.slice(8,10)<=upto)),hasPrev=p.n>0,rows=funOf(m,u).sort((x,y)=>x.ref_date.localeCompare(y.ref_date));
+ const seg=`<div class="seg" role="group" aria-label="Unidade" style="margin-top:14px"><button data-funit="all" aria-pressed="${u==='all'}">Todas as unidades</button>${Object.entries(UN).map(([k,v])=>`<button data-funit="${k}" aria-pressed="${u===k}">${v}</button>`).join('')}</div>`;
+ const top=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">${seg}<button class="btn-y" data-newf style="margin-top:14px">+ Registrar semana</button></div>`;
+ if(!a.n)return top+`<section class="panel"><div class="empty">Nenhum registro em ${MNAME[+m.slice(5,7)-1]}${u==='all'?'':' em '+UN[u]}. Use <b>+ Registrar semana</b> para começar.</div></section>`;
+ const kpi=(l,v,sub)=>`<div class="kpi"><span class="l">${l}</span><b>${v}</b><small>${sub}</small></div>`;
+ const stages=[['Leads','contatos novos',a.leads,p.leads,null],['Experimental agendada','marcaram aula ou visita',a.booked,p.booked,a.r1],['Compareceram','foram de fato',a.done,p.done,a.r2],['Matrículas','fecharam plano',a.sales,p.sales,a.r3]];
+ const colors=['#fff000','#e6d800','#c7b800','#a39600'];
+ const funnel=stages.map((s,i)=>{const w=a.leads?Math.max(4,s[2]/a.leads*100):0;return `${i?`<p class="fconv">↓ ${s[4]==null?'—':pct(s[4])} ${['','agendaram','compareceram','fecharam'][i]}</p>`:''}<div class="fstage"><div class="nm">${s[0]}<small>${s[1]}</small></div><div class="ftrack"><div class="ffill" style="width:${w}%;background:${colors[i]}">${num(s[2])}</div></div><div class="fside"><b>${hasPrev?dlt(s[2],s[3]).replace(DLT_SFX,''):'—'}</b>${hasPrev?(isCur?'mesmo período do mês anterior: ':'mês anterior: ')+num(s[3]):'sem mês anterior'}</div></div>`}).join('');
+ // vazamento
+ const rates=[['Lead → experimental agendada',a.r1,a.leads,'Responda o lead em minutos e ofereça dois horários de aula experimental. Mensagem pronta e objetiva ajuda muito.'],['Agendou → compareceu',a.r2,a.booked,'Confirme no dia anterior e no dia da aula pelo WhatsApp, e deixe claro onde estacionar, o que levar e quem vai receber.'],['Compareceu → matrícula',a.r3,a.done,'Faça follow-up em até 24 horas e deixe uma condição de fechamento para quem já veio conhecer.']].filter(r=>r[1]!=null&&r[2]>=5);
+ let ins='';
+ if(rates.length){const w=[...rates].sort((x,y)=>x[1]-y[1])[0];ins=`<div class="insight"><b>Onde mais se perde gente</b><p><strong>${w[0]}</strong>: só ${pct(w[1])} avançam. ${w[3]}</p></div>`}
+ else ins=`<div class="insight"><b>Poucos dados ainda</b><p>Com mais registros do mês (pelo menos 5 por etapa), eu aponto aqui em qual etapa do funil estão perdendo mais gente.</p></div>`;
+ const byUnit=u==='all'?`<section class="panel"><div class="ph"><div><h2 class="display">Por unidade</h2><p>${mLabel(m)}</p></div></div><div class="tw"><table style="min-width:560px"><thead><tr><th>Unidade</th><th>Leads</th><th>Matrículas</th><th>Conversão</th><th>Investimento</th><th>Custo / matrícula</th></tr></thead><tbody>${Object.entries(UN).map(([k,v])=>{const x=fagg(funOf(m,k));return `<tr><td>${v}</td><td>${x.n?num(x.leads):'—'}</td><td>${x.n?num(x.sales):'—'}</td><td>${pct(x.conv)}</td><td>${brl0(x.spend)}</td><td>${brl0(x.cac)}</td></tr>`}).join('')}</tbody></table></div></section>`:'';
+ return top+`<section class="kpis"><div class="kpi"><span class="l">Leads</span><b>${num(a.leads)}</b><small>${hasPrev?dlt(a.leads,p.leads):''}</small></div>${kpi('Matrículas',num(a.sales),hasPrev?dlt(a.sales,p.sales):'')}${kpi('Conversão geral',pct(a.conv),(hasPrev?dlt(a.conv,p.conv,{pp:true}):'')+'<br>lead → matrícula')}${kpi('Investimento',brl0(a.spend),hasPrev&&a.spend!=null?dlt(a.spend,p.spend,{neutral:true}):'')}${kpi('Custo por lead',brl(a.cpl),hasPrev&&a.cpl!=null?dlt(a.cpl,p.cpl,{down:true}):'')}${kpi('Custo por matrícula',brl0(a.cac),hasPrev&&a.cac!=null?dlt(a.cac,p.cac,{down:true}):'')}</section>
+ <section class="panel"><div class="ph"><div><h2 class="display">Funil de ${MNAME[+m.slice(5,7)-1]}</h2><p>${u==='all'?'Soma das 3 unidades':UN[u]} · ${a.n} registro${a.n===1?'':'s'}${isCur?' · mês em andamento: a comparação usa o mesmo período do mês anterior':''}</p></div></div>${funnel}${ins}</section>${byUnit}
+ <section class="panel"><div class="ph"><div><h2 class="display">Registros do mês</h2><p>Toque numa linha para corrigir.</p></div></div><div class="tw"><table><thead><tr><th>Data</th><th>Unidade</th><th>Leads</th><th>Agendadas</th><th>Compareceram</th><th>Matrículas</th><th>Investimento</th><th>Obs.</th></tr></thead><tbody>${rows.map(r=>`<tr data-fid="${r.id}" tabindex="0"><td>${dmy(r.ref_date)}</td><td>${UN[r.unit]}</td><td>${num(r.leads)}</td><td>${num(r.trials_booked)}</td><td>${num(r.trials_done)}</td><td><b>${num(r.sales)}</b></td><td>${r.spend==null?'—':brl(r.spend)}</td><td style="text-align:left;max-width:200px;overflow:hidden;text-overflow:ellipsis">${esc(r.note)}</td></tr>`).join('')}</tbody></table></div></section>`;
+}
+
+function ideaCard(i){
+ return `<article class="icard ${i.status==='used'?'used':''}" data-idea="${esc(i.id)}"><b>${esc(i.title)}</b>${i.note?`<p>${esc(i.note)}</p>`:''}<div class="row">${i.month_hint?`<span class="chip">Melhor em ${MNAME[i.month_hint-1]}</span>`:''}${safeUrl(i.link)?`<a class="chip y" href="${esc(safeUrl(i.link))}" target="_blank" rel="noopener noreferrer">▶ Link</a>`:''}${i.status==='used'?'<span class="chip">✔ já usada</span>':''}</div>${i.status==='open'?`<div class="act"><button class="btn-g" data-iplan="${esc(i.id)}">Planejar como campanha</button><button class="btn-g" data-iedit="${esc(i.id)}">Editar</button></div>`:`<div class="act"><button class="btn-g" data-iedit="${esc(i.id)}">Editar</button></div>`}</article>`;
+}
+function tabIdeias(){
+ const open=IDEAS.filter(i=>i.status==='open'),used=IDEAS.filter(i=>i.status==='used'),list=S.ifilter==='open'?open:used,cm=curMonth();
+ const next=[0,1,2,3].map(n=>addM(cm,n));
+ return `<section class="panel"><div class="ph"><div><h2 class="display">Banco de ideias</h2><p>Guarde aqui tudo que pode virar campanha. Quando decidir, toque em "Planejar como campanha".</p></div><button class="btn-y" data-newi>+ Nova ideia</button></div>
+  <div class="chips2" role="group" aria-label="Filtrar"><button data-ifilter="open" aria-pressed="${S.ifilter==='open'}">Abertas (${open.length})</button><button data-ifilter="used" aria-pressed="${S.ifilter==='used'}">Já usadas (${used.length})</button></div>
+  ${list.length?`<div class="igrid">${list.map(ideaCard).join('')}</div>`:`<div class="empty">${S.ifilter==='open'?'Nenhuma ideia ainda. Anote a primeira, mesmo que seja só uma frase.':'Nenhuma ideia virou campanha ainda.'}</div>`}</section>
+  <section class="panel"><div class="ph"><div><h2 class="display">Datas para inspirar</h2><p>Ganchos dos próximos meses que costumam funcionar para academia.</p></div></div>${next.map(m=>monthDates(m).length?`<h3 class="display" style="font-size:19px;margin:14px 0 0">${mLabel(m)}</h3>${datesHTML(m)}`:'').join('')}</section>`;
+}
+
+function tabBalanco(){
+ const cm=curMonth(),months=Array.from({length:12},(_,i)=>addM(cm,i-11)),data=months.map(m=>({m,c:campOf(m),f:fagg(funOf(m))}));
+ const val={sales:x=>x.f.n?x.f.sales:null,leads:x=>x.f.n?x.f.leads:null,conv:x=>x.f.conv,cac:x=>x.f.cac};
+ const MET=[['sales','Matrículas',v=>num(Math.round(v))],['leads','Leads',v=>num(Math.round(v))],['conv','Conversão lead → matrícula',v=>dec1(v)+'%'],['cac','Custo por matrícula',v=>brl0(v)]];
+ const mt=MET.find(x=>x[0]===S.metric);
+ const withSales=data.filter(x=>x.f.sales>0),best=[...withSales].sort((a,b)=>b.f.sales-a.f.sales)[0],cheap=[...data.filter(x=>x.f.cac!=null)].sort((a,b)=>a.f.cac-b.f.cac)[0],conv=[...data.filter(x=>x.f.conv!=null&&x.f.leads>=10)].sort((a,b)=>b.f.conv-a.f.conv)[0];
+ const hl=(t,x,v)=>x?`<div class="kpi"><span class="l">${t}</span><b>${v}</b><small>${mLabel(x.m)}${x.c?' · '+esc(x.c.name):''}</small></div>`:`<div class="kpi"><span class="l">${t}</span><b>—</b><small>sem dados ainda</small></div>`;
+ queueBal=()=>({xs:months.map(m=>MAB[+m.slice(5,7)-1]),titles:months.map(mLabel),ys:data.map(val[S.metric]),yFmt:mt[2],aria:mt[1]+' mês a mês',extra:i=>[data[i].c?'Campanha: '+data[i].c.name:'',months[i]===cm?'mês em andamento':''].filter(Boolean).join(' · ')});
+ return `<div class="hl">${hl('Mais matrículas',best,best?num(best.f.sales):'')}${hl('Menor custo por matrícula',cheap,cheap?brl0(cheap.f.cac):'')}${hl('Melhor conversão',conv,conv?pct(conv.f.conv):'')}</div>
+ <section class="panel"><div class="ph"><div><h2 class="display">Mês a mês</h2><p>Últimos 12 meses, 3 unidades somadas.</p></div></div><div class="chips2" role="group" aria-label="Métrica">${MET.map(([k,l])=>`<button data-bmet="${k}" aria-pressed="${S.metric===k}">${l}</button>`).join('')}</div><div class="chartbox" id="bch"></div></section>
+ <section class="panel"><div class="ph"><div><h2 class="display">Campanhas e resultados</h2><p>Toque numa campanha para abrir o mês.</p></div></div><div class="tw"><table><thead><tr><th>Mês</th><th>Campanha</th><th>Leads</th><th>Matrículas</th><th>Meta</th><th>Conversão</th><th>Investimento</th><th>Custo / matrícula</th></tr></thead><tbody>${[...data].reverse().filter(x=>x.c||x.f.n).map(x=>`<tr data-bm="${x.m}" style="cursor:pointer"><td>${mLabel(x.m)}</td><td style="text-align:left">${x.c?esc(x.c.name):'<span style="color:var(--muted)">sem campanha</span>'}</td><td>${x.f.n?num(x.f.leads):'—'}</td><td><b>${x.f.n?num(x.f.sales):'—'}</b></td><td>${x.c&&x.c.goal_sales?num(x.c.goal_sales)+(x.f.n?' ('+dec1(x.f.sales/x.c.goal_sales*100)+'%)':''):'—'}</td><td>${pct(x.f.conv)}</td><td>${brl0(x.f.spend)}</td><td>${brl0(x.f.cac)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Nada registrado ainda.</td></tr>'}</tbody></table></div></section>`;
+}
+let queueBal=null;
+function render(){
+ let body='';queueBal=null;
+ body=S.tab==='mes'?tabMes():S.tab==='funil'?tabFunil():S.tab==='ideias'?tabIdeias():tabBalanco();
+ $('page').innerHTML=head()+body;
+ if(queueBal&&$('bch'))drawChart($('bch'),queueBal());
+}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(queueBal&&$('bch'))drawChart($('bch'),queueBal())},120)});
+
+/* ---------- campanha: formulário ---------- */
+function monthOptions(sel,disabledExisting,keep){
+ const cm=curMonth(),ms=Array.from({length:14},(_,i)=>addM(cm,i-2));if(keep&&!ms.includes(keep))ms.unshift(keep);
+ return ms.map(m=>`<option value="${m}" ${m===sel?'selected':''}>${mLabel(m)}${disabledExisting&&campOf(m)&&m!==keep?' (já tem campanha)':''}</option>`).join('');
+}
+function openCamp(c,month,idea){
+ editC=c||null;ideaForC=idea||null;$('cTitle').textContent=c?'Editar campanha':'Planejar campanha';
+ const m=c?c.month.slice(0,7):(month||S.month);
+ $('c_month').innerHTML=monthOptions(m,true,c?m:null);$('c_month').disabled=!!c;
+ $('c_status').value=c?.status||'planning';$('c_name').value=c?.name||idea?.title||'';$('c_objective').value=c?.objective||idea?.note||'';$('c_offer').value=c?.offer||'';$('c_audience').value=c?.audience||'';
+ $('c_channels').innerHTML=CHANNELS.map(x=>`<label><input type="checkbox" value="${esc(x)}" ${c?.channels?.includes(x)?'checked':''}>${esc(x)}</label>`).join('');
+ $('c_start').value=c?.start_date||'';$('c_end').value=c?.end_date||'';$('c_gleads').value=c?.goal_leads??'';$('c_gsales').value=c?.goal_sales??'';$('c_budget').value=c?.budget!=null?String(c.budget).replace('.',','):'';
+ $('c_owner').innerHTML='<option value="">Ninguém definido</option>'+PEOPLE.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${esc(p.unit_label||'')}</option>`).join('');$('c_owner').value=c?.owner_id||'';
+ $('c_link').value=c?.link||idea?.link||'';$('c_notes').value=c?.notes||'';$('c_err').textContent='';$('c_del').hidden=!c;$('cdlg').showModal();$('cdlg').scrollTop=0;setTimeout(()=>$('c_name').focus(),30);
+}
+$('cform').addEventListener('submit',async e=>{
+ e.preventDefault();const err=t=>{$('c_err').textContent=t};
+ const month=$('c_month').value+'-01',name=$('c_name').value.trim();if(!name)return err('Dê um nome para a campanha.');
+ if(!editC&&campOf($('c_month').value))return err('Esse mês já tem uma campanha. Escolha outro mês ou edite a existente.');
+ const link=normUrl($('c_link').value);if(link===undefined)return err('Esse link não parece válido.');
+ const gl=$('c_gleads').value.trim()===''?null:parseInt0($('c_gleads').value),gs=$('c_gsales').value.trim()===''?null:parseInt0($('c_gsales').value),bud=parseMoney($('c_budget').value);
+ if(Number.isNaN(gl)||Number.isNaN(gs))return err('As metas devem ser números inteiros.');if(Number.isNaN(bud))return err('Verba inválida. Use números, como 1.500,00.');
+ const st=$('c_start').value||null,en=$('c_end').value||null;if(st&&en&&en<st)return err('A data final não pode ser antes da inicial.');
+ const row={month,name,status:$('c_status').value,objective:$('c_objective').value.trim(),offer:$('c_offer').value.trim(),audience:$('c_audience').value.trim(),channels:[...$('c_channels').querySelectorAll('input:checked')].map(x=>x.value),start_date:st,end_date:en,goal_leads:gl,goal_sales:gs,budget:bud,owner_id:$('c_owner').value||null,link,notes:$('c_notes').value.trim()};
+ const b=$('c_save');b.disabled=true;
+ try{
+  const out=editC?await CTX.client.from('boha_campaigns').update(row).eq('id',editC.id).select().single():await CTX.client.from('boha_campaigns').insert(row).select().single();
+  if(out.error)throw out.error;
+  if(editC)CAMPS=CAMPS.map(x=>x.id===editC.id?out.data:x);else CAMPS.push(out.data);
+  if(ideaForC){const up=await CTX.client.from('boha_campaign_ideas').update({status:'used',campaign_id:out.data.id}).eq('id',ideaForC.id).select().single();if(!up.error)IDEAS=IDEAS.map(x=>x.id===up.data.id?up.data:x);ideaForC=null}
+  $('cdlg').close();S.tab='mes';S.month=$('c_month').value;render();toast('Campanha salva.');
+ }catch{err('Não foi possível salvar. Confira os campos e tente de novo.')}finally{b.disabled=false}
+});
+$('c_del').addEventListener('click',async()=>{
+ if(!editC||!confirm(`Excluir a campanha "${editC.name}" e o plano de ação dela? Os registros do funil continuam.`))return;
+ const {error}=await CTX.client.from('boha_campaigns').delete().eq('id',editC.id);if(error){$('c_err').textContent='Não foi possível excluir.';return}
+ const id=editC.id;CAMPS=CAMPS.filter(x=>x.id!==id);TASKS=TASKS.filter(t=>t.campaign_id!==id);IDEAS=IDEAS.map(i=>i.campaign_id===id?{...i,campaign_id:null}:i);$('cdlg').close();render();toast('Campanha excluída.');
+});
+
+/* ---------- funil: formulário ---------- */
+function openFun(r){
+ editF=r||null;$('fTitle').textContent=r?'Corrigir registro do funil':'Registrar semana do funil';
+ $('f_unit').innerHTML=Object.entries(UN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('f_unit').value=r?r.unit:(S.unit==='all'?'cb':S.unit);
+ $('f_date').value=r?r.ref_date:today();fillF(r);$('f_err').textContent='';$('f_del').hidden=!r;$('fdlg').showModal();$('fdlg').scrollTop=0;setTimeout(()=>$('f_leads').focus(),30);
+}
+function fillF(r){$('f_leads').value=r?r.leads:'';$('f_booked').value=r?r.trials_booked:'';$('f_done').value=r?r.trials_done:'';$('f_sales').value=r?r.sales:'';$('f_spend').value=r&&r.spend!=null?String(r.spend).replace('.',','):'';$('f_note').value=r?r.note:''}
+['f_unit','f_date'].forEach(id=>$(id).addEventListener('change',()=>{const r=FUN.find(x=>x.unit===$('f_unit').value&&x.ref_date===$('f_date').value);if(r&&r!==editF){editF=r;fillF(r);$('f_del').hidden=false;$('fTitle').textContent='Corrigir registro do funil';$('f_err').textContent='Já existe registro dessa unidade nesta data: você está corrigindo ele.'}}));
+$('fform').addEventListener('submit',async e=>{
+ e.preventDefault();const err=t=>{$('f_err').textContent=t};
+ const unit=$('f_unit').value,date=$('f_date').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return err('Informe a data.');
+ const v={leads:parseInt0($('f_leads').value),trials_booked:parseInt0($('f_booked').value),trials_done:parseInt0($('f_done').value),sales:parseInt0($('f_sales').value)};
+ if(Object.values(v).some(Number.isNaN))return err('Use só números inteiros, sem letras.');
+ const spend=parseMoney($('f_spend').value);if(Number.isNaN(spend))return err('Investimento inválido. Use números, como 350,00.');
+ if(v.leads+v.trials_booked+v.trials_done+v.sales===0&&spend==null)return err('Preencha ao menos um número.');
+ if(v.trials_done>v.trials_booked&&v.trials_booked>0&&!confirm('Compareceram é maior que agendadas. Pode acontecer se vieram sem marcar. Salvar assim?'))return;
+ if(v.sales>v.trials_done&&v.trials_done>0&&!confirm('Matrículas é maior que compareceram. Está correto?'))return;
+ const row={unit,ref_date:date,...v,spend,note:$('f_note').value.trim()};const b=$('f_save');b.disabled=true;
+ try{
+  if(editF&&(editF.unit!==unit||editF.ref_date!==date)){const d=await CTX.client.from('boha_funnel_entries').delete().eq('id',editF.id);if(d.error)throw d.error;FUN=FUN.filter(x=>x.id!==editF.id)}
+  const {data,error}=await CTX.client.from('boha_funnel_entries').upsert(row,{onConflict:'unit,ref_date'}).select().single();if(error)throw error;
+  FUN=FUN.filter(x=>!(x.unit===data.unit&&x.ref_date===data.ref_date));FUN.push(data);FUN.sort((a,b)=>a.ref_date.localeCompare(b.ref_date));
+  $('fdlg').close();S.tab='funil';S.month=date.slice(0,7);render();toast('Registro salvo.');
+ }catch{err('Não foi possível salvar. Tente de novo.')}finally{b.disabled=false}
+});
+$('f_del').addEventListener('click',async()=>{
+ if(!editF||!confirm(`Excluir o registro de ${dmy(editF.ref_date)} (${UN[editF.unit]})?`))return;
+ const {error}=await CTX.client.from('boha_funnel_entries').delete().eq('id',editF.id);if(error){$('f_err').textContent='Não foi possível excluir.';return}
+ FUN=FUN.filter(x=>x.id!==editF.id);$('fdlg').close();render();toast('Registro excluído.');
+});
+
+/* ---------- ideias: formulário ---------- */
+function openIdea(i){
+ editI=i||null;$('iTitle').textContent=i?'Editar ideia':'Nova ideia de campanha';
+ $('i_month').innerHTML='<option value="">Qualquer mês</option>'+MNAME.map((n,k)=>`<option value="${k+1}">${cap(n)}</option>`).join('');$('i_month').value=i?.month_hint||'';
+ $('i_title').value=i?.title||'';$('i_note').value=i?.note||'';$('i_status').value=i?.status||'open';$('i_link').value=i?.link||'';$('i_err').textContent='';$('i_del').hidden=!i;$('idlg').showModal();setTimeout(()=>$('i_title').focus(),30);
+}
+$('iform').addEventListener('submit',async e=>{
+ e.preventDefault();const title=$('i_title').value.trim();if(!title){$('i_err').textContent='Escreva a ideia.';return}
+ const link=normUrl($('i_link').value);if(link===undefined){$('i_err').textContent='Esse link não parece válido.';return}
+ const row={title,note:$('i_note').value.trim(),month_hint:$('i_month').value?+$('i_month').value:null,link,status:$('i_status').value};
+ const out=editI?await CTX.client.from('boha_campaign_ideas').update(row).eq('id',editI.id).select().single():await CTX.client.from('boha_campaign_ideas').insert(row).select().single();
+ if(out.error){$('i_err').textContent='Não foi possível salvar.';return}
+ if(editI)IDEAS=IDEAS.map(x=>x.id===editI.id?out.data:x);else IDEAS.unshift(out.data);$('idlg').close();render();toast('Ideia salva.');
+});
+$('i_del').addEventListener('click',async()=>{
+ if(!editI||!confirm('Excluir esta ideia?'))return;const {error}=await CTX.client.from('boha_campaign_ideas').delete().eq('id',editI.id);
+ if(error){$('i_err').textContent='Não foi possível excluir.';return}IDEAS=IDEAS.filter(x=>x.id!==editI.id);$('idlg').close();render();toast('Ideia excluída.');
+});
+
+/* ---------- ações do plano ---------- */
+async function addTask(title){
+ const c=campOf(S.month);if(!c||!title)return;const sort=Math.max(0,...TASKS.filter(t=>t.campaign_id===c.id).map(t=>t.sort))+1;
+ const {data,error}=await CTX.client.from('boha_campaign_tasks').insert({campaign_id:c.id,title:title.slice(0,160),sort}).select().single();
+ if(error){toast('Não foi possível adicionar a ação.');return false}TASKS.push(data);return true;
+}
+async function patchTask(id,patch){
+ const t=TASKS.find(x=>x.id===id);if(!t)return;const old={...t};Object.assign(t,patch);
+ const {error}=await CTX.client.from('boha_campaign_tasks').update(patch).eq('id',id);if(error){Object.assign(t,old);render();toast('Não foi possível atualizar.')}else render();
+}
+
+/* ---------- eventos ---------- */
+$('page').addEventListener('submit',async e=>{
+ if(e.target.id!=='taskform')return;e.preventDefault();const v=$('newTask').value.trim();if(!v)return;
+ if(await addTask(v)){render();$('newTask')?.focus()}
+});
+document.addEventListener('click',async e=>{
+ const t=e.target;let b;
+ if(b=t.closest('[data-close]')){$(b.dataset.close).close();return}
+ if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
+ if(b=t.closest('[data-nav]')){S.month=addM(S.month,+b.dataset.nav);render();return}
+ if(b=t.closest('[data-funit]')){S.unit=b.dataset.funit;render();return}
+ if(b=t.closest('[data-bmet]')){S.metric=b.dataset.bmet;render();return}
+ if(b=t.closest('[data-ifilter]')){S.ifilter=b.dataset.ifilter;render();return}
+ if(t.closest('[data-newc]')){openCamp(null,S.month);return}
+ if(t.closest('[data-editc]')){openCamp(campOf(S.month));return}
+ if(t.closest('[data-newf]')){openFun(null);return}
+ if(t.closest('[data-newi]')){openIdea(null);return}
+ if(b=t.closest('[data-fid]')){openFun(FUN.find(x=>x.id===b.dataset.fid));return}
+ if(b=t.closest('[data-bm]')){S.tab='mes';S.month=b.dataset.bm;render();return}
+ if(b=t.closest('[data-iplan]')){const i=IDEAS.find(x=>x.id===b.dataset.iplan);if(i){let m=i.month_hint?(()=>{const y=+curMonth().slice(0,4),mm=String(i.month_hint).padStart(2,'0');let c=y+'-'+mm;if(c<curMonth())c=(y+1)+'-'+mm;return c})():addM(curMonth(),1);if(S.tab==='mes'&&!campOf(S.month))m=S.month;openCamp(null,m,i)}return}
+ if(b=t.closest('[data-iedit]')){openIdea(IDEAS.find(x=>x.id===b.dataset.iedit));return}
+ if(t.closest('a'))return;
+ if(b=t.closest('[data-idea]')){openIdea(IDEAS.find(x=>x.id===b.dataset.idea));return}
+ if(b=t.closest('[data-tdel]')){const id=b.dataset.tdel;const {error}=await CTX.client.from('boha_campaign_tasks').delete().eq('id',id);if(error){toast('Não foi possível remover.');return}TASKS=TASKS.filter(x=>x.id!==id);render();return}
+ if(t.closest('[data-template]')){for(const title of TEMPLATE)await addTask(title);render();return}
+});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset&&t.dataset.tdone)patchTask(t.dataset.tdone,{done:t.checked,done_at:t.checked?new Date().toISOString():null});
+ else if(t.dataset&&t.dataset.towner)patchTask(t.dataset.towner,{owner_id:t.value||null});
+ else if(t.dataset&&t.dataset.tdue)patchTask(t.dataset.tdue,{due_date:t.value||null});
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('tr[data-fid]')){e.preventDefault();openFun(FUN.find(x=>x.id===e.target.dataset.fid))}});
+['cdlg','fdlg','idlg'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close()}));
+
+async function load(){
+ const c=CTX.client,[a,b,d,e,p]=await Promise.all([c.from('boha_campaigns').select('*').order('month'),c.from('boha_campaign_tasks').select('*').order('sort'),c.from('boha_funnel_entries').select('*').order('ref_date').limit(3000),c.from('boha_campaign_ideas').select('*').order('created_at',{ascending:false}).limit(500),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([])]);
+ if(a.error)throw a.error;CAMPS=a.data||[];TASKS=b.error?[]:(b.data||[]);FUN=d.error?[]:(d.data||[]);IDEAS=e.error?[]:(e.data||[]);PEOPLE=p||[];render();
+}
+window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch(()=>{})};
+(async()=>{
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#campanhas" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if(CTX.canModule&&!CTX.canModule('campanhas')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
+})();
+</script></body></html>
