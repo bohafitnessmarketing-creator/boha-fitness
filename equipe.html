@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer}
 .today{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font-size:15px}
 .today .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(61,220,132,.14)}
 
+.role-switch{display:flex;align-items:center;gap:12px;margin-top:26px;animation:fadeUp .6s var(--ease) .1s backwards}.role-switch>span{flex:none;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.role-switch .seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}.role-switch .seg::-webkit-scrollbar{display:none}.role-switch .seg button{padding:7px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;background:none;border:0;cursor:pointer;transition:background .2s,color .2s}.role-switch .seg button:hover{color:var(--text)}.role-switch .seg button[aria-pressed="true"]{background:var(--y);color:#111}.role-switch .seg button:focus-visible{outline:2px solid var(--y);outline-offset:2px}.role-switch+.row-head{margin-top:24px}@media(max-width:700px){.role-switch{flex-direction:column;align-items:flex-start;gap:8px}.role-switch .seg{width:100%}}
 .row-head{display:flex;justify-content:space-between;align-items:baseline;margin:44px 0 14px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .row-head b{color:var(--text)}
 .hub-grid{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:24px;align-items:start}
@@ -306,6 +307,7 @@ html.mtile .pv-empty h3{font-size:20px}
    <h1 class="display"><span id="greeting">Olá</span>, <span id="firstName" class="accent"></span></h1>
    <p class="today"><span class="dot"></span><span id="today"></span></p>
   </div>
+  <div class="role-switch" id="roleSwitch" role="group" aria-label="Ver o sistema como outro perfil" hidden></div>
   <div class="row-head"><span>Áreas do sistema</span><span id="liveCount"></span></div>
   <div class="hub-grid">
    <div class="modules" id="modules"></div>
@@ -548,7 +550,16 @@ function showPreview(m,card){
 }
 
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
+function renderRoleSwitch(){
+ const box=el('roleSwitch');if(!box)return;
+ if(profile?.role!=='admin'){box.hidden=true;box.innerHTML='';return}
+ const hadFocus=box.contains(document.activeElement),cur=effectiveRole(),order=['admin','gerente','dono','marketing','recepcao'];
+ box.innerHTML=`<span>Ver como</span><div class="seg">${order.map(k=>`<button type="button" data-preview="${k}" aria-pressed="${cur===k}">${k==='admin'?'Administrador':ROLE_LABEL[k]}</button>`).join('')}</div>`;
+ box.hidden=false;
+ if(hadFocus)box.querySelector('[aria-pressed="true"]')?.focus();
+}
 function renderModules(){
+ renderRoleSwitch();
  const wrap=el('modules');wrap.innerHTML='';
  visibleModules().sort((a,b)=>a.key==='checklist'?-1:b.key==='checklist'?1:0).forEach((m,i)=>{
   const live=m.status==='live';
@@ -609,7 +620,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261116f';
+const VERSION='20261116g';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
