@@ -35,7 +35,7 @@ img{display:block}
 .seg button:hover{color:var(--text)}
 .seg button[aria-pressed="true"]{background:var(--y);color:#111}
 .seg img{width:24px;height:24px;border-radius:6px;object-fit:cover}
-.status{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 14px}
+.status{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:22px 0 14px}
 .tag{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:4px 11px;border:1px solid var(--line2);color:#cfcfcf}
 .tag.now{color:var(--good);border-color:rgba(61,220,132,.4);background:rgba(61,220,132,.08)}
 .tag.plan{color:var(--y);border-color:rgba(255,240,0,.4);background:rgba(255,240,0,.06)}
@@ -120,11 +120,11 @@ textarea.inp:focus{border-color:var(--y)}
 let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const UNITS={cb:{name:'Casa Branca',photo:'../imagens/unidade-jardim-casa-branca-1024x1024.jpg'},te:{name:'Santa Tereza',photo:'../imagens/unidade-jardim-santa-tereza-300x300.png'},ma:{name:'Macedônia',photo:'../imagens/unidade-jardim-macedonia-1024x1024.jpg'}};
+const UNIT_LABEL='Todas as unidades';
 const TZ='America/Sao_Paulo',BUCKET='boha-mural';
 const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>';
 const kind=n=>n>=7?'P':'L';
-let S={unit:'cb',month:null,cmp:false},DATA={},URLS={},CUR_DATA={},EDIT=null,PH=null,busy=new Set(),lastFocus=null,dragFrom=null;
+let S={unit:'rede',month:null,cmp:false},DATA={},URLS={},CUR_DATA={},EDIT=null,PH=null,busy=new Set(),lastFocus=null,dragFrom=null;
 const canEdit=()=>!!CTX&&(!CTX.canModule||CTX.canModule('mural'));
 function nowMonth(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit'}).format(new Date());return p+'-01'}
 const addMonth=(m,n)=>{let [y,mo]=m.split('-').map(Number);mo+=n;y+=Math.floor((mo-1)/12);mo=((mo-1)%12+12)%12+1;return `${y}-${String(mo).padStart(2,'0')}-01`};
@@ -160,9 +160,8 @@ function render(){
  const cur=nowMonth(),isCur=S.month===cur,future=S.month>cur;
  const filled=Object.values(DATA).filter(r=>r.photo_path).length,planned=Object.values(DATA).filter(r=>(r.note||'').trim()).length;
  const label=isCur?'<span class="tag now">Mural atual</span>':future?'<span class="tag plan">Planejamento</span>':'<span class="tag">Mês anterior</span>';
- let h=`<header class="hd"><div><p class="eyebrow">Mural do mês</p><h1 class="display">${esc(monthName(S.month))} <span>${monthYear(S.month)}</span></h1><p class="sub">${isCur?'É assim que o mural está hoje. Anexe a foto de cada folha para ver como ficou.':future?'Planeje como vai ficar. Anexe as fotos das folhas e use a nota para lembrar o que falta produzir.':'Registro de como o mural ficou neste mês.'}</p></div><div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><button class="btn-g" data-nav="0">Mês atual</button><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div></header>
- <div class="filters"><div class="seg" role="group" aria-label="Unidade">${Object.entries(UNITS).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}"><img src="${v.photo}" alt="">${v.name}</button>`).join('')}</div></div>
- <div class="status">${label}<span class="prog"><span class="bar"><i style="width:${filled/8*100}%"></i></span><span><b>${filled} de 8</b> folhas com foto${planned?` · ${planned} com nota`:''}</span></span>${!isCur?`<button class="btn-g cmp-toggle" data-cmp>${S.cmp?'Ocultar mural atual':'Ver mural atual junto'}</button>`:''}</div>
+ let h=`<header class="hd"><div><p class="eyebrow">Mural do mês</p><h1 class="display">${esc(monthName(S.month))} <span>${monthYear(S.month)}</span></h1><p class="sub">${isCur?'É assim que o mural está hoje em todas as unidades. Anexe a foto de cada folha para ver como ficou.':future?'Planeje como vai ficar. Anexe as fotos das folhas e use a nota para lembrar o que falta produzir.':'Registro de como o mural ficou neste mês.'}</p></div><div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><button class="btn-g" data-nav="0">Mês atual</button><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div></header>
+  <div class="status">${label}<span class="prog"><span class="bar"><i style="width:${filled/8*100}%"></i></span><span><b>${filled} de 8</b> folhas com foto${planned?` · ${planned} com nota`:''}</span></span>${!isCur?`<button class="btn-g cmp-toggle" data-cmp>${S.cmp?'Ocultar mural atual':'Ver mural atual junto'}</button>`:''}</div>
  ${boardHTML(DATA,{month:S.month})}
  <p class="hint">${canEdit()?'Toque numa folha para anexar ou trocar a foto e escrever uma nota. No computador, arraste uma imagem direto para a folha, ou arraste uma folha para outra para trocar de lugar.':'Você pode ver o mural, mas não alterar.'}</p>`;
  if(!isCur&&S.cmp)h+=`<section class="cmp"><h2 class="display">Mural atual · ${esc(cap(monthName(cur)))}</h2><p>Só para comparar com ${future?'o planejamento':'este mês'}.</p>${boardHTML(CUR_DATA,{ro:true,id:'board2',month:cur})}</section>`;
@@ -199,7 +198,7 @@ async function swap(a,b){
 /* ---------- gaveta da folha ---------- */
 function openSlot(n){
  lastFocus=document.activeElement;EDIT=n;PH=null;const r=DATA[n]||{},url=r.photo_path&&URLS[r.photo_path],ed=canEdit();
- $('drTitle').innerHTML=`Folha ${n}<small>${esc(UNITS[S.unit].name)} · ${esc(cap(monthName(S.month)))} ${monthYear(S.month)} · ${kind(n)==='L'?'A4 deitada':'A4 em pé'}</small>`;
+ $('drTitle').innerHTML=`Folha ${n}<small>${UNIT_LABEL} · ${esc(cap(monthName(S.month)))} ${monthYear(S.month)} · ${kind(n)==='L'?'A4 deitada':'A4 em pé'}</small>`;
  $('drBody').innerHTML=`<div class="preview ${kind(n)} ${url?'has':''}" id="pv" ${ed?'tabindex="0" role="button" aria-label="Anexar foto"':''}>${url?`<img src="${esc(url)}" alt="Foto da folha ${n}">`:`<span>${ed?'Toque para anexar a foto<br><small>ou arraste uma imagem para cá</small>':'Sem foto'}</span>`}</div>
  ${ed?`<div class="dr-actions"><button class="btn-y" data-pick>${url?'Trocar foto':'Anexar foto'}</button>${url?'<a class="btn-g" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Abrir em tamanho real</a><button class="btn-g danger" data-rmphoto>Remover foto</button>':''}</div>`:''}
  <label class="lb" for="nt">Nota de planejamento</label><textarea class="inp" id="nt" maxlength="200" placeholder="Ex.: Campanha de volta às aulas — arte em produção" ${ed?'':'disabled'}>${esc(r.note||'')}</textarea><div class="cnt"><span id="cn">${(r.note||'').length}</span>/200</div>
@@ -222,7 +221,6 @@ async function removePhoto(){
 /* ---------- eventos ---------- */
 document.addEventListener('click',e=>{
  const nav=e.target.closest('[data-nav]');if(nav){S.month=nav.dataset.nav==='0'?nowMonth():addMonth(S.month,+nav.dataset.nav);load().catch(()=>{});return}
- const un=e.target.closest('[data-unit]');if(un){S.unit=un.dataset.unit;load().catch(()=>{});return}
  if(e.target.closest('[data-cmp]')){S.cmp=!S.cmp;load().catch(()=>{});return}
  const sl=e.target.closest('#board .slot');if(sl){openSlot(+sl.dataset.slot);return}
  if(e.target.closest('#drClose,[data-close]')){closeSlot();return}
