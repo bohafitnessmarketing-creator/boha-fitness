@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Crescimento do Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--c-cb:#3987e5;--c-te:#d95926;--c-ma:#199e70;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;white-space:nowrap;text-align:center}
+.btn-y:disabled{opacity:.5;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:8px 14px;font-size:13px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s}
+.btn-g:hover{border-color:var(--y);color:var(--y)}
+.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}
+.page{max-width:1180px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hd h1{font-size:clamp(34px,5vw,60px);line-height:1;margin:12px 0 6px}
+.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:560px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.seg::-webkit-scrollbar{display:none}
+.seg button{display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.nav{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav b{min-width:150px;text-align:center;font-weight:700;font-size:15px}
+.arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:17px;transition:border-color .2s,color .2s}
+.arrow:hover{border-color:var(--y);color:var(--y)}
+.late{margin-top:16px;padding:11px 14px;border:1px solid rgba(255,240,0,.35);background:rgba(255,240,0,.06);border-radius:12px;font-size:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 15px}
+.kpi span.l{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:32px;line-height:1.15;margin-top:4px}
+.kpi small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.d{font-weight:700;white-space:nowrap}.d.up{color:var(--good)}.d.down{color:var(--bad)}.d.flat{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+.panel h2{font-size:24px;margin:0;line-height:1}
+.panel .ph{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-bottom:10px}
+.panel .ph p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.chip{border:1px solid var(--line2);border-radius:99px;padding:5px 12px;font-size:13px;color:var(--muted);transition:border-color .2s,color .2s}
+.chip:hover{color:var(--text)}
+.chip[aria-pressed="true"]{border-color:var(--y);color:var(--y);background:rgba(255,240,0,.07)}
+.chartbox{position:relative;width:100%;margin-top:6px}
+.chartbox svg{display:block;width:100%;height:auto;overflow:visible}
+.chartbox:focus-visible{outline-offset:4px;border-radius:8px}
+.tip{position:absolute;z-index:5;pointer-events:none;min-width:150px;max-width:260px;background:#0e0e0e;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-size:12.5px;box-shadow:0 10px 30px rgba(0,0,0,.6);opacity:0;transition:opacity .12s}
+.tip.on{opacity:1}
+.tip .t{color:var(--muted);font-size:11.5px;margin-bottom:4px}
+.tip .r{display:flex;align-items:center;gap:8px;margin-top:3px}
+.tip .k{width:12px;height:0;border-top:3px solid;border-radius:2px;flex:none}
+.tip .v{font-weight:800;font-size:14px}
+.tip .n{color:var(--muted);margin-left:auto;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:0;border-top:3px solid;border-radius:2px}
+.empty{padding:34px 16px;text-align:center;color:var(--muted)}
+.tw{overflow-x:auto;margin-top:8px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+tbody tr[data-id]{cursor:pointer}tbody tr[data-id]:hover td{background:rgba(255,255,255,.03)}
+.ym{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:10px}
+.ym div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.ym small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.ym b{display:block;font-size:16px}
+.note{color:var(--muted);font-size:12.5px;margin:10px 2px 0}
+.state{padding:60px 20px;text-align:center;color:var(--muted)}
+dialog{width:min(560px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:1px solid #444;border-radius:18px;background:#121212;color:#f4f4f4;padding:0;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(3px)}
+.fm{padding:20px 22px 22px}
+.fm h2{font-size:26px;margin:0}
+.fm .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.fm label{display:grid;gap:4px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fm label small{font-size:11px;text-transform:none;letter-spacing:0;font-weight:500;color:#7d7d7d}
+.fm .inp{width:100%;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--text);text-transform:none;letter-spacing:0;font-weight:500;outline:none}
+.fm .inp:focus{border-color:var(--y)}
+.fm .full{grid-column:1/-1}
+.fm .help{margin:10px 0 0;color:var(--muted);font-size:13px}
+.fm .err{color:var(--bad);font-size:13px;margin:10px 0 0;min-height:18px}
+.fm .foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:640px){.page{padding:16px 16px 70px}.nav{margin-left:0;width:100%;justify-content:space-between}.fm .row{grid-template-columns:1fr 1fr}.kpi b{font-size:27px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+<dialog id="dlg" aria-labelledby="dlgTitle"><form class="fm" id="form" novalidate>
+ <h2 class="display" id="dlgTitle">Registrar semana</h2>
+ <p class="help">Abra o Instagram da unidade → <b>Painel profissional</b> → <b>Insights</b>, escolha <b>Últimos 7 dias</b> e copie os números. Só os seguidores são obrigatórios.</p>
+ <div class="row"><label>Unidade<select class="inp" id="f_unit"></select></label><label>Data da medição<input class="inp" type="date" id="f_date" required></label></div>
+ <div class="row"><label class="full">Seguidores agora<small id="f_hint">Total de seguidores do perfil hoje</small><input class="inp" id="f_followers" inputmode="numeric" autocomplete="off" required></label></div>
+ <div class="row">
+  <label>Visualizações<small>Últimos 7 dias</small><input class="inp" id="f_views" inputmode="numeric" autocomplete="off"></label>
+  <label>Contas alcançadas<small>Últimos 7 dias</small><input class="inp" id="f_reach" inputmode="numeric" autocomplete="off"></label>
+  <label>Interações<small>Curtidas, comentários, salvos e compartilhamentos</small><input class="inp" id="f_interactions" inputmode="numeric" autocomplete="off"></label>
+  <label>Visitas ao perfil<small>Últimos 7 dias</small><input class="inp" id="f_profile_visits" inputmode="numeric" autocomplete="off"></label>
+  <label>Toques no link<small>Link da bio e botões de contato</small><input class="inp" id="f_link_clicks" inputmode="numeric" autocomplete="off"></label>
+  <label>Publicações na semana<small>Feed + Reels</small><input class="inp" id="f_posts" inputmode="numeric" autocomplete="off"></label>
+  <label>Stories na semana<small>Quantidade postada</small><input class="inp" id="f_stories" inputmode="numeric" autocomplete="off"></label>
+  <label class="full">Observação<small>Opcional. Ex.: sorteio, post que viralizou, anúncio pago</small><input class="inp" id="f_note" maxlength="200" autocomplete="off"></label>
+ </div>
+ <p class="err" id="f_err" role="alert"></p>
+ <div class="foot"><span><button type="button" class="btn-g danger" id="f_del" hidden>Excluir registro</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" id="f_cancel">Cancelar</button><button type="submit" class="btn-y" id="f_save">Salvar</button></span></div>
+</form></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UN={cb:{name:'Casa Branca',c:'var(--c-cb)',hex:'#3987e5'},te:{name:'Santa Tereza',c:'var(--c-te)',hex:'#d95926'},ma:{name:'Macedônia',c:'var(--c-ma)',hex:'#199e70'}};
+const MET=[['followers','Seguidores'],['reach','Contas alcançadas'],['views','Visualizações'],['interactions','Interações'],['engagement','Engajamento'],['profile_visits','Visitas ao perfil'],['link_clicks','Toques no link'],['posts','Publicações']];
+const MNAME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],MAB=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const TZ='America/Sao_Paulo',FIELDS=['followers','views','reach','interactions','profile_visits','link_clicks','posts','stories'];
+const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
+const num=v=>v==null?'—':Number(v).toLocaleString('pt-BR');
+const dec1=v=>Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
+const dmy=d=>dm(d)+'/'+d.slice(0,4);
+const mOf=r=>r.ref_date.slice(0,7);
+const addM=(m,n)=>{let y=+m.slice(0,4),mo=+m.slice(5,7)+n;y+=Math.floor((mo-1)/12);mo=((mo-1)%12+12)%12+1;return y+'-'+String(mo).padStart(2,'0')};
+const daysBetween=(a,b)=>Math.round((Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/864e5);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
+
+let ROWS=[],S={unit:'cb',view:'month',month:today().slice(0,7),year:+today().slice(0,4),metric:'followers'},editing=null;
+const byUnit=u=>ROWS.filter(r=>r.unit===u);
+
+/* ---------- cálculos ---------- */
+function agg(rows,m){
+ const rs=rows.filter(r=>mOf(r)===m);if(!rs.length)return null;
+ const sum=k=>{const v=rs.map(r=>r[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0):null},avg=k=>{const v=rs.map(r=>r[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+ const both=rs.filter(r=>r.reach!=null&&r.interactions!=null),R=both.reduce((a,r)=>a+r.reach,0),I=both.reduce((a,r)=>a+r.interactions,0);
+ return {n:rs.length,followers:rs[rs.length-1].followers,reach:avg('reach'),views:avg('views'),interactions:avg('interactions'),profile_visits:avg('profile_visits'),link_clicks:avg('link_clicks'),posts:avg('posts'),stories:avg('stories'),sum_reach:sum('reach'),sum_profile_visits:sum('profile_visits'),sum_link_clicks:sum('link_clicks'),sum_posts:sum('posts'),sum_stories:sum('stories'),engagement:R>0?I/R*100:null,last:rs[rs.length-1].ref_date};
+}
+function followersDelta(rows,m){
+ const rs=rows.filter(r=>mOf(r)===m);if(!rs.length)return null;
+ const end=rs[rs.length-1].followers,prev=[...rows].reverse().find(r=>r.ref_date<m+'-01');
+ if(prev)return {d:end-prev.followers,base:prev.followers,since:'desde o fim do mês anterior'};
+ if(rs.length>1)return {d:end-rs[0].followers,base:rs[0].followers,since:'desde o 1º registro do mês'};
+ return null;
+}
+const rowVal=(r,k)=>k==='engagement'?(r.reach>0&&r.interactions!=null?r.interactions/r.reach*100:null):r[k];
+const fmtMet=(k,v)=>v==null?'—':k==='engagement'||k==='posts'?dec1(v)+(k==='engagement'?'%':''):num(Math.round(v));
+function deltaHTML(d,base,suffix=''){
+ if(d==null)return '<span class="d flat">—</span>';
+ const cls=d>0?'up':d<0?'down':'flat',ar=d>0?'▲':d<0?'▼':'■',pc=base?` (${d>0?'+':''}${dec1(d/base*100)}%)`:'';
+ return `<span class="d ${cls}">${ar} ${d>0?'+':''}${num(d)}${pc}${suffix}</span>`;
+}
+const ppHTML=(c,p)=>{if(c==null||p==null)return '<span class="d flat">sem mês anterior para comparar</span>';const d=c-p,cls=d>0.05?'up':d<-0.05?'down':'flat';return `<span class="d ${cls}">${d>0.05?'▲ +':d<-0.05?'▼ ':'■ '}${dec1(Math.abs(d)<0.05?0:d)} p.p. vs mês anterior</span>`};
+function pctChange(cur,prev){if(cur==null||prev==null||prev===0)return null;return (cur/prev-1)*100}
+function pctHTML(p){if(p==null)return '<span class="d flat">sem mês anterior para comparar</span>';const cls=p>0.05?'up':p<-0.05?'down':'flat';return `<span class="d ${cls}">${p>0.05?'▲':p<-0.05?'▼':'■'} ${p>0?'+':''}${dec1(p)}% vs mês anterior</span>`}
+
+/* ---------- gráfico ---------- */
+function niceScale(min,max,t=4){
+ if(min===max){const p=Math.abs(min)*.1||1;min-=p;max+=p}
+ const span=max-min,raw=span/t,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag,step=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*mag;
+ const lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step,ticks=[];for(let v=lo;v<=hi+step/1000;v+=step)ticks.push(+v.toFixed(10));return {lo,hi,ticks};
+}
+function drawChart(box,cfg){
+ // cfg: {xs:[label], titles:[tooltip title], series:[{name,color,ys}], mode:'tight'|'zero', yFmt, tipExtra(i,s)->string}
+ const W=Math.max(280,box.clientWidth||680),H=W<520?250:300,m={l:W<520?44:54,r:cfg.series.length>1?(W<520?66:84):(W<520?34:56),t:14,b:30},iw=W-m.l-m.r,ih=H-m.t-m.b,n=cfg.xs.length;
+ const all=cfg.series.flatMap(s=>s.ys.filter(v=>v!=null));
+ if(!all.length){box.innerHTML='<div class="empty">Sem dados para este período.</div>';return}
+ let mn=Math.min(...all),mx=Math.max(...all);if(cfg.mode==='zero'){mn=Math.min(0,mn);mx=Math.max(mx,mn+1)}else if(cfg.mode==='pct'){mn=Math.min(0,mn);mx=Math.max(0,mx)}
+ const sc=niceScale(mn,mx,4),X=i=>m.l+(n===1?iw/2:i*iw/(n-1)),Y=v=>m.t+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih;
+ let g=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(cfg.aria||'Gráfico')}">`;
+ sc.ticks.forEach(t=>{g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t===0&&cfg.mode==='pct'?'#555':'#262626'}" stroke-width="1"/><text x="${m.l-8}" y="${Y(t)+4}" text-anchor="end" fill="#9b9b9b" font-size="11">${esc(cfg.yFmt(t))}</text>`});
+ const step=Math.ceil(n/(W<520?6:12));
+ cfg.xs.forEach((x,i)=>{if(i%step===0||i===n-1)g+=`<text x="${X(i)}" y="${H-8}" text-anchor="${n===1?'middle':i===0?'start':i===n-1?'end':'middle'}" fill="#9b9b9b" font-size="11">${esc(x)}</text>`});
+ cfg.series.forEach((s,si)=>{
+  let d='',pen=false;s.ys.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);pen=true});
+  if(cfg.series.length===1&&s.ys.filter(v=>v!=null).length>1){const pts=s.ys.map((v,i)=>[i,v]).filter(p=>p[1]!=null);if(pts.length===n)g+=`<path d="${d} L${X(n-1)} ${Y(sc.lo)} L${X(0)} ${Y(sc.lo)}Z" fill="${s.hex}" opacity=".10"/>`}
+  g+=`<path d="${d}" fill="none" stroke="${s.hex}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  s.ys.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="4" fill="${s.hex}" stroke="#141414" stroke-width="2"/>`});
+  if(cfg.series.length>1){const li=s.ys.map((v,i)=>v!=null?i:-1).filter(i=>i>=0).pop();if(li!=null&&li>=0)g+=`<text x="${X(li)+9}" y="${Y(s.ys[li])+4}" fill="#e6e6e6" font-size="11" font-weight="700">${esc(s.short||s.name)}</text>`}
+ });
+ g+=`<line id="xh" x1="0" x2="0" y1="${m.t}" y2="${m.t+ih}" stroke="#777" stroke-width="1" opacity="0"/><rect id="hit" x="${m.l-10}" y="${m.t}" width="${iw+20}" height="${ih}" fill="transparent"/></svg><div class="tip" id="tip"></div>`;
+ box.innerHTML=g;
+ const tip=box.querySelector('.tip'),xh=box.querySelector('#xh'),hit=box.querySelector('#hit');let cur=-1;
+ function show(i){
+  if(i<0||i>=n)return;cur=i;xh.setAttribute('x1',X(i));xh.setAttribute('x2',X(i));xh.setAttribute('opacity','1');
+  tip.textContent='';const t=document.createElement('div');t.className='t';t.textContent=cfg.titles[i];tip.appendChild(t);
+  cfg.series.forEach(s=>{const r=document.createElement('div');r.className='r';const k=document.createElement('i');k.className='k';k.style.borderColor=s.hex;const v=document.createElement('span');v.className='v';v.textContent=s.ys[i]==null?'—':cfg.yFmt(s.ys[i],true);r.append(k,v);
+   if(cfg.series.length>1){const nm=document.createElement('span');nm.className='n';nm.textContent=s.name;r.appendChild(nm)}
+   tip.appendChild(r);const ex=cfg.tipExtra&&cfg.tipExtra(i,s);if(ex){const e=document.createElement('div');e.className='n';e.style.marginTop='2px';e.style.fontSize='12px';e.style.color='var(--muted)';e.textContent=ex;tip.appendChild(e)}});
+  tip.classList.add('on');const tw=tip.offsetWidth,x=X(i),left=x+14+tw>W?x-14-tw:x+14;tip.style.left=Math.max(0,left)+'px';tip.style.top='6px';
+ }
+ const idxAt=ev=>{const r=hit.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*(iw+20)-10;return n===1?0:Math.max(0,Math.min(n-1,Math.round(px/(iw/(n-1)))))};
+ hit.addEventListener('pointermove',ev=>show(idxAt(ev)));hit.addEventListener('pointerdown',ev=>show(idxAt(ev)));
+ hit.addEventListener('pointerleave',()=>{tip.classList.remove('on');xh.setAttribute('opacity','0')});
+ box.tabIndex=0;box.addEventListener('keydown',ev=>{if(ev.key==='ArrowRight'){ev.preventDefault();show(Math.min(n-1,cur+1))}else if(ev.key==='ArrowLeft'){ev.preventDefault();show(Math.max(0,cur<0?n-1:cur-1))}});
+ box.addEventListener('blur',()=>{tip.classList.remove('on');xh.setAttribute('opacity','0')});
+}
+let charts=[];
+const queueChart=(id,cfgFn)=>charts.push([id,cfgFn]);
+function paintCharts(){charts.forEach(([id,fn])=>{const b=$(id);if(b)drawChart(b,fn())})}
+
+/* ---------- telas ---------- */
+const metLabel=k=>(MET.find(x=>x[0]===k)||[,''])[1];
+function metChips(){return `<div class="chips" role="group" aria-label="Métrica do gráfico">${MET.map(([k,l])=>`<button class="chip" data-metric="${k}" aria-pressed="${S.metric===k}">${l}</button>`).join('')}</div>`}
+function yFmtFor(k){return (v,full)=>k==='engagement'?dec1(v)+'%':(Math.abs(v)>=10000&&!full?(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':num(Math.round(v*100)/100))}
+function head(){
+ const tabs=[...Object.entries(UN).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}"><i class="dot" style="background:${v.c}"></i>${v.name}</button>`),`<button data-unit="all" aria-pressed="${S.unit==='all'}">Comparar unidades</button>`].join('');
+ const nav=S.view==='month'&&S.unit!=='all'?`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><b>${cap(MNAME[+S.month.slice(5,7)-1])} ${S.month.slice(0,4)}</b><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div>`:`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Ano anterior">‹</button><b>${S.year}</b><button class="arrow" data-nav="1" aria-label="Próximo ano">›</button></div>`;
+ return `<header class="hd"><div><p class="eyebrow">Conteúdo · Instagram</p><h1 class="display">Crescimento do Instagram</h1><p class="sub">Registre os números uma vez por semana e veja se cada conta está crescendo, parada ou caindo.</p></div><button class="btn-y" data-new>+ Registrar semana</button></header>
+ <div class="bar"><div class="seg" role="group" aria-label="Unidade">${tabs}</div>${S.unit!=='all'?`<div class="seg" role="group" aria-label="Período"><button data-view="month" aria-pressed="${S.view==='month'}">Mês</button><button data-view="year" aria-pressed="${S.view==='year'}">Ano</button></div>`:''}${nav}</div>`;
+}
+function lateBanner(){
+ const t=today(),out=[];
+ Object.entries(UN).forEach(([k,v])=>{if(S.unit!=='all'&&S.unit!==k)return;const rs=byUnit(k),last=rs[rs.length-1];if(!last)out.push(`${v.name}: nenhum registro ainda`);else{const d=daysBetween(last.ref_date,t);if(d>7)out.push(`${v.name}: último registro há ${d} dias (${dm(last.ref_date)})`)}});
+ return out.length?`<div class="late"><span>⏰ ${esc(out.join(' · '))}</span><button class="btn-g" data-new>Registrar agora</button></div>`:'';
+}
+function monthView(){
+ const rows=byUnit(S.unit),m=S.month,a=agg(rows,m),pa=agg(rows,addM(m,-1)),fd=followersDelta(rows,m),mrows=rows.filter(r=>mOf(r)===m);
+ let h='';
+ if(!a){h+=`<div class="panel"><div class="empty">Nenhum registro em ${MNAME[+m.slice(5,7)-1]} de ${m.slice(0,4)}. Use <b>+ Registrar semana</b> para começar.</div></div>`;return h}
+ const kpi=(l,v,sub)=>`<div class="kpi"><span class="l">${l}</span><b>${v}</b><small>${sub}</small></div>`;
+ h+=`<section class="kpis" aria-label="Resumo do mês">`+
+  kpi('Seguidores',num(a.followers),fd?deltaHTML(fd.d,fd.base)+`<br>${fd.since}`:'primeiro registro')+
+  kpi('Alcance por semana',num(a.reach==null?null:Math.round(a.reach)),pctHTML(pctChange(a.reach,pa?.reach))+`<br>média · soma ${num(a.sum_reach)}`)+
+  kpi('Engajamento',a.engagement==null?'—':dec1(a.engagement)+'%',ppHTML(a.engagement,pa?.engagement)+'<br>interações ÷ alcance')+
+  kpi('Visitas ao perfil por semana',num(a.profile_visits==null?null:Math.round(a.profile_visits)),pctHTML(pctChange(a.profile_visits,pa?.profile_visits))+`<br>média · soma ${num(a.sum_profile_visits)}`)+
+  kpi('Toques no link por semana',num(a.link_clicks==null?null:Math.round(a.link_clicks)),pctHTML(pctChange(a.link_clicks,pa?.link_clicks))+`<br>média · soma ${num(a.sum_link_clicks)}`)+
+  kpi('Publicações',num(a.sum_posts),`${num(a.sum_stories)} stories · ${a.n} registro${a.n===1?'':'s'} no mês`)+`</section>`;
+ h+=`<section class="panel"><div class="ph"><div><h2 class="display">${esc(metLabel(S.metric))} por semana</h2><p>${UN[S.unit].name} · ${cap(MNAME[+m.slice(5,7)-1])} de ${m.slice(0,4)}${rows.some(r=>r.ref_date<m+'-01')?' · começa no último registro do mês anterior':''}</p></div></div>${metChips()}<div class="chartbox" id="ch1"></div></section>`;
+ queueChart('ch1',()=>{
+  const k=S.metric,all=rows,start=[...rows].reverse().find(r=>r.ref_date<m+'-01'),pts=start?[start,...mrows]:mrows,ys=pts.map(r=>rowVal(r,k));
+  return {xs:pts.map(r=>dm(r.ref_date)),titles:pts.map(r=>'Medição de '+dmy(r.ref_date)),series:[{name:UN[S.unit].name,hex:UN[S.unit].hex,ys}],mode:k==='followers'?'tight':'zero',yFmt:yFmtFor(k),aria:`${metLabel(k)} por semana em ${UN[S.unit].name}`,
+   tipExtra:i=>{const r=pts[i];if(k!=='followers')return r.note||'';const idx=all.indexOf(r),p=all[idx-1];return (p?(r.followers-p.followers>=0?'+':'')+num(r.followers-p.followers)+' desde '+dm(p.ref_date):'primeiro registro')+(r.note?' · '+r.note:'')}};
+ });
+ h+=`<section class="panel"><div class="ph"><div><h2 class="display">Registros do mês</h2><p>Toque numa linha para corrigir os números.</p></div></div><div class="tw"><table><thead><tr><th>Medição</th><th>Seguidores</th><th>Variação</th><th>Alcance</th><th>Visualizações</th><th>Interações</th><th>Engaj.</th><th>Visitas</th><th>Cliques</th><th>Posts</th><th>Stories</th></tr></thead><tbody>`+
+  mrows.map(r=>{const i=rows.indexOf(r),p=rows[i-1];return `<tr data-id="${r.id}" tabindex="0"><td>${dmy(r.ref_date)}${r.note?' ✎':''}</td><td><b>${num(r.followers)}</b></td><td>${p?deltaHTML(r.followers-p.followers,p.followers):'<span class="d flat">—</span>'}</td><td>${num(r.reach)}</td><td>${num(r.views)}</td><td>${num(r.interactions)}</td><td>${fmtMet('engagement',rowVal(r,'engagement'))}</td><td>${num(r.profile_visits)}</td><td>${num(r.link_clicks)}</td><td>${num(r.posts)}</td><td>${num(r.stories)}</td></tr>`}).join('')+`</tbody></table></div><p class="note">Engajamento = interações ÷ contas alcançadas. Alcance, visualizações, interações, visitas e toques são dos últimos 7 dias de cada medição. Por isso os indicadores do mês usam a média por semana: assim um mês com menos registros (ou ainda em andamento) não parece pior do que outro completo.</p></section>`;
+ return h;
+}
+function yearSeries(rows,k,y){
+ return Array.from({length:12},(_,i)=>{const m=y+'-'+String(i+1).padStart(2,'0'),a=agg(rows,m);return a?(k==='followers'?a.followers:a[k]):null});
+}
+function yearView(){
+ const rows=byUnit(S.unit),y=String(S.year),ms=Array.from({length:12},(_,i)=>y+'-'+String(i+1).padStart(2,'0')),aggs=ms.map(m=>agg(rows,m));
+ if(!aggs.some(Boolean))return `<div class="panel"><div class="empty">Nenhum registro em ${y}.</div></div>`;
+ const yrs=rows.filter(r=>r.ref_date.startsWith(y)),endY=yrs[yrs.length-1],prevY=[...rows].reverse().find(r=>r.ref_date<y+'-01-01');
+ const base=prevY||yrs[0],grow=endY&&base&&endY!==base?endY.followers-base.followers:null;
+ const best=ms.map((m,i)=>({m,i,d:followersDelta(rows,m)})).filter(x=>x.d).sort((a,b)=>b.d.d-a.d.d)[0];
+ const sumK=k=>{const v=aggs.map(a=>a&&a[k]).filter(x=>x!=null);return v.length?v.reduce((p,q)=>p+q,0):null};
+ const eR=yrs.filter(r=>r.reach!=null&&r.interactions!=null),eng=eR.reduce((a,r)=>a+r.reach,0)>0?eR.reduce((a,r)=>a+r.interactions,0)/eR.reduce((a,r)=>a+r.reach,0)*100:null;
+ const kpi=(l,v,sub)=>`<div class="kpi"><span class="l">${l}</span><b>${v}</b><small>${sub}</small></div>`;
+ let h=`<section class="kpis" aria-label="Resumo do ano">`+
+  kpi('Seguidores',num(endY?.followers),`em ${endY?dmy(endY.ref_date):'—'}`)+
+  kpi('Crescimento no ano',grow==null?'—':(grow>0?'+':'')+num(grow),grow==null?'precisa de 2 registros':deltaHTML(grow,base.followers)+`<br>${prevY?'desde o fim do ano anterior':'desde o 1º registro do ano'}`)+
+  kpi('Melhor mês',best&&best.d.d>0?MAB[best.i]:'—',best&&best.d.d>0?deltaHTML(best.d.d,best.d.base):'sem ganho de seguidores')+
+  kpi('Engajamento médio',eng==null?'—':dec1(eng)+'%','interações ÷ alcance no ano')+
+  kpi('Publicações',num(sumK('sum_posts')),`${num(sumK('sum_stories'))} stories`)+`</section>`;
+ h+=`<section class="panel"><div class="ph"><div><h2 class="display">${esc(metLabel(S.metric))} em ${y}</h2><p>${UN[S.unit].name} · ${S.metric==='followers'?'seguidores no último registro de cada mês':S.metric==='engagement'?'interações ÷ alcance de cada mês':'média semanal de cada mês (justa mesmo com mês incompleto)'}</p></div></div>${metChips()}<div class="chartbox" id="ch1"></div></section>`;
+ queueChart('ch1',()=>{const k=S.metric,ys=yearSeries(rows,k,S.year);return {xs:MAB,titles:MNAME.map(n=>cap(n)+' de '+y),series:[{name:UN[S.unit].name,hex:UN[S.unit].hex,ys}],mode:k==='followers'?'tight':'zero',yFmt:yFmtFor(k),aria:`${metLabel(k)} mês a mês em ${y}, ${UN[S.unit].name}`,
+  tipExtra:i=>{if(k!=='followers')return aggs[i]?aggs[i].n+' medição(ões)':'';const d=followersDelta(rows,ms[i]);return d?(d.d>=0?'+':'')+num(d.d)+' '+d.since:''}}});
+ h+=`<section class="panel"><div class="ph"><div><h2 class="display">Mês a mês</h2><p>${esc(metLabel(S.metric))} · variação em relação ao mês anterior</p></div></div><div class="ym">`+ms.map((m,i)=>{const a=aggs[i],v=a?(S.metric==='followers'?a.followers:a[S.metric]):null,pa=i>0?aggs[i-1]:agg(rows,addM(m,-1)),pv=pa?(S.metric==='followers'?pa.followers:pa[S.metric]):null;
+  const d=v!=null&&pv!=null?v-pv:null;
+  return `<div><small>${MNAME[i]}</small><b>${fmtMet(S.metric,v)}</b>${d==null?'<span class="d flat">—</span>':S.metric==='engagement'?`<span class="d ${d>0?'up':d<0?'down':'flat'}">${d>0?'▲ +':d<0?'▼ ':'■ '}${dec1(d)} p.p.</span>`:deltaHTML(d,pv)}</div>`}).join('')+`</div></section>`;
+ return h;
+}
+function compareView(){
+ const y=String(S.year),ms=Array.from({length:12},(_,i)=>y+'-'+String(i+1).padStart(2,'0'));
+ const info=Object.entries(UN).map(([k,v])=>{const rows=byUnit(k),aggs=ms.map(m=>agg(rows,m)),f=aggs.map(a=>a&&a.followers);const prev=[...rows].reverse().find(r=>r.ref_date<y+'-01-01'),first=f.find(x=>x!=null),base=prev?prev.followers:first,last=[...f].reverse().find(x=>x!=null);
+  const lm=[...aggs].reverse().find(Boolean);return {k,v,rows,f,base,last,growthPct:base&&last!=null?(last/base-1)*100:null,grow:base&&last!=null?last-base:null,eng:lm?lm.engagement:null,lastM:lm}});
+ if(!info.some(i=>i.last!=null))return `<div class="panel"><div class="empty">Nenhum registro em ${y}.</div></div>`;
+ let h=`<section class="panel"><div class="ph"><div><h2 class="display">Crescimento de seguidores em ${y}</h2><p>Variação percentual desde ${info.some(i=>i.rows.some(r=>r.ref_date<y+'-01-01'))?'o fim do ano anterior':'o primeiro registro do ano'} — assim contas de tamanhos diferentes são comparáveis de forma justa.</p></div></div><div class="chartbox" id="ch1"></div><div class="legend">${info.map(i=>`<span><i style="border-color:${i.v.hex}"></i>${i.v.name}</span>`).join('')}</div></section>`;
+ queueChart('ch1',()=>({xs:MAB,titles:MNAME.map(n=>cap(n)+' de '+y),series:info.map(i=>({name:i.v.name,short:{cb:'C. Branca',te:'S. Tereza',ma:'Macedônia'}[i.k],hex:i.v.hex,ys:i.f.map(v=>v!=null&&i.base?(v/i.base-1)*100:null)})),mode:'pct',yFmt:(v,full)=>(v>0?'+':'')+dec1(v)+'%',aria:`Crescimento percentual de seguidores em ${y} nas três unidades`}));
+ h+=`<section class="panel"><div class="ph"><div><h2 class="display">Resumo por unidade</h2><p>${y}</p></div></div><div class="tw"><table style="min-width:560px"><thead><tr><th>Unidade</th><th>Seguidores</th><th>Ganho no ano</th><th>Crescimento</th><th>Engajamento (último mês)</th></tr></thead><tbody>`+info.map(i=>`<tr><td><i class="dot" style="display:inline-block;background:${i.v.c};margin-right:8px"></i>${i.v.name}</td><td><b>${num(i.last)}</b></td><td>${i.grow==null?'—':deltaHTML(i.grow,i.base)}</td><td>${i.growthPct==null?'—':`<span class="d ${i.growthPct>0?'up':i.growthPct<0?'down':'flat'}">${i.growthPct>0?'+':''}${dec1(i.growthPct)}%</span>`}</td><td>${i.eng==null?'—':dec1(i.eng)+'%'}</td></tr>`).join('')+`</tbody></table></div></section>`;
+ return h;
+}
+function render(){
+ charts=[];
+ const body=S.unit==='all'?compareView():S.view==='month'?monthView():yearView();
+ $('page').innerHTML=head()+lateBanner()+body;
+ paintCharts();
+}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(paintCharts,120)});
+
+/* ---------- registro ---------- */
+function fillForm(row,unit){
+ $('f_unit').innerHTML=Object.entries(UN).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+ $('f_unit').value=row?row.unit:unit;$('f_date').value=row?row.ref_date:today();
+ FIELDS.forEach(k=>$('f_'+k).value=row&&row[k]!=null?row[k]:'');$('f_note').value=row?row.note||'':'';
+ $('f_err').textContent='';$('f_del').hidden=!row;$('dlgTitle').textContent=row?'Corrigir registro':'Registrar semana';hint();
+}
+function hint(){const rs=byUnit($('f_unit').value),l=rs[rs.length-1];$('f_hint').textContent=l?`Último registro: ${num(l.followers)} em ${dm(l.ref_date)}`:'Total de seguidores do perfil hoje'}
+function openForm(id){
+ editing=id?ROWS.find(r=>r.id===id):null;fillForm(editing,S.unit==='all'?'cb':S.unit);$('dlg').showModal();$('dlg').scrollTop=0;setTimeout(()=>$('f_followers').focus(),30);
+}
+$('f_unit').addEventListener('change',hint);
+$('f_date').addEventListener('change',()=>{const r=ROWS.find(x=>x.unit===$('f_unit').value&&x.ref_date===$('f_date').value);if(r&&r!==editing){editing=r;FIELDS.forEach(k=>$('f_'+k).value=r[k]!=null?r[k]:'');$('f_note').value=r.note||'';$('f_del').hidden=false;$('dlgTitle').textContent='Corrigir registro';$('f_err').textContent='Já existe um registro nessa data: você está corrigindo ele.'}});
+const parseInt0=s=>{s=String(s).replace(/[.\s]/g,'').trim();if(s==='')return null;return /^\d{1,10}$/.test(s)?Number(s):NaN};
+$('form').addEventListener('submit',async e=>{
+ e.preventDefault();const err=m=>{$('f_err').textContent=m};
+ const unit=$('f_unit').value,date=$('f_date').value,p={unit,ref_date:date,note:$('f_note').value.trim().slice(0,200)};
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return err('Informe a data da medição.');
+ if(date>addDays(today(),1))return err('A data não pode estar no futuro.');
+ for(const k of FIELDS){const v=parseInt0($('f_'+k).value);if(Number.isNaN(v))return err('Use só números inteiros, sem letras.');p[k]=v}
+ if(p.followers==null)return err('Informe o total de seguidores.');
+ const rs=byUnit(unit).filter(r=>!editing||r.id!==editing.id),before=[...rs].reverse().find(r=>r.ref_date<date);
+ if(before&&before.followers>50&&Math.abs(p.followers-before.followers)/before.followers>.2&&!confirm(`Os seguidores mudaram mais de 20% desde ${dm(before.ref_date)} (${num(before.followers)} → ${num(p.followers)}). Está correto?`))return;
+ const btn=$('f_save');btn.disabled=true;
+ try{
+  if(editing&&(editing.unit!==unit||editing.ref_date!==date)){const d=await CTX.client.from('boha_ig_weekly').delete().eq('id',editing.id);if(d.error)throw d.error}
+  const {error}=await CTX.client.from('boha_ig_weekly').upsert(p,{onConflict:'unit,ref_date'});if(error)throw error;
+  $('dlg').close();S.unit=unit;S.month=date.slice(0,7);S.year=+date.slice(0,4);
+  await load();toast('Registro salvo.');
+ }catch{err('Não foi possível salvar. Confira os números e tente de novo.')}finally{btn.disabled=false}
+});
+function addDays(d,n){const t=new Date(Date.parse(d+'T12:00:00Z')+n*864e5);return t.toISOString().slice(0,10)}
+$('f_cancel').addEventListener('click',()=>$('dlg').close());
+$('f_del').addEventListener('click',async()=>{
+ if(!editing||!confirm(`Excluir o registro de ${dmy(editing.ref_date)} (${UN[editing.unit].name})?`))return;
+ const {error}=await CTX.client.from('boha_ig_weekly').delete().eq('id',editing.id);
+ if(error){$('f_err').textContent='Não foi possível excluir.';return}
+ $('dlg').close();await load();toast('Registro excluído.');
+});
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
+
+document.addEventListener('click',e=>{
+ const t=e.target;let b;
+ if(b=t.closest('[data-unit]')){S.unit=b.dataset.unit;render();return}
+ if(b=t.closest('[data-view]')){S.view=b.dataset.view;render();return}
+ if(b=t.closest('[data-metric]')){S.metric=b.dataset.metric;render();return}
+ if(b=t.closest('[data-nav]')){const n=+b.dataset.nav;if(S.view==='month'&&S.unit!=='all')S.month=addM(S.month,n);else S.year+=n;render();return}
+ if(t.closest('[data-new]')){openForm();return}
+ if(b=t.closest('tr[data-id]')){openForm(b.dataset.id);return}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('tr[data-id]')){e.preventDefault();openForm(e.target.dataset.id)}});
+
+async function load(){
+ const {data,error}=await CTX.client.from('boha_ig_weekly').select('id,unit,ref_date,followers,views,reach,interactions,profile_visits,link_clicks,posts,stories,note').order('ref_date',{ascending:true}).limit(3000);
+ if(error)throw error;ROWS=data||[];render();
+}
+window.bohaReload=()=>{if(!$('dlg').open)load().catch(()=>{})};
+(async()=>{
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#instagram" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if(CTX.canModule&&!CTX.canModule('instagram')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
+})();
+</script></body></html>
