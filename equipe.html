@@ -469,7 +469,7 @@ const MODULES=[
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
-let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas'],marketing:['marketing','mural','instagram','campanhas'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas'],marketing:['marketing','mural','instagram','campanhas','compras'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -667,7 +667,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261116l';
+const VERSION='20261118a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
