@@ -693,7 +693,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261126a';
+const VERSION='20261126b';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1032,7 +1032,7 @@ function renderAccess(){
  el('accList').innerHTML=people.length?people.map(r=>{
   const isMe=r.email===me,nm=label(r);
   const sub=r.confirmed?(r.last_sign_in?`Último acesso em ${dateBR(r.last_sign_in)}`:'Conta ativa'):r.has_account?'Criou a conta, falta confirmar pelo link do e-mail':'Ainda não criou a conta';
-  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<div class="acc-sel"><select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${SCOPED_ROLES.includes(r.role)?`<select data-unit-of="${esc(r.email)}" class="${r.unit?'':'nounit'}" aria-label="Unidade de ${esc(nm)}" title="${r.unit?'Só vê e edita dados desta unidade':'Sem unidade: não enxerga dados de nenhuma unidade'}">${unitOptions(r.unit,'Escolha a unidade')}</select>`:`<span class="nu" style="font-size:13px;color:var(--muted);align-self:center">${r.role==='admin'?'Todas as unidades':'Rede toda'}</span>`}</div>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
+  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<div class="acc-sel"><select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${r.role!=='admin'?`<select data-unit-of="${esc(r.email)}" class="${!r.unit&&SCOPED_ROLES.includes(r.role)?'nounit':''}" aria-label="Unidade de ${esc(nm)}" title="${r.unit?'Só vê e edita dados desta unidade':SCOPED_ROLES.includes(r.role)?'Sem unidade: não enxerga dados de nenhuma unidade':'Sem restrição: vê a rede toda'}">${unitOptions(r.unit,SCOPED_ROLES.includes(r.role)?'Escolha a unidade':'Rede toda')}</select>`:`<span class="nu" style="font-size:13px;color:var(--muted);align-self:center">Todas as unidades</span>`}</div>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
  }).join(''):'<p class="acc-empty">Ninguém com acesso ainda.</p>';
  el('accRequests').innerHTML=reqs.length?`<div class="acc-card req"><div class="acc-top"><h2 class="display">Pediram acesso</h2><span>Criaram conta, mas ainda não foram liberados</span></div>${reqs.map(r=>{const nm=label(r);return `<div class="acc-row req-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}</b><span>${esc(r.email)}</span><small>Conta criada em ${dateBR(r.created_at)}</small></div><div class="acc-actions"><button type="button" class="btn-y" data-act="prefill" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Liberar</button></div></div>`}).join('')}</div>`:'';
 }
@@ -1043,11 +1043,11 @@ async function loadAccess(){
 }
 function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=r?`${r[1]}: ${r[2]}.`:''}
 el('accRole').innerHTML=roleOptions('gerente');el('accUnit').innerHTML=unitOptions('','Escolha…');
-function syncAccUnit(){const sc=SCOPED_ROLES.includes(el('accRole').value);el('accUnitWrap').hidden=!sc;el('accUnit').required=sc;if(!sc)el('accUnit').value=''}
+function syncAccUnit(){const role=el('accRole').value,sc=SCOPED_ROLES.includes(role),cur=el('accUnit').value;el('accUnitWrap').hidden=role==='admin';el('accUnit').required=sc;el('accUnit').innerHTML=unitOptions(cur,sc?'Escolha…':'Rede toda (sem restrição)');if(role==='admin')el('accUnit').value=''}
 el('accRole').onchange=()=>{roleHint();syncAccUnit()};roleHint();syncAccUnit();
 el('accForm').onsubmit=async e=>{
  e.preventDefault();
- const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unit=SCOPED_ROLES.includes(role)?el('accUnit').value:'';
+ const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unit=role==='admin'?'':el('accUnit').value;
  if(SCOPED_ROLES.includes(role)&&!unit){toast('Escolha a unidade desta pessoa.');el('accUnit').focus();return}
  if(accData.some(r=>r.role&&r.email===email)&&!confirm(`${email} já tem acesso. Atualizar nome e perfil?`))return;
  el('accSubmit').disabled=true;
@@ -1079,14 +1079,14 @@ el('accessView').addEventListener('change',async e=>{
  if(u){const r=accData.find(x=>x.email===u.dataset.unitOf);if(!r)return;const prev=r.unit||'';u.disabled=true;
   const {error}=await client.rpc('boha_access_set_unit',{p_email:r.email,p_unit:u.value||null});u.disabled=false;
   if(error){toast(error.message||'Não foi possível alterar a unidade.');u.value=prev;return}
-  r.unit=u.value||null;u.classList.toggle('nounit',!r.unit);toast(r.unit?`${r.name||r.email} agora só vê dados de ${UNIT_NAMES[r.unit]}.`:`${r.name||r.email} está sem unidade e não vê dados de nenhuma.`);return}
+  r.unit=u.value||null;u.classList.toggle('nounit',!r.unit&&SCOPED_ROLES.includes(r.role));toast(r.unit?`${r.name||r.email} agora só vê dados de ${UNIT_NAMES[r.unit]}.`:SCOPED_ROLES.includes(r.role)?`${r.name||r.email} está sem unidade e não vê dados de nenhuma.`:`${r.name||r.email} agora vê a rede toda.`);return}
  const s=e.target.closest('select[data-role]');if(!s)return;
  const r=accData.find(x=>x.email===s.dataset.role);if(!r)return;
  const prev=r.role;s.disabled=true;
  const {error}=await client.rpc('boha_access_save',{p_email:r.email,p_name:'',p_role:s.value,p_unit:r.unit||null});
  s.disabled=false;
  if(error){toast(error.message||'Não foi possível alterar o perfil.');s.value=prev;return}
- r.role=s.value;if(!SCOPED_ROLES.includes(s.value))r.unit=null;renderAccess();toast(`Perfil de ${r.name||r.email} agora é ${ROLE_LABEL[s.value]}.`+(SCOPED_ROLES.includes(s.value)&&!r.unit?' Escolha a unidade dela.':''));
+ r.role=s.value;if(s.value==='admin')r.unit=null;renderAccess();toast(`Perfil de ${r.name||r.email} agora é ${ROLE_LABEL[s.value]}.`+(SCOPED_ROLES.includes(s.value)&&!r.unit?' Escolha a unidade dela.':''));
 });
 el('back2').onclick=goHome;
 el('logout3').onclick=logout;
