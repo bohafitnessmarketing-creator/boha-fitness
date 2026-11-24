@@ -48,7 +48,7 @@ button{font:inherit;cursor:pointer}
 .today{display:flex;align-items:center;gap:10px;margin:0;color:var(--muted);font-size:15px}
 .today .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(61,220,132,.14)}
 
-.role-switch{display:flex;align-items:center;gap:12px;margin-top:26px;animation:fadeUp .6s var(--ease) .1s backwards}.role-switch>span{flex:none;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.role-switch .seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}.role-switch .seg::-webkit-scrollbar{display:none}.role-switch .seg button{padding:7px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;background:none;border:0;cursor:pointer;transition:background .2s,color .2s}.role-switch .seg button:hover{color:var(--text)}.role-switch .seg button[aria-pressed="true"]{background:var(--y);color:#111}.role-switch .seg button:focus-visible{outline:2px solid var(--y);outline-offset:2px}.role-switch+.row-head{margin-top:24px}@media(max-width:700px){.role-switch{flex-direction:column;align-items:flex-start;gap:8px}.role-switch .seg{width:100%}}
+.role-switch{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:26px;animation:fadeUp .6s var(--ease) .1s backwards}.role-switch>span{flex:none;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.role-switch .seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}.role-switch .seg::-webkit-scrollbar{display:none}.role-switch .seg button{padding:7px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;background:none;border:0;cursor:pointer;transition:background .2s,color .2s}.role-switch .seg button:hover{color:var(--text)}.role-switch .seg button[aria-pressed="true"]{background:var(--y);color:#111}.role-switch .seg button:focus-visible{outline:2px solid var(--y);outline-offset:2px}.role-switch+.row-head{margin-top:24px}@media(max-width:700px){.role-switch{flex-direction:column;align-items:flex-start;gap:8px}.role-switch .seg{width:100%}}
 .row-head{display:flex;justify-content:space-between;align-items:baseline;margin:44px 0 14px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .row-head b{color:var(--text)}
 .rh-right{display:flex;align-items:center;gap:14px}
@@ -400,7 +400,7 @@ window.bohaAPI=async function(path,options={}){
  try{
  const method=(options.method||'GET').toUpperCase();
  if(path==='/api/employees'&&method==='GET'){
- const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return reply(data||[]);
+ const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return reply((data||[]).filter(e=>allowedUnits().includes(e.unit)));
  }
  if(path==='/api/state'&&method==='GET'){
  const {data,error}=await client.from('boha_members').select('id,data');if(error)throw error;
@@ -496,7 +496,8 @@ const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','
 let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina'],recepcao:['hierarquia','checklist','manuais','rotina'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
 const UNIT_NAMES={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},SCOPED_ROLES=['gerente','recepcao'];
-const myUnit=()=>previewRole?null:(profile?.unit||null);
+let previewUnit='cb';
+const myUnit=()=>previewRole?(SCOPED_ROLES.includes(previewRole)?previewUnit:null):(profile?.unit||null);
 const allowedUnits=()=>myUnit()?[myUnit()]:Object.keys(UNIT_NAMES);
 const unitOptions=(sel,blank)=>(blank?`<option value="">${blank}</option>`:'')+Object.entries(UNIT_NAMES).map(([k,v])=>`<option value="${k}" ${k===sel?'selected':''}>${v}</option>`).join('');
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
@@ -691,7 +692,7 @@ function renderRoleSwitch(){
  const box=el('roleSwitch');if(!box)return;
  if(profile?.role!=='admin'){box.hidden=true;box.innerHTML='';return}
  const hadFocus=box.contains(document.activeElement),cur=effectiveRole(),order=['admin','gerente','dono','marketing','recepcao'];
- box.innerHTML=`<span>Ver como</span><div class="seg">${order.map(k=>`<button type="button" data-preview="${k}" aria-pressed="${cur===k}">${k==='admin'?'Administrador':ROLE_LABEL[k]}</button>`).join('')}</div>`;
+ box.innerHTML=`<span>Ver como</span><div class="seg">${order.map(k=>`<button type="button" data-preview="${k}" aria-pressed="${cur===k}">${k==='admin'?'Administrador':ROLE_LABEL[k]}</button>`).join('')}</div>${SCOPED_ROLES.includes(cur)?`<span>Unidade</span><div class="seg" role="group" aria-label="Unidade da prévia">${Object.entries(UNIT_NAMES).map(([k,v])=>`<button type="button" data-preview-unit="${k}" aria-pressed="${previewUnit===k}">${v}</button>`).join('')}</div>`:''}`;
  box.hidden=false;
  if(hadFocus)box.querySelector('[aria-pressed="true"]')?.focus();
 }
@@ -762,7 +763,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261126b';
+const VERSION='20261127a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -773,7 +774,7 @@ async function loadEvoStats(){
   const closed=[...new Set(data.filter(r=>r.status==='fechado').map(r=>r.period))].sort(),ref=closed[closed.length-1];if(!ref)return;
   const prev=(+ref.slice(0,4)-1)+ref.slice(4),get=(u,p)=>{const r=data.find(x=>x.unit===u&&x.period===p);return r&&typeof r.data.a==='number'?r.data.a:null};
   const mes=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][+ref.slice(5)-1];
-  stats.evo={label:mes+'/'+ref.slice(0,4),units:[[1,'Casa Branca'],[2,'Santa Tereza'],[3,'Macedônia']].map(([u,name])=>{const cur=get(u,ref),pv=get(u,prev);return {name,cur,prev:pv,pct:cur!=null&&pv?(cur/pv-1)*100:null}}).filter(u=>u.cur!=null)};
+  stats.evo={label:mes+'/'+ref.slice(0,4),units:[[1,'Casa Branca'],[2,'Santa Tereza'],[3,'Macedônia']].filter(([u])=>allowedUnits().includes(({1:'cb',2:'te',3:'ma'})[u])).map(([u,name])=>{const cur=get(u,ref),pv=get(u,prev);return {name,cur,prev:pv,pct:cur!=null&&pv?(cur/pv-1)*100:null}}).filter(u=>u.cur!=null)};
   refreshMeta('resultados');
  }catch{}
 }
@@ -835,8 +836,9 @@ async function loadMuralStats(){
 async function loadReqStats(){
  if(!profile)return;
  try{
-  const {data,error}=await client.from('boha_requests').select('title,unit,area,priority,created_at').neq('status','concluido').limit(1000);
+  let {data,error}=await client.from('boha_requests').select('title,unit,area,priority,created_at').neq('status','concluido').limit(1000);
   if(error||!Array.isArray(data))return;
+  data=data.filter(x=>allowedUnits().includes(x.unit));
   const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},ord={urgente:0,alta:1,media:2,baixa:3};
   const top=[...data].sort((a,b)=>ord[a.priority]-ord[b.priority]||a.created_at.localeCompare(b.created_at)).slice(0,4).map(x=>({title:x.title,unit:UN[x.unit]||x.unit,area:x.area,priority:x.priority}));
   stats.req={open:data.length,urgent:data.filter(x=>x.priority==='urgente').length,top};refreshMeta('compras');
@@ -984,12 +986,30 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return data||[]}};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>allowedUnits().includes(e.unit))}};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
-function setPreview(role){if(profile?.role!=='admin'||!ROLES.some(r=>r[0]===role))return;previewRole=role==='admin'?null:role;closeProfileMenu();closePanel();history.replaceState(null,'',location.pathname+location.search);currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();el('userRole').textContent=previewRole?'Prévia: '+ROLE_LABEL[previewRole]:ROLE_LABEL[profile.role];const flag=el('previewFlag');flag.hidden=!previewRole;flag.innerHTML=previewRole?`<span>Prévia: ${ROLE_LABEL[previewRole]}</span><button type="button" data-preview="admin">Sair da prévia</button>`:'';renderModules();route();updateBell()}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]');if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
+function setPreview(role,unit){
+ if(profile?.role!=='admin'||!ROLES.some(r=>r[0]===role))return;
+ if(unit&&UNIT_NAMES[unit])previewUnit=unit;
+ previewRole=role==='admin'?null:role;
+ const label=previewRole?ROLE_LABEL[previewRole]+(SCOPED_ROLES.includes(previewRole)?' · '+UNIT_NAMES[previewUnit]:''):'';
+ closeProfileMenu();closePanel();history.replaceState(null,'',location.pathname+location.search);currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();
+ el('userRole').textContent=previewRole?'Prévia: '+label:ROLE_LABEL[profile.role];
+ const flag=el('previewFlag');flag.hidden=!previewRole;
+ flag.innerHTML=previewRole?`<span>Prévia: ${label}</span>${SCOPED_ROLES.includes(previewRole)?Object.entries(UNIT_NAMES).map(([k,v])=>`<button type="button" data-preview-unit="${k}" aria-pressed="${previewUnit===k}" style="${previewUnit===k?'background:#111;color:#fff000':''}">${v}</button>`).join(''):''}<button type="button" data-preview="admin">Sair da prévia</button>`:'';
+ cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};renderModules();route();updateBell();loadStats();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]'),pu=e.target.closest('[data-preview-unit]');if(pu&&previewRole){setPreview(previewRole,pu.dataset.previewUnit);return}if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
+// Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
+function lockHierarchy(html){
+ const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return html;
+ let out=html.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
+  .replace("view='rede',selected=null","view='"+u+"',selected=null")
+  .replace("return [['rede','Visão da rede',null],...Object.entries(units)","return [...Object.entries(units)");
+ return out;
+}
 function openModule(m){
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
  location.hash=m.key;
@@ -1014,7 +1034,7 @@ async function route(){
  }
  if(currentView!==key)return;
  el('moduleTitle').textContent=m.title;
- setFrame({html});
+ setFrame({html:lockHierarchy(html)});
  el('hub').hidden=true;el('workspace').hidden=false;window.scrollTo(0,0);
 }
 function enterHub(me,session){
