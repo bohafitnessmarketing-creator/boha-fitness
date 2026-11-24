@@ -81,6 +81,28 @@ dialog{width:min(600px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media (max-width:760px){.page{padding:16px 16px 70px}.nav{margin-left:0;width:100%;justify-content:space-between}.cols3{grid-template-columns:1fr}.fstage{grid-template-columns:1fr;gap:4px}.fconv{margin-left:0}.fside{display:flex;gap:10px;align-items:baseline}.kpi b{font-size:26px}.task select,.task input[type=date]{max-width:100px}.task{flex-wrap:wrap}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* planejamento */
+.radars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:14px}
+.radar{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:14px;padding:13px 15px;display:grid;gap:5px;text-align:left;transition:border-color .2s}.radar:hover{border-color:#555;border-left-color:var(--c)}
+.radar .rl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.radar .rt{font-size:14px;color:#dcdcdc}.radar .rs{font-size:12.5px;font-weight:700}.radar .rs.ok{color:var(--good)}.radar .rs.no{color:var(--warn)}
+.lvp{display:inline-block;font-size:12px;font-weight:800;border-radius:99px;padding:4px 12px;color:#111;background:var(--c)}
+.therm{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;align-items:end}
+.tb{display:grid;gap:5px;justify-items:center;padding:6px 0 4px;border-radius:10px;border:1px solid transparent;text-align:center}.tb:hover{background:#1b1b1b}.tb.sel{border-color:var(--y);background:rgba(255,240,0,.06)}
+.tb .v{font-size:12.5px;font-weight:800}.tb.sel .v{color:var(--y)}.tb .b{display:flex;align-items:flex-end;height:130px;width:70%;max-width:44px;background:#1a1a1a;border-radius:8px;overflow:hidden}.tb .b i{display:block;width:100%;border-radius:8px 8px 0 0}
+.tb .mn{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.tb.now .mn{color:var(--y);font-weight:800}
+.tb .cd,.legend .dot{width:9px;height:9px;border-radius:50%;border:2px solid #555;display:block;background:transparent}.tb .cd.has,.legend .dot.has{background:var(--good);border-color:var(--good)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12px;color:var(--muted)}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:3px;display:block}.legend i.dot{border-radius:50%}
+.phases{display:flex;gap:4px;margin-top:14px}.ph1{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}.ph1 b{display:block;font-size:12px;line-height:1.25}.ph1 small{color:var(--muted);font-size:11px}.ph1.on{border-color:var(--y);background:rgba(255,240,0,.06)}
+.now{font-family:Inter,sans-serif;font-size:11px;font-weight:800;letter-spacing:.06em;color:#111;background:var(--y);border-radius:99px;padding:3px 9px;vertical-align:middle}
+.ind{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px}.ind div{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 12px}.ind small{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.ind b{font-size:16px}
+.pc p{margin:4px 0 0;font-size:14px}.prio{margin-top:14px}.prio .t{display:block;margin-bottom:6px}
+.campbox{margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line2);border-radius:14px;padding:14px 16px;background:var(--panel2)}.campbox .cn{display:block;font-size:19px;margin:4px 0 2px}.campbox small{color:var(--muted);font-size:12.5px}
+.msg{margin:12px 0 0;color:var(--muted);font-size:12.5px}.msg b{color:var(--text)}
+.plform{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.plform label{display:grid;gap:5px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tw{overflow-x:auto;margin-top:14px}.plt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}.plt th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}.plt td{padding:7px 8px;border-bottom:1px solid var(--line)}.plt td.n{text-align:right;font-variant-numeric:tabular-nums}.plt th:nth-child(n+2):not(:last-child){text-align:right}.plt td.pb{min-width:120px}.plt td.pb small{color:var(--muted);font-size:11px}.plt tr.sel td{background:rgba(255,240,0,.05)}
+.sugbox{border:1px dashed rgba(255,240,0,.5);border-radius:12px;padding:12px 14px;margin:0 auto 14px;max-width:560px;text-align:left;background:rgba(255,240,0,.04)}.sugbox b{display:block;font-size:18px;color:var(--text);margin:2px 0}.sugbox small{color:var(--muted)}
+@media (max-width:760px){.therm{gap:3px}.tb .b{height:96px;width:78%}.tb .v{font-size:11px}.phases{flex-wrap:wrap}.ph1{flex:1 1 45%!important}.ind{grid-template-columns:1fr}.plform{grid-template-columns:1fr}}
 </style></head><body>
 <div class="page" id="page"><div class="state">Carregando…</div></div>
 
@@ -151,10 +173,25 @@ const parseMoney=s=>{s=String(s).replace(/[R$\s]/g,'').trim();if(s==='')return n
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
 const LOCKU=()=>(CTX&&CTX.profile&&CTX.profile.unit)||null;
-let CAMPS=[],TASKS=[],FUN=[],IDEAS=[],PEOPLE=[],S={tab:'mes',month:curMonth(),unit:'all',metric:'sales',ifilter:'open'},editC=null,editF=null,editI=null,ideaForC=null;
+let CAMPS=[],TASKS=[],FUN=[],IDEAS=[],PEOPLE=[],S={tab:'plano',pm:curMonth(),year:+curMonth().slice(0,4),month:curMonth(),unit:'all',metric:'sales',ifilter:'open'},editC=null,editF=null,editI=null,ideaForC=null;
 const personName=id=>PEOPLE.find(p=>p.id===id)?.name||'';
 const campOf=m=>CAMPS.find(c=>c.month.slice(0,7)===m);
 const funOf=(m,unit='all')=>FUN.filter(r=>r.ref_date.slice(0,7)===m&&(unit==='all'||r.unit===unit));
+/* ---------- termômetro sazonal (referência de mercado, não dados da Boha) ---------- */
+const LV={alta:['Alta temporada','#3ddc84'],fav:['Favorável','#b3e65c'],trans:['Transição','#ffd23d'],baixa:['Baixa','#ff9f2e'],crit:['Crítico','#ff5a4f']};
+const PLAN=[{"s": 90, "lv": "Muito forte", "c": "alta", "v": "Muito alto", "f": "Média", "e": "Médio", "camp": "Seu ano começa aqui", "obj": "Captação", "mode": "aq", "pros": "Motivação elevada, procura por emagrecimento, musculação e qualidade de vida.", "cons": "Férias, despesas de início de ano e alunos com motivações passageiras.", "strat": "Captar iniciantes, vender planos anuais e acompanhar de perto os primeiros 30 dias de treino."}, {"s": 70, "lv": "Bom", "c": "fav", "v": "Alto", "f": "Alta", "e": "Médio", "camp": "Volte ao ritmo", "obj": "Reativação", "mode": "re", "pros": "Continuidade das metas de Ano Novo.", "cons": "O Carnaval interrompe a rotina e iniciantes desistem.", "strat": "Campanha de pós-Carnaval e recuperação dos leads de janeiro."}, {"s": 85, "lv": "Muito forte", "c": "alta", "v": "Muito alto", "f": "Alta", "e": "Baixo", "camp": "Supere o sedentarismo", "obj": "Captação", "mode": "aq", "pros": "Retorno às atividades e rotina mais estável depois das férias e do Carnaval.", "cons": "Perda do entusiasmo inicial de Ano Novo.", "strat": "Campanha contra o sedentarismo, apresentação da estrutura e acompanhamento profissional."}, {"s": 75, "lv": "Bom", "c": "fav", "v": "Alto", "f": "Alta", "e": "Baixo", "camp": "Boha em movimento", "obj": "Autoridade e captação", "mode": "aq", "pros": "Dia Mundial da Atividade Física e Dia Mundial da Saúde.", "cons": "Redução gradual do apelo do verão.", "strat": "Semana da atividade física, aulões, avaliações e conteúdos educativos."}, {"s": 55, "lv": "Regular", "c": "trans", "v": "Médio", "f": "Média", "e": "Médio", "camp": "Não perca o ritmo", "obj": "Prevenção de evasão", "mode": "re", "pros": "Ainda há tempo para prevenir cancelamentos.", "cons": "As temperaturas caem e há menos urgência para começar a treinar.", "strat": "Identificar alunos ausentes e antecipar as campanhas de inverno."}, {"s": 35, "lv": "Fraco", "c": "baixa", "v": "Baixo", "f": "Baixa", "e": "Alto", "camp": "Desafio de inverno", "obj": "Retenção", "mode": "re", "pros": "Boas oportunidades para campanhas internas e aulas coletivas.", "cons": "Menor frequência, desmotivação e dificuldade de captação.", "strat": "Desafio de inverno, campanhas de indicação e contato com alunos ausentes."}, {"s": 25, "lv": "Crítico", "c": "crit", "v": "Muito baixo", "f": "Baixa", "e": "Muito alto", "camp": "Sua evolução não tira férias", "obj": "Retenção e renovação", "mode": "re", "pros": "Dá para trabalhar públicos com horários mais flexíveis durante as férias.", "cons": "Frio, viagens, férias escolares e queda na frequência.", "strat": "Priorizar retenção, reativação de ex-alunos, renovação e migração para planos anuais."}, {"s": 60, "lv": "Retomada", "c": "trans", "v": "Médio", "f": "Em recuperação", "e": "Médio", "camp": "A preparação começa agora", "obj": "Reativação", "mode": "re", "pros": "Volta à rotina e aproximação da primavera.", "cons": "Parte do mês ainda tem temperaturas baixas.", "strat": "Aquecer o Projeto Verão {Y+1} e recuperar os alunos perdidos no inverno."}, {"s": 100, "lv": "Excelente", "c": "alta", "v": "Muito alto", "f": "Alta", "e": "Baixo", "camp": "Projeto Verão {Y+1}", "obj": "Captação intensiva", "mode": "aq", "pros": "Proximidade do verão, volta do calor e recuperação da motivação. É a prioridade comercial número 1 do ano.", "cons": "Aumento da concorrência entre academias.", "strat": "Lançamento oficial do Projeto Verão {Y+1}, investimento em captação e valorização dos professores."}, {"s": 95, "lv": "Excelente", "c": "alta", "v": "Muito alto", "f": "Muito alta", "e": "Médio", "camp": "Seu próximo nível", "obj": "Captação intensiva", "mode": "aq", "pros": "Forte apelo comercial e procura por musculação com o verão chegando.", "cons": "Expectativas pouco realistas de resultados rápidos.", "strat": "Campanhas de transformação de hábitos, estrutura, diferenciais e acompanhamento profissional."}, {"s": 80, "lv": "Forte", "c": "fav", "v": "Alto", "f": "Alta", "e": "Médio", "camp": "Black Boha", "obj": "Conversão comercial", "mode": "aq", "pros": "Proximidade do verão, Black Friday e primeira parcela do 13º para muitos trabalhadores.", "cons": "Concorrência com outros segmentos do varejo.", "strat": "Black Boha, conversão de leads antigos e venda de planos anuais."}, {"s": 30, "lv": "Crítico", "c": "crit", "v": "Baixo", "f": "Muito baixa", "e": "Alto", "camp": "Não espere janeiro", "obj": "Pré-venda e renovação", "mode": "re", "pros": "Dá para antecipar as vendas de janeiro.", "cons": "Natal, Réveillon, viagens e gastos extras.", "strat": "Pré-venda de janeiro, renovação de contratos e manutenção da base ativa."}];
+const PHASES=[[1,4,'Crescimento e aquisição'],[5,7,'Proteção da base e retenção'],[8,8,'Preparação para a alta temporada'],[9,11,'Aceleração comercial'],[12,12,'Proteção da receita e antecipação de janeiro']];
+const WEIGHTS=[11,8,10,9,7,5,5,7,12,12,9,5],QSHARE=[30,20,22,28];
+const MODES={aq:['Aquisição de novos alunos','Campanhas de conversão','Apresentação da estrutura','Captação de leads','Venda de planos','Expansão da base'],re:['Retenção de alunos ativos','Reativação de ex-alunos','Fortalecimento da comunidade','Recuperação de leads antigos','Renovação de contratos','Proteção do faturamento']};
+const pOf=m=>PLAN[+m.slice(5,7)-1];
+const phaseOf=mo=>PHASES.find(x=>mo>=x[0]&&mo<=x[1]);
+const fillY=(t,m)=>String(t).replace(/\{Y\+1\}/g,String(+m.slice(0,4)+1));
+let PLANS=[];const planOf=y=>PLANS.find(x=>x.year===y)||null;
+function sugFor(m){
+ const P=pOf(m),pl=planOf(+m.slice(0,4)),mo=+m.slice(5,7),q=Math.floor((mo-1)/3);
+ return {name:fillY(P.camp,m),objective:(P.obj+'. '+fillY(P.strat,m)).slice(0,400),goal:pl&&pl.annual_goal?Math.round(pl.annual_goal*WEIGHTS[mo-1]/100):null,budget:pl&&pl.annual_budget!=null?Math.round(Number(pl.annual_budget)*QSHARE[q]/100/3):null};
+}
+
 
 /* ---------- cálculos do funil ---------- */
 function fagg(rows){
@@ -195,20 +232,57 @@ let charts=[];
 
 /* ---------- telas ---------- */
 function head(){
- const tabs=[['mes','Campanha do mês'],['funil','Funil de vendas'],['ideias','Ideias'],['balanco','Balanço']];
- const nav=(S.tab==='mes'||S.tab==='funil')?`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><b>${mLabel(S.month)}</b><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div>`:'';
- return `<header class="hd"><div><p class="eyebrow">Marketing · acompanhamento</p><h1 class="display">Campanhas</h1><p class="sub">Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu certo.</p></div></header>
+ const tabs=[['plano','Planejamento'],['mes','Campanha do mês'],['funil','Funil de vendas'],['ideias','Ideias'],['balanco','Balanço']];
+ const nav=S.tab==='plano'?`<div class="nav"><button class="arrow" data-ynav="-1" aria-label="Ano anterior">‹</button><b>${S.year}</b><button class="arrow" data-ynav="1" aria-label="Próximo ano">›</button></div>`:(S.tab==='mes'||S.tab==='funil')?`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><b>${mLabel(S.month)}</b><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div>`:'';
+ return `<header class="hd"><div><p class="eyebrow">Marketing · acompanhamento</p><h1 class="display">Campanhas</h1><p class="sub">Veja o que priorizar em cada mês, planeje a campanha, acompanhe o funil e aprenda com o que deu certo.</p></div></header>
  <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${nav}</div>`;
 }
 const STATUS={planning:'Planejando',running:'No ar',done:'Encerrada'};
 function monthDates(m){const mo=+m.slice(5,7);return DATES.filter(d=>d[0]===mo)}
 function datesHTML(m){const ds=monthDates(m);return ds.length?`<div class="dates">${ds.map(d=>`<div class="date"><small>${esc(d[1])}</small><b>${esc(d[2])}</b><span>${esc(d[3])}</span></div>`).join('')}</div>`:''}
 
+
+/* ---------- aba Planejamento ---------- */
+const lvPill=P=>`<span class="lvp" style="--c:${LV[P.c][1]}">${esc(P.lv)} · ${P.s}/100</span>`;
+function radarCard(m,label){
+ const P=pOf(m),c=campOf(m),ph=phaseOf(+m.slice(5,7));
+ return `<button type="button" class="radar" data-pm="${m}" style="--c:${LV[P.c][1]}"><span class="rl">${label} · ${esc(mLabel(m))}</span><b>${lvPill(P)}</b><span class="rt">${esc(P.obj)}</span><span class="rs ${c?'ok':'no'}">${c?'✓ Campanha: '+esc(c.name):'Falta planejar a campanha'}</span></button>`;
+}
+function tabPlano(){
+ const cm=curMonth(),y=S.year,mm=S.pm.slice(5,7),sel=y+'-'+mm,P=pOf(sel),mo=+mm,c=campOf(sel),ph=phaseOf(mo),pl=planOf(y),sug=sugFor(sel);
+ const bars=PLAN.map((p,i)=>{const m=y+'-'+String(i+1).padStart(2,'0');return `<button type="button" class="tb ${m===sel?'sel':''} ${m===cm?'now':''}" data-pm="${m}" aria-pressed="${m===sel}" aria-label="${cap(MNAME[i])}: ${p.lv}, ${p.s} de 100"><span class="v">${p.s}</span><span class="b"><i style="height:${p.s}%;background:${LV[p.c][1]}"></i></span><span class="mn">${MAB[i]}</span><span class="cd ${campOf(m)?'has':''}" title="${campOf(m)?'Campanha planejada':'Sem campanha'}"></span></button>`}).join('');
+ const phases=PHASES.map(x=>`<div class="ph1 ${mo>=x[0]&&mo<=x[1]?'on':''}" style="flex:${x[1]-x[0]+1}"><b>${esc(x[2])}</b><small>${x[0]===x[1]?MAB[x[0]-1]:MAB[x[0]-1]+' a '+MAB[x[1]-1]}</small></div>`).join('');
+ const goalM=sug.goal,real=fagg(funOf(sel)).sales,budM=sug.budget;
+ const det=`<section class="panel" style="border-top:3px solid ${LV[P.c][1]}"><div class="ph"><div><h2 class="display" style="font-size:34px">${esc(cap(MNAME[mo-1]))} ${y}${sel===cm?' <span class="now">agora</span>':''}</h2><p>${lvPill(P)} <span class="chip">Fase: ${esc(ph[2])}</span> <span class="chip">Foco: ${esc(P.obj)}</span></p></div></div>
+ <div class="ind"><div><small>Potencial de vendas</small><b>${esc(P.v)}</b></div><div><small>Frequência esperada</small><b>${esc(P.f)}</b></div><div><small>Risco de evasão</small><b>${esc(P.e)}</b></div></div>
+ <div class="cols3 pc"><div><div class="t" style="color:var(--good)">Aproveite</div><p>${esc(P.pros)}</p></div><div><div class="t" style="color:var(--warn)">Cuidado</div><p>${esc(P.cons)}</p></div><div><div class="t">Estratégia Boha</div><p>${esc(fillY(P.strat,sel))}</p></div></div>
+ <div class="prio"><span class="t">Neste mês o marketing deve priorizar</span><div class="chips">${MODES[P.mode].map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div></div>
+ <div class="campbox">${c?`<div><span class="pill ${c.status}">${STATUS[c.status]}</span><b class="cn">${esc(c.name)}</b><small>${[c.goal_sales!=null?'meta '+num(c.goal_sales)+' matrículas':'',c.budget!=null?'verba '+brl0(c.budget):''].filter(Boolean).join(' · ')||'Abra para definir metas e plano de ação.'}</small></div><button class="btn-y" data-gocamp="${sel}">Abrir campanha</button>`
+  :`<div><span class="t">Sugestão da Boha</span><b class="cn">${esc(sug.name)}</b><small>${esc(P.obj)}${goalM!=null?' · meta '+num(goalM)+' contratos':''}${budM!=null?' · verba '+brl0(budM):''}</small></div><button class="btn-y" data-sug="${sel}">Planejar com a sugestão</button>`}</div>
+ ${!LOCKU()&&goalM!=null?`<p class="msg">Meta do mês pelo termômetro: <b>${num(goalM)}</b> contratos${sel<=cm?` · feito até agora: <b>${num(real)}</b> (${pct(goalM?real/goalM*100:null)})`:''}.</p>`:''}</section>`;
+ // números do ano (só quem enxerga a rede toda)
+ let nums='';
+ if(!LOCKU()){
+  const g=pl?.annual_goal,bd=pl?.annual_budget!=null?Number(pl.annual_budget):null;
+  const rows=PLAN.map((p,i)=>{const m=y+'-'+String(i+1).padStart(2,'0'),meta=g?Math.round(g*WEIGHTS[i]/100):null,r=m<=cm?fagg(funOf(m)).sales:null,pc=meta&&r!=null?r/meta*100:null;return `<tr class="${m===sel?'sel':''}"><td>${cap(MNAME[i])}</td><td class="n">${WEIGHTS[i]}%</td><td class="n">${meta!=null?num(meta):'—'}</td><td class="n">${r!=null&&m<=cm?num(r):'—'}</td><td class="pb">${pc!=null?`<div class="prog"><i class="${pc>=100?'ok':''}" style="width:${Math.min(100,pc)}%;${pc<70&&m<cm?'background:var(--bad)':''}"></i></div><small>${Math.round(pc)}%</small>`:''}</td></tr>`}).join('');
+  const qs=QSHARE.map((q,i)=>{const sp=[0,1,2].reduce((a,k)=>{const f=fagg(funOf(y+'-'+String(i*3+k+1).padStart(2,'0')));return a+(f.spend||0)},0);return `<div class="goal"><span class="l">${i+1}º trimestre · ${q}%</span><b>${bd!=null?brl0(bd*q/100):'—'}</b><small>investido: ${sp?brl0(sp):'—'}</small></div>`}).join('');
+  nums=`<section class="panel"><div class="ph"><div><h2 class="display">Metas e verba de ${y}</h2><p>Informe a meta anual da rede e a verba. A Boha distribui pelos meses de acordo com a sazonalidade.</p></div></div>
+  <form class="plform" id="planform" autocomplete="off"><label>Meta de contratos no ano<input class="inp" id="pl_goal" inputmode="numeric" value="${g!=null?g:''}" placeholder="Ex.: 6000"></label><label>Verba anual de marketing (R$)<input class="inp" id="pl_budget" inputmode="decimal" value="${bd!=null?String(bd).replace('.',','):''}" placeholder="Ex.: 120.000"></label><button class="btn-y">Salvar</button></form>
+  ${g?`<div class="tw"><table class="plt"><thead><tr><th>Mês</th><th>Peso</th><th>Meta</th><th>Feito</th><th>Andamento</th></tr></thead><tbody>${rows}</tbody></table></div><div class="addrow" style="margin-top:10px"><button class="btn-g" data-copygoals>Copiar metas mensais</button><button class="btn-g" data-applygoals>Aplicar nas campanhas do ano</button></div><p class="msg">O peso dos meses é uma hipótese inicial (setembro e outubro pesam mais que julho e dezembro), não vendas comprovadas. Ajuste a meta anual e acompanhe o "Feito" para calibrar.</p>`:'<p class="msg">Preencha a meta anual para ver quanto vender em cada mês.</p>'}
+  ${bd!=null?`<div class="kpis">${qs}</div><p class="msg">Não pare o tráfego pago nos meses fracos: troque o objetivo (retenção, reativação, renovação). Revise a distribuição conforme custo por aquisição e conversão de cada unidade.</p>`:''}</section>`;
+ }
+ const note=`<details class="orient"><summary>Como ler este termômetro</summary><div class="ob"><p>As notas de 0 a 100 são uma <b>escala estratégica estimada</b> a partir de pesquisas de mercado (Censo Fitness, estudos de Santa Catarina e Londrina, Exame, Wodify e outros), pensando em musculação e aulas coletivas na Grande São Paulo. <b>Não são vendas reais da Boha.</b></p><p>Vendas não são frequência: um mês pode vender muito e ter pouca gente treinando. Por isso cada mês traz também frequência esperada e risco de evasão. Julho é o ponto de maior divergência entre os estudos.</p><p>A grande oportunidade é perder menos alunos nos meses ruins: quem atravessa julho com a base preservada chega a setembro pronto para o pico. O próximo passo é calibrar com os números reais das três unidades (vendas, cancelamentos, churn e frequência) para ter o termômetro da Boha.</p></div></details>`;
+ return `<div class="radars">${radarCard(cm,'Este mês')}${radarCard(addM(cm,1),'Mês que vem')}</div>
+ <section class="panel"><div class="ph"><div><h2 class="display">Termômetro do ano</h2><p>Potencial comercial estimado de cada mês. Toque num mês para ver o que fazer.</p></div></div><div class="therm" role="group" aria-label="Termômetro anual">${bars}</div>
+ <div class="legend">${Object.values(LV).map(([l,col])=>`<span><i style="background:${col}"></i>${l}</span>`).join('')}<span><i class="dot has"></i>Campanha criada</span><span><i class="dot"></i>Sem campanha</span></div><div class="phases">${phases}</div></section>
+ ${det}${nums}<section class="panel" style="padding:6px 18px">${note}</section>`;
+}
+
 function tabMes(){
  const m=S.month,c=campOf(m),f=fagg(funOf(m));
  if(!c){
   const sug=IDEAS.filter(i=>i.status==='open'&&(!i.month_hint||i.month_hint===+m.slice(5,7))).slice(0,3);
-  return `<section class="panel"><div class="empty" style="padding:26px 10px"><p style="margin:0 0 4px;font-size:17px;color:var(--text)">Ainda não há campanha para ${mLabel(m)}.</p><p style="margin:0 0 14px">Defina tema, oferta e metas para o time saber o que está vendendo no mês.</p><button class="btn-y" data-newc>Planejar campanha de ${MNAME[+m.slice(5,7)-1]}</button></div></section>
+  return `<section class="panel"><div class="empty" style="padding:26px 10px"><p style="margin:0 0 4px;font-size:17px;color:var(--text)">Ainda não há campanha para ${mLabel(m)}.</p><p style="margin:0 0 14px">Defina tema, oferta e metas para o time saber o que está vendendo no mês.</p><div class="sugbox"><small>Sugestão da Boha para ${MNAME[+m.slice(5,7)-1]} · mês ${esc(pOf(m).lv.toLowerCase())}</small><b>${esc(sugFor(m).name)}</b><small>${esc(pOf(m).obj)}</small></div><button class="btn-y" data-sug="${m}">Planejar com a sugestão</button> <button class="btn-g" data-newc>Começar em branco</button></div></section>
   ${sug.length?`<section class="panel"><div class="ph"><div><h2 class="display">Ideias guardadas que combinam</h2><p>Toque em "Planejar" para transformar em campanha deste mês.</p></div></div><div class="igrid">${sug.map(ideaCard).join('')}</div></section>`:''}
   ${monthDates(m).length?`<section class="panel"><div class="ph"><div><h2 class="display">Datas para inspirar em ${MNAME[+m.slice(5,7)-1]}</h2><p>Ganchos que costumam funcionar para academia.</p></div></div>${datesHTML(m)}</section>`:''}`;
  }
@@ -276,18 +350,42 @@ function tabBalanco(){
 let queueBal=null;
 function render(){
  let body='';queueBal=null;
- body=S.tab==='mes'?tabMes():S.tab==='funil'?tabFunil():S.tab==='ideias'?tabIdeias():tabBalanco();
+ body=S.tab==='plano'?tabPlano():S.tab==='mes'?tabMes():S.tab==='funil'?tabFunil():S.tab==='ideias'?tabIdeias():tabBalanco();
  $('page').innerHTML=head()+body;
  if(queueBal&&$('bch'))drawChart($('bch'),queueBal());
 }
 let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(queueBal&&$('bch'))drawChart($('bch'),queueBal())},120)});
+
+/* ---------- planejamento: salvar, copiar e aplicar metas ---------- */
+document.addEventListener('submit',async e=>{
+ if(e.target.id!=='planform')return;e.preventDefault();
+ const g=$('pl_goal').value.trim()===''?null:parseInt0($('pl_goal').value),bd=parseMoney($('pl_budget').value);
+ if(Number.isNaN(g)||Number.isNaN(bd)){toast('Confira os números. Use só dígitos, como 6000 e 120.000.');return}
+ const row={year:S.year,annual_goal:g,annual_budget:bd};
+ const {data,error}=await CTX.client.from('boha_campaign_plan').upsert(row,{onConflict:'year'}).select().single();
+ if(error){toast('Não foi possível salvar. Seu perfil pode não ter permissão.');return}
+ PLANS=PLANS.filter(x=>x.year!==S.year);PLANS.push(data||row);render();toast('Meta e verba salvas.');
+});
+async function copyGoals(){
+ const g=planOf(S.year)?.annual_goal;if(!g)return;
+ const txt=PLAN.map((p,i)=>cap(MNAME[i])+': '+Math.round(g*WEIGHTS[i]/100)).join('\n');
+ try{await navigator.clipboard.writeText(txt);toast('Metas mensais copiadas.')}catch{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Metas mensais copiadas.')}catch{toast('Não deu para copiar.')}ta.remove()}
+}
+async function applyGoals(){
+ const pl=planOf(S.year);if(!pl||!pl.annual_goal)return;
+ const list=CAMPS.filter(c=>c.month.startsWith(String(S.year)));
+ if(!list.length){toast('Ainda não há campanhas criadas em '+S.year+'.');return}
+ if(!confirm(`Aplicar a meta sazonal de matrículas em ${list.length} campanha${list.length===1?'':'s'} de ${S.year}? Isso substitui a meta de matrículas que já estiver nelas.`))return;
+ let n=0;for(const c of list){const mo=+c.month.slice(5,7),g=Math.round(pl.annual_goal*WEIGHTS[mo-1]/100);const {data,error}=await CTX.client.from('boha_campaigns').update({goal_sales:g}).eq('id',c.id).select().single();if(!error){CAMPS=CAMPS.map(x=>x.id===c.id?data:x);n++}}
+ render();toast(`Meta aplicada em ${n} campanha${n===1?'':'s'}.`);
+}
 
 /* ---------- campanha: formulário ---------- */
 function monthOptions(sel,disabledExisting,keep){
  const cm=curMonth(),ms=Array.from({length:14},(_,i)=>addM(cm,i-2));if(keep&&!ms.includes(keep))ms.unshift(keep);
  return ms.map(m=>`<option value="${m}" ${m===sel?'selected':''}>${mLabel(m)}${disabledExisting&&campOf(m)&&m!==keep?' (já tem campanha)':''}</option>`).join('');
 }
-function openCamp(c,month,idea){
+function openCamp(c,month,idea,sug){
  editC=c||null;ideaForC=idea||null;$('cTitle').textContent=c?'Editar campanha':'Planejar campanha';
  const m=c?c.month.slice(0,7):(month||S.month);
  $('c_month').innerHTML=monthOptions(m,true,c?m:null);$('c_month').disabled=!!c;
@@ -295,6 +393,7 @@ function openCamp(c,month,idea){
  $('c_channels').innerHTML=CHANNELS.map(x=>`<label><input type="checkbox" value="${esc(x)}" ${c?.channels?.includes(x)?'checked':''}>${esc(x)}</label>`).join('');
  $('c_start').value=c?.start_date||'';$('c_end').value=c?.end_date||'';$('c_gleads').value=c?.goal_leads??'';$('c_gsales').value=c?.goal_sales??'';$('c_budget').value=c?.budget!=null?String(c.budget).replace('.',','):'';
  $('c_owner').innerHTML='<option value="">Ninguém definido</option>'+PEOPLE.map(p=>`<option value="${esc(p.id)}">${esc(p.name)} · ${esc(p.unit_label||'')}</option>`).join('');$('c_owner').value=c?.owner_id||'';
+ if(sug&&!c){$('c_name').value=sug.name;$('c_objective').value=sug.objective;if(sug.goal!=null)$('c_gsales').value=sug.goal;if(sug.budget!=null)$('c_budget').value=String(sug.budget).replace('.',',')}
  $('c_link').value=c?.link||idea?.link||'';$('c_notes').value=c?.notes||'';$('c_err').textContent='';$('c_del').hidden=!c;$('cdlg').showModal();$('cdlg').scrollTop=0;setTimeout(()=>$('c_name').focus(),30);
 }
 $('cform').addEventListener('submit',async e=>{
@@ -391,6 +490,12 @@ document.addEventListener('click',async e=>{
  const t=e.target;let b;
  if(b=t.closest('[data-close]')){$(b.dataset.close).close();return}
  if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
+ if(b=t.closest('[data-pm]')){S.pm=b.dataset.pm;S.year=+b.dataset.pm.slice(0,4);render();return}
+ if(b=t.closest('[data-ynav]')){S.year+=+b.dataset.ynav;S.pm=S.year+'-'+S.pm.slice(5,7);render();return}
+ if(b=t.closest('[data-sug]')){const m=b.dataset.sug;S.month=m;openCamp(null,m,null,sugFor(m));return}
+ if(b=t.closest('[data-gocamp]')){S.tab='mes';S.month=b.dataset.gocamp;render();return}
+ if(t.closest('[data-copygoals]')){copyGoals();return}
+ if(t.closest('[data-applygoals]')){applyGoals();return}
  if(b=t.closest('[data-nav]')){S.month=addM(S.month,+b.dataset.nav);render();return}
  if(b=t.closest('[data-funit]')){S.unit=b.dataset.funit;render();return}
  if(b=t.closest('[data-bmet]')){S.metric=b.dataset.bmet;render();return}
@@ -418,7 +523,8 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 ['cdlg','fdlg','idlg'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close()}));
 
 async function load(){
- const c=CTX.client,[a,b,d,e,p]=await Promise.all([c.from('boha_campaigns').select('*').order('month'),c.from('boha_campaign_tasks').select('*').order('sort'),c.from('boha_funnel_entries').select('*').order('ref_date').limit(3000),c.from('boha_campaign_ideas').select('*').order('created_at',{ascending:false}).limit(500),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([])]);
+ const c=CTX.client,[a,b,d,e,p,pln]=await Promise.all([c.from('boha_campaigns').select('*').order('month'),c.from('boha_campaign_tasks').select('*').order('sort'),c.from('boha_funnel_entries').select('*').order('ref_date').limit(3000),c.from('boha_campaign_ideas').select('*').order('created_at',{ascending:false}).limit(500),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([]),c.from('boha_campaign_plan').select('*')]);
+ PLANS=pln&&!pln.error?(pln.data||[]):[];
  if(a.error)throw a.error;CAMPS=a.data||[];TASKS=b.error?[]:(b.data||[]);FUN=d.error?[]:(d.data||[]);IDEAS=e.error?[]:(e.data||[]);PEOPLE=p||[];render();
 }
 window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch(()=>{})};

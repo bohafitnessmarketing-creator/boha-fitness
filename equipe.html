@@ -474,8 +474,8 @@ const MODULES=[
   desc:'Gere artes da Boha com o logo e a identidade visual: você escreve o texto e o objetivo, a IA cria o fundo.',
   features:['Formatos 9:16, 4:3 e 16:9','Logo e fonte da marca aplicados automaticamente','Texto exatamente como você escreveu','Histórico guardado por 30 dias · 5 artes por dia']},
  {key:'campanhas',status:'live',src:'sistema/campanhas.html',icon:'camp',tag:'Marketing',title:'Campanhas',visual:'camp',
-  desc:'Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu resultado.',
-  features:['Campanha do mês com oferta, metas e plano de ação','Funil: lead, experimental, comparecimento e matrícula','Banco de ideias e datas para inspirar','Balanço mês a mês: o que mais trouxe matrículas']},
+  desc:'Veja o que priorizar em cada mês, planeje a campanha, acompanhe o funil de vendas e aprenda com o que deu resultado.',
+  features:['Termômetro do ano: melhores e piores meses para vender','Sugestão de campanha, meta e verba para cada mês','Campanha do mês com plano de ação e funil de vendas','Banco de ideias e balanço mês a mês']},
  {key:'instagram',status:'live',src:'sistema/instagram.html',icon:'insta',tag:'Conteúdo',title:'Crescimento do Instagram',visual:'insta',
   desc:'Os números semanais do Instagram de cada unidade, com gráficos de crescimento por mês e por ano.',
   features:['Registro semanal: seguidores, alcance, interações e mais','Gráfico do mês e gráfico do ano, com alta e queda','Compare as 3 unidades de forma justa (crescimento %)','Aviso quando uma unidade está sem registro há mais de 7 dias']},
@@ -780,7 +780,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261201a';
+const VERSION='20261204a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
