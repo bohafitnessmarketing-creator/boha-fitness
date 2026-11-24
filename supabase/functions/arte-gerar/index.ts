@@ -41,7 +41,7 @@ ${SKILL}
 TAREFA
 Você recebe TEXTO DO POST, OBJETIVO, UNIDADE e FORMATO. Responda SOMENTE o JSON do esquema.
 - headline, support e cta: distribua EXATAMENTE o texto do usuário. Não acrescente, troque, corrija, traduza nem remova nenhuma palavra, número, preço ou data. Você só separa o texto nas três partes, mantendo a ordem.
-  headline = a ideia principal, curta (ideal até 7 palavras). support = informação de apoio (pode ser vazia). cta = chamada para ação SOMENTE se o texto do usuário já trouxer uma (senão vazia).
+  headline = a ideia principal, curta (ideal até 7 palavras; se o texto tiver mais de uma frase, a primeira vira o título e o restante vai para o apoio). support = informação de apoio (pode ser vazia). cta = chamada para ação SOMENTE se o texto do usuário já trouxer uma (senão vazia).
 - highlight: de 1 a 3 palavras CONSECUTIVAS da headline, copiadas exatamente, para destacar em amarelo; ou vazio.
 - zone: onde o texto ficará sobre a imagem ("bottom", "top" ou "center"), pensando na composição.
 - image_prompt: em inglês, descreva SOMENTE a imagem de fundo (a arte final terá logo e texto colocados depois, por cima). Regras do image_prompt:
@@ -87,6 +87,24 @@ async function openai(path: string, body: unknown, key: string, ms: number) {
   return data;
 }
 
+// Usa o modelo mais novo primeiro; se ele sumir ou falhar por motivo de modelo, tenta o próximo da lista.
+// Os nomes podem ser trocados sem mexer no código pelos Secrets OPENAI_TEXT_MODEL e OPENAI_IMAGE_MODEL (lista separada por vírgula).
+const chain = (env: string | undefined, def: string[]) =>
+  (env ? env.split(',').map((x) => x.trim()).filter(Boolean) : []).concat(def).filter((m, i, a) => a.indexOf(m) === i);
+async function firstThatWorks<T>(models: string[], run: (m: string) => Promise<T>): Promise<{ out: T; model: string }> {
+  let last: (Error & { status?: number }) | null = null;
+  for (const m of models) {
+    try { return { out: await run(m), model: m }; } catch (e) {
+      const err = e as Error & { status?: number };
+      last = err;
+      const safety = /safety|policy|moderation/i.test(err.message || '');
+      const retry = !safety && (err.status === 404 || err.status === 403 || (err.status ?? 0) >= 500 || err.name === 'TimeoutError' || (err.status === 400 && /model/i.test(err.message || '')));
+      if (!retry) throw err;
+    }
+  }
+  throw last ?? new Error('Nenhum modelo disponível.');
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   if (req.method !== 'POST') return json({ error: 'Método não permitido.' }, 405);
@@ -125,8 +143,8 @@ Deno.serve(async (req) => {
 
   const key = Deno.env.get('OPENAI_API_KEY');
   if (!key) return json({ error: 'A chave da OpenAI ainda não foi configurada no servidor. Peça ao administrador.' }, 503);
-  const textModel = Deno.env.get('OPENAI_TEXT_MODEL') || 'gpt-4.1-mini';
-  const imageModel = Deno.env.get('OPENAI_IMAGE_MODEL') || 'gpt-image-2';
+  const textModels = chain(Deno.env.get('OPENAI_TEXT_MODEL'), ['gpt-5.6-sol', 'gpt-5.5', 'gpt-4.1-mini']);
+  const imageModels = chain(Deno.env.get('OPENAI_IMAGE_MODEL'), ['gpt-image-2.6-flare', 'gpt-image-2.6-sunburst', 'gpt-image-2']);
   const quality = Deno.env.get('OPENAI_IMAGE_QUALITY') || 'medium';
 
   // Limpeza de artes vencidas (30 dias): arquivos e linhas. Melhor esforço.
@@ -149,28 +167,27 @@ Deno.serve(async (req) => {
   try {
     const F = FORMATS[format];
     const unitName = unit ? UNITS[unit] : 'rede (as três unidades)';
-    const dir = await openai('/v1/chat/completions', {
-      model: textModel,
-      temperature: 0.7,
+    const { out: dir, model: usedText } = await firstThatWorks(textModels, (model) => openai('/v1/chat/completions', {
+      model,
       response_format: { type: 'json_schema', json_schema: SCHEMA },
       messages: [
         { role: 'system', content: SYSTEM },
         { role: 'user', content: `TEXTO DO POST:\n${text}\n\nOBJETIVO: ${objective}\nUNIDADE: ${unitName}\nFORMATO: ${F.label} (${F.orient})` },
       ],
-    }, key, 60000);
+    }, key, 60000));
     let layout: Record<string, string>;
     try { layout = JSON.parse(dir.choices[0].message.content); } catch { throw new Error('Resposta da direção de arte veio em formato inesperado.'); }
 
     const prompt = `${layout.image_prompt}\n\nStrict rules: background artwork only, no text, no letters, no numbers, no logos, no watermarks anywhere in the image. Keep the ${layout.zone} area of the frame dark, calm and uncluttered, and keep the top-left corner free of faces and key details. ${F.orient} composition. Premium dark sports look, black/graphite base with sparing yellow (#FFF000) accents.`;
-    const img = await openai('/v1/images/generations', {
-      model: imageModel, prompt, size: F.size, quality, n: 1, output_format: 'jpeg', output_compression: 88,
-    }, key, 120000);
+    const { out: img, model: usedImage } = await firstThatWorks(imageModels, (model) => openai('/v1/images/generations', {
+      model, prompt, size: F.size, quality, n: 1, output_format: 'jpeg', output_compression: 88,
+    }, key, 120000));
     const b64 = img?.data?.[0]?.b64_json;
     if (!b64) throw new Error('A imagem não veio na resposta.');
 
     const { data: row, error: he } = await admin.from('boha_art_history').insert({
       created_by: email, created_by_name: acc.name || null, unit, format, objective,
-      input_text: text, direction: layout,
+      input_text: text, direction: { ...layout, _models: { text: usedText, image: usedImage } },
     }).select('id').single();
     if (he || !row) throw new Error('Não foi possível registrar no histórico.');
 
