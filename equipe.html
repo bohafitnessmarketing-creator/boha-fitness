@@ -461,9 +461,9 @@ const MODULES=[
  {key:'escalas',status:'live',src:'sistema/escalas.html',icon:'sched',tag:'Equipe',title:'Escalas',visual:'esc',
   desc:'Quem trabalha em cada turno, a escala da semana por unidade, as horas e a cobertura.',
   features:['Escala semanal por unidade, com horas por pessoa','Quem está hoje em cada turno','Cobertura de manhã, tarde e noite','Copiar a semana anterior e imprimir']},
- {key:'rotina',status:'live',src:'sistema/rotina.html',icon:'rot',tag:'Operação',title:'Rotina',visual:'rot',
-  desc:'O checklist do dia da recepção, da abertura ao fechamento, e o painel do gerente acompanhando em tempo real.',
-  features:['A recepção marca cada tarefa conforme faz','Painel do gerente: o que foi feito, quem fez e o que atrasou','% cumprido nos últimos 7 e 30 dias','Cada unidade vê só a própria rotina']},
+ {key:'rotina',status:'live',src:'sistema/rotina.html',icon:'rot',tag:'Operação',title:'Rotina da recepção',visual:'rot',
+  desc:'O checklist completo da recepção, em 6 blocos, e o painel do gerente por recepcionista.',
+  features:['Toda recepcionista criada já recebe o checklist','6 blocos: da abertura à passagem de turno','Painel do gerente: progresso de cada pessoa em tempo real','Cada unidade vê só a própria recepção']},
  {key:'campanhas',status:'live',src:'sistema/campanhas.html',icon:'camp',tag:'Marketing',title:'Campanhas',visual:'camp',
   desc:'Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu resultado.',
   features:['Campanha do mês com oferta, metas e plano de ação','Funil: lead, experimental, comparecimento e matrícula','Banco de ideias e datas para inspirar','Balanço mês a mês: o que mais trouxe matrículas']},
@@ -620,8 +620,9 @@ const VISUALS={
  },
  rot(){
   const k=stats.rot;
-  if(!k)return '<div class="vz-head"><span>Rotina de hoje</span><b>carregando…</b></div>';
-  return `<div class="vz-head"><span>Rotina de hoje</span><b>${k.tot?k.done+' de '+k.tot:'sem rotina'}</b></div>`+k.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.tot?u.done+' de '+u.tot+' tarefas':'sem tarefas hoje'}</span></div><span style="display:flex;gap:8px;align-items:center;min-width:104px"><span style="flex:1;height:7px;background:#222;border-radius:9px;overflow:hidden"><i style="display:block;height:100%;width:${u.tot?u.done/u.tot*100:0}%;background:${u.tot&&u.done===u.tot?'#3ddc84':'#fff000'}"></i></span><b style="font-size:12.5px;min-width:34px;text-align:right">${u.tot?Math.round(u.done/u.tot*100)+'%':'—'}</b></span></div>`).join('');
+  if(!k)return '<div class="vz-head"><span>Rotina da recepção</span><b>carregando…</b></div>';
+  const self=k.mode==='self';
+  return `<div class="vz-head"><span>${self?'Seu checklist de hoje':'Recepção hoje'}</span><b>${self?(k.tot?k.done+' de '+k.tot:'sem checklist'):(k.people?k.people+' pessoa'+(k.people===1?'':'s'):'sem recepção')}</b></div>`+k.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${self?(u.tot?u.done+' de '+u.tot+' tarefas':'sem tarefas hoje'):(u.people?u.people+' recepcionista'+(u.people===1?'':'s'):'ninguém com acesso')}</span></div><span style="display:flex;gap:8px;align-items:center;min-width:104px"><span style="flex:1;height:7px;background:#222;border-radius:9px;overflow:hidden"><i style="display:block;height:100%;width:${u.pct||0}%;background:${u.pct>=100?'#3ddc84':'#fff000'}"></i></span><b style="font-size:12.5px;min-width:34px;text-align:right">${u.pct==null?'—':Math.round(u.pct)+'%'}</b></span></div>`).join('');
  },
  camp(){
   const k=stats.camp;
@@ -734,7 +735,7 @@ function metaText(m){
  if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
  if(m.key==='compras'){const r=stats.req;if(!r)return 'Abrir módulo';return r.open?`${r.open} em aberto`+(r.urgent?` · ${r.urgent} urgente${r.urgent===1?'':'s'}`:''):'Nada em aberto'}
  if(m.key==='escalas'){const k=stats.esc;if(!k)return 'Abrir módulo';return k.working?`${k.working} ${k.working===1?'pessoa escalada':'pessoas escaladas'} hoje`:'Ninguém escalado hoje'}
- if(m.key==='rotina'){const k=stats.rot;if(!k)return 'Abrir módulo';return k.tot?`${k.done} de ${k.tot} tarefas feitas hoje`:'Sem rotina cadastrada para hoje'}
+ if(m.key==='rotina'){const k=stats.rot;if(!k)return 'Abrir módulo';if(!k.tot)return 'Sem checklist cadastrado para hoje';if(k.mode==='self')return `${k.done} de ${k.tot} tarefas feitas hoje`;return k.people?`${k.people} recepcionista${k.people===1?'':'s'} · média ${Math.round(k.pct||0)}% hoje`:'Nenhuma recepcionista com acesso'}
  if(m.key==='campanhas'){const k=stats.camp;if(!k)return 'Abrir módulo';return k.name?`${k.sales} matrícula${k.sales===1?'':'s'}${k.goalSales?' de '+k.goalSales:''} · ${k.tasksTotal?k.tasksDone+'/'+k.tasksTotal+' ações':'sem plano'}`:'Sem campanha em '+k.label}
  if(m.key==='instagram'){const k=stats.insta;if(!k)return 'Abrir módulo';return k.late.length?`Falta registrar: ${k.late.join(', ')}`:'Em dia nas 3 unidades'}
  if(m.key==='mural'){const k=stats.mural;if(!k)return 'Abrir módulo';return k.n?`${k.n} de 8 folhas em ${k.label}`:`${k.label}: sem fotos ainda`}
@@ -763,7 +764,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261127a';
+const VERSION='20261128a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -792,11 +793,17 @@ async function loadEscStats(){
 async function loadRotStats(){
  if(!profile||!canModule('rotina'))return;
  try{
-  const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date()),dow=new Date(today+'T12:00:00Z').getUTCDay();
-  const [ro,ch]=await Promise.all([client.from('boha_routines').select('id,unit,weekdays,active').limit(1000),client.from('boha_routine_checks').select('routine_id,unit').eq('check_date',today)]);
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date()),dow=new Date(today+'T12:00:00Z').getUTCDay(),recep=effectiveRole()==='recepcao',me=String(profile.email||'').toLowerCase();
+  const [ro,ch,tm]=await Promise.all([client.from('boha_routines').select('id,unit,weekdays,active').limit(2000),client.from('boha_routine_checks').select('routine_id,unit,done_by').eq('check_date',today).limit(5000),recep?Promise.resolve({data:[]}):client.rpc('boha_reception_team')]);
   if(ro.error||ch.error||!Array.isArray(ro.data)||!Array.isArray(ch.data))return;
-  const units=allowedUnits().map(k=>[k,UNIT_NAMES[k]]).map(([k,name])=>{const ap=ro.data.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow)));return {name,tot:ap.length,done:ap.filter(r=>ch.data.some(c=>c.routine_id===r.id&&c.unit===k)).length}});
-  stats.rot={units,tot:units.reduce((a,u)=>a+u.tot,0),done:units.reduce((a,u)=>a+u.done,0)};refreshMeta('rotina');
+  const team=Array.isArray(tm.data)?tm.data:[];
+  const units=allowedUnits().map(k=>{
+   const ap=ro.data.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow))),ids=new Set(ap.map(r=>r.id));
+   if(recep){const done=ap.filter(r=>ch.data.some(c=>c.routine_id===r.id&&c.done_by===me)).length;return {name:UNIT_NAMES[k],tot:ap.length,done,people:1,pct:ap.length?done/ap.length*100:null}}
+   const ps=team.filter(x=>x.unit===k),pc=ps.map(x=>ap.length?ch.data.filter(c=>c.done_by===String(x.email).toLowerCase()&&ids.has(c.routine_id)).length/ap.length*100:0);
+   return {name:UNIT_NAMES[k],tot:ap.length,people:ps.length,pct:ps.length&&ap.length?pc.reduce((a,b)=>a+b,0)/ps.length:null};
+  });
+  stats.rot={mode:recep?'self':'team',units,tot:units.reduce((a,u)=>a+u.tot,0),done:units.reduce((a,u)=>a+(u.done||0),0),people:units.reduce((a,u)=>a+u.people,0),pct:(()=>{const v=units.filter(u=>u.pct!=null);return v.length?v.reduce((a,u)=>a+u.pct,0)/v.length:null})()};refreshMeta('rotina');
  }catch{}
 }
 async function loadCampStats(){
