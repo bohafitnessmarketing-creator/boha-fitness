@@ -290,7 +290,7 @@ a.ghost{text-decoration:none;display:inline-flex;align-items:center}
 
 @media (max-width:1020px){.hub-grid{grid-template-columns:1fr}.preview{display:none}}
 @media (hover:none) and (pointer:coarse){html:not(.has-mouse) .hub-grid{grid-template-columns:1fr}html:not(.has-mouse) .preview{display:none}html:not(.has-mouse) .card-features{display:block}}
-.pv-pop{position:fixed;z-index:15;width:min(380px,calc(100vw - 24px));max-height:calc(100vh - 20px);overflow:hidden;background:linear-gradient(180deg,#161616,#0f0f0f);border:1px solid var(--line2);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.65);pointer-events:none}
+.pv-pop{position:fixed;z-index:15;pointer-events:none;width:min(380px,calc(100vw - 24px));max-height:calc(100vh - 20px);overflow:hidden;background:linear-gradient(180deg,#161616,#0f0f0f);border:1px solid var(--line2);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.65);pointer-events:none}
 .pv-pop[hidden]{display:none}
 @media (hover:none) and (pointer:coarse){html:not(.has-mouse) .hub-grid{grid-template-columns:1fr}}
 html.mtile .hub-grid{grid-template-columns:1fr}
@@ -713,6 +713,7 @@ function updateMode(){
 function sideVisible(){const p=el('preview');return !!p&&p.offsetParent!==null&&getComputedStyle(p).display!=='none'}
 function hidePop(){const p=el('pvPop');if(p)p.hidden=true}
 function showPop(m,card){
+ if(el('hub').hidden||!card||!card.isConnected||card.offsetParent===null)return;
  let pop=el('pvPop');if(!pop){pop=document.createElement('div');pop.id='pvPop';pop.className='pv-pop';pop.setAttribute('aria-hidden','true');document.body.appendChild(pop)}
  let html;try{html=previewHTML(m)}catch{html=fallbackPreview(m)}
  pop.innerHTML=html;pop.hidden=false;
@@ -723,7 +724,7 @@ function showPop(m,card){
  pop.style.left=Math.round(left)+'px';pop.style.top=Math.round(top)+'px';
 }
 function showPreview(m,card){
- if(isReordering())return;
+ if(isReordering()||el('hub').hidden)return;
  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('is-active',c.dataset.key===m.key));
  const coarse=window.matchMedia('(hover:none) and (pointer:coarse)').matches&&!document.documentElement.classList.contains('has-mouse');
  if(!sideVisible()){if(!coarse){const c=card||document.querySelector(`.card[data-key="${m.key}"]`);if(c)showPop(m,c)}return}
@@ -733,6 +734,14 @@ function showPreview(m,card){
  activeKey=m.key;el('preview').innerHTML=html;
 }
 
+// Rede de segurança: a prévia flutuante nunca fica presa por cima das telas.
+document.addEventListener('mouseover',e=>{const p=el('pvPop');if(p&&!p.hidden&&!e.target.closest('.card')&&!e.target.closest('#pvPop'))hidePop()});
+window.addEventListener('scroll',hidePop,{passive:true});
+window.addEventListener('blur',hidePop);
+window.addEventListener('hashchange',hidePop);
+window.addEventListener('pagehide',hidePop);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hidePop()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hidePop()});
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
 function renderRoleSwitch(){
  const box=el('roleSwitch');if(!box)return;
@@ -1100,19 +1109,24 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-me
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 // Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
 function lockHierarchy(html){
- const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return html;
- let out=html.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
+ // Gerente com unidade pode editar a Hierarquia da própria unidade (o banco também só aceita a unidade dele).
+ let out=html.replace("canEdit=ROLE==='admin'||ROLE==='editor'","MYU=(()=>{try{return window.parent.bohaCtx.profile.unit||null}catch{return null}})(),canEdit=ROLE==='admin'||ROLE==='editor'||(ROLE==='gerente'&&!!MYU)")
+  .replace("const tools=editing&&canEdit?","const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?");
+ const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return out;
+ out=out.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
   .replace("view='rede',selected=null","view='"+u+"',selected=null")
   .replace("return [['rede','Visão da rede',null],...Object.entries(units)","return [...Object.entries(units)");
  return out;
 }
 function openModule(m){
+ hidePop();
  if(m.status!=='live'){toast(`${m.title} está em construção — chega em breve por aqui.`);return}
  location.hash=m.key;
 }
 function goHome(){history.pushState(null,'',location.pathname+location.search);route()}
 async function route(){
  if(!profile)return;
+ hidePop();
  const key=location.hash.slice(1);
  const m=visibleModules().find(x=>x.key===key&&x.status==='live');
  if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();loadRotStats();loadArtStats();loadSolStats();loadAcvStats();loadTalStats();return}

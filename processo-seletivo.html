@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="imagens/processo-seletivo-topo.webp" type="image/webp">
 <link rel="icon" type="image/png" href="assets/favicon/favicon-oficial.png">
 <link rel="apple-touch-icon" href="assets/favicon/favicon-oficial.png">
 <style>
@@ -37,6 +38,18 @@ h1{font-size:clamp(34px,9vw,54px)}h2{font-size:clamp(26px,6.5vw,36px)}
 .progress{position:sticky;top:0;z-index:5;background:rgba(10,10,10,.96);backdrop-filter:blur(6px);margin:0 -18px;padding:12px 18px 10px;border-bottom:1px solid var(--line)}
 .progress .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600}
 .bar{height:6px;background:#222;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--y);border-radius:9px;transition:width .35s}
+.hero{position:relative;overflow:hidden;border-radius:22px;border:1px solid var(--line);background:radial-gradient(110% 130% at 88% 0%,rgba(255,240,0,.20),transparent 58%),linear-gradient(180deg,#141414,#0d0d0d);margin-bottom:8px}
+.hero .in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:end;gap:6px;padding:30px 0 0 30px}
+.hero .txt{padding-bottom:30px}
+.hero .txt .unit{margin-top:14px}
+.hero .pic{display:block;width:100%;height:auto;max-height:360px;object-fit:contain;object-position:bottom right}
+.hero.mini{border-radius:16px}
+.hero.mini .in{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px;padding:10px 16px 10px 12px}
+.hero.mini .txt{padding:0}
+.hero.mini .pic{width:76px;height:76px;max-height:none;object-fit:cover;object-position:50% 8%;border-radius:12px;background:#0a0a0a}
+.hero.mini .t{font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:21px;line-height:1.05;letter-spacing:.3px}
+.hero.mini .u{display:block;margin-top:5px;font-size:12.5px;font-weight:700;color:var(--y)}
+@media (max-width:640px){.hero .in{grid-template-columns:minmax(0,1fr);padding:0;gap:0}.hero .pic{order:-1;max-height:250px;margin:0 auto;object-position:bottom center}.hero .txt{padding:6px 20px 24px}}
 .sec h2{margin:24px 0 4px}
 .q{margin-top:26px}
 .q>label,.q>legend{display:block;font-weight:700;font-size:16.5px;line-height:1.4;margin-bottom:6px}
@@ -133,17 +146,20 @@ function privacyHTML(){
   </ul></details></div>
  <label class="opt" style="margin-top:14px"><input type="checkbox" id="bank" ${BANK?'checked':''}><span>Quero que a Boha Fitness guarde meus dados por até 12 meses para me chamar em outras oportunidades. <i style="color:var(--muted)">(opcional)</i></span></label>`;
 }
+const PIC='imagens/processo-seletivo-topo.webp';
+function heroFull(){return `<header class="hero"><div class="in"><div class="txt"><p class="eyebrow">Boha Fitness</p><h1>${esc(VAGA.title)}</h1>${LINK_UNIT?`<span class="unit">Unidade ${esc(T.units[LINK_UNIT].name)}</span>`:''}</div><img class="pic" src="${PIC}" width="760" height="880" alt="Equipe da Boha Fitness sorrindo" fetchpriority="high" decoding="async"></div></header>`}
+function heroMini(){const u=T.units[UNIT];return `<header class="hero mini"><div class="in"><img class="pic" src="${PIC}" width="76" height="76" alt="" decoding="async"><div class="txt"><div class="t">${esc(VAGA.title)}</div>${u?`<span class="u">Unidade ${esc(u.name)}</span>`:''}</div></div></header>`}
 function progress(){const p=Math.round(((STEP)/total)*100);return `<div class="progress"><div class="row"><span>Etapa ${STEP+1} de ${total}</span><span>${esc(SECS[STEP].title)}</span></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><i style="width:${Math.max(p,4)}%"></i></div></div>`}
 
 function render(){
  const app=$('app');
  if(DONE){
-  app.innerHTML=`<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Candidatura enviada</h2>${VAGA.thanks.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`;
+  app.innerHTML=`${heroMini()}<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Candidatura enviada</h2>${VAGA.thanks.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`;
   window.scrollTo(0,0);return;
  }
  if(STEP<0){
   const d=load();
-  app.innerHTML=`<section class="intro"><p class="eyebrow">Boha Fitness</p><h1>${esc(VAGA.title)}</h1>${LINK_UNIT?`<span class="unit">Unidade ${esc(T.units[LINK_UNIT].name)}</span>`:''}
+  app.innerHTML=`${heroFull()}<section class="intro">
   ${VAGA.intro.map(t=>`<p>${esc(t)}</p>`).join('')}
   <div class="meta"><span>⏱ Leva cerca de 10 minutos</span><span>📱 Pode responder pelo celular</span><span>🔒 Dados protegidos</span></div>
   <div class="nav" style="margin-top:28px"><button class="btn y" id="go">${d&&d.step>=0?'Continuar de onde parei':'Começar'}</button></div>
@@ -153,7 +169,7 @@ function render(){
   return;
  }
  const s=SECS[STEP],last=STEP===total-1;
- app.innerHTML=`${progress()}<form class="sec" id="form" novalidate><h2>${esc(s.title)}</h2>${STEP===0?unitQ():''}${s.qs.map(qHTML).join('')}${last?privacyHTML():''}
+ app.innerHTML=`${heroMini()}${progress()}<form class="sec" id="form" novalidate><h2>${esc(s.title)}</h2>${STEP===0?unitQ():''}${s.qs.map(qHTML).join('')}${last?privacyHTML():''}
  <div class="hp" aria-hidden="true"><label>Não preencha este campo<input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div>
  <div id="top-err"></div>
  <div class="nav">${STEP>0?'<button type="button" class="btn g" id="back">Voltar</button>':'<button type="button" class="btn g" id="back0">Início</button>'}<button type="submit" class="btn y" id="next">${last?'Enviar candidatura':'Continuar'}</button></div></form>`;
@@ -226,7 +242,7 @@ async function send(){
    p_answers:ans,p_consent_bank:!!BANK,p_hp:($('hp')?.value||''),p_elapsed:Date.now()-T0});
   if(error)throw error;
   clearDraft();DONE=true;
-  if(data==='duplicado'){$('app').innerHTML=`<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Já recebemos você</h2><p>Encontramos uma candidatura recente com este telefone. Nossa equipe já está com as suas respostas e entrará em contato se você avançar para a próxima etapa.</p></div>`;window.scrollTo(0,0)}
+  if(data==='duplicado'){$('app').innerHTML=`${heroMini()}<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Já recebemos você</h2><p>Encontramos uma candidatura recente com este telefone. Nossa equipe já está com as suas respostas e entrará em contato se você avançar para a próxima etapa.</p></div>`;window.scrollTo(0,0)}
   else render();
  }catch(e){
   const m=String(e&&e.message||'');
