@@ -254,6 +254,8 @@ button.np-item:hover .np-go{color:var(--y)}
 .btn-y:hover{filter:brightness(1.08)}
 .btn-y:disabled{opacity:.5;cursor:wait}
 .acc-hint{font-size:12.5px;color:var(--muted);margin:14px 0 0}
+.acc-err{margin:10px 0 0;padding:10px 14px;border:1px solid rgba(255,90,79,.5);background:rgba(255,90,79,.08);color:#ff8a80;border-radius:10px;font-size:14px;font-weight:600}.acc-err[hidden]{display:none}
+.acc-fields .bad{border-color:var(--red,#ff5a4f)!important}
 .invite{margin-top:16px;border:1px solid rgba(255,240,0,.35);background:rgba(255,240,0,.05);border-radius:14px;padding:16px;animation:fadeUp .4s var(--ease) backwards}
 .invite b{color:var(--y)}
 .invite pre{white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.55;color:#ddd;margin:10px 0 12px;background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:12px}
@@ -373,6 +375,7 @@ html.mtile .pv-empty h3{font-size:20px}
     <button type="submit" class="btn-y" id="accSubmit">Liberar acesso</button>
    </div>
    <p class="acc-hint" id="accRoleHint"></p>
+   <p class="acc-err" id="accErr" role="alert" hidden></p>
    <div id="accInvite"></div>
   </form>
   <div class="acc-card"><div class="acc-top"><h2 class="display">Permissões dos perfis</h2><span>Escolha o que cada perfil pode abrir</span></div><p class="acc-hint">As mudanças valem para todas as pessoas do perfil. Administradores sempre têm acesso total e gerenciam os acessos.</p><div id="roleTabs" class="role-tabs" role="group" aria-label="Perfil a configurar"></div><div id="roleModuleList" class="role-module-list"></div><div class="role-save"><span id="roleSaveStatus" role="status"></span><button type="button" class="btn-y" id="roleSave" disabled>Salvar permissões</button></div></div>
@@ -1139,17 +1142,21 @@ async function loadAccess(){
 }
 function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=r?`${r[1]}: ${r[2]}.`:''}
 el('accRole').innerHTML=roleOptions('gerente');el('accUnit').innerHTML=unitOptions('','Escolha…');
-function syncAccUnit(){const role=el('accRole').value,sc=SCOPED_ROLES.includes(role),cur=el('accUnit').value;el('accUnitWrap').hidden=role==='admin';el('accUnit').required=sc;el('accUnit').innerHTML=unitOptions(cur,sc?'Escolha…':'Rede toda (sem restrição)');if(role==='admin')el('accUnit').value=''}
-el('accRole').onchange=()=>{roleHint();syncAccUnit()};roleHint();syncAccUnit();
+function syncAccUnit(){const role=el('accRole').value,sc=SCOPED_ROLES.includes(role),cur=el('accUnit').value;el('accUnitWrap').hidden=role==='admin';el('accUnit').innerHTML=unitOptions(cur,sc?'Escolha…':'Rede toda (sem restrição)');if(role==='admin')el('accUnit').value=''}
+el('accForm').noValidate=true;el('accRole').onchange=()=>{roleHint();syncAccUnit();el('accErr').hidden=true;el('accUnit').classList.remove('bad')};roleHint();syncAccUnit();
 el('accForm').onsubmit=async e=>{
  e.preventDefault();
  const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unit=role==='admin'?'':el('accUnit').value;
- if(SCOPED_ROLES.includes(role)&&!unit){toast('Escolha a unidade desta pessoa.');el('accUnit').focus();return}
+ const fail=(msg,field)=>{const b=el('accErr');b.textContent=msg;b.hidden=false;['accName','accEmail','accUnit'].forEach(id=>el(id).classList.toggle('bad',id===field));el(field).focus();toast(msg)};
+ if(!name)return fail('Escreva o nome da pessoa.','accName');
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return fail('Escreva um e-mail válido.','accEmail');
+ if(SCOPED_ROLES.includes(role)&&!unit)return fail(`Escolha a unidade desta pessoa (${ROLE_LABEL[role]} só vê os dados de uma unidade).`,'accUnit');
+ el('accErr').hidden=true;['accName','accEmail','accUnit'].forEach(id=>el(id).classList.remove('bad'));
  if(accData.some(r=>r.role&&r.email===email)&&!confirm(`${email} já tem acesso. Atualizar nome e perfil?`))return;
  el('accSubmit').disabled=true;
  try{
   const {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role,p_unit:unit||null});
-  if(error){toast(error.message||'Não foi possível liberar o acesso.');return}
+  if(error){const b=el('accErr');b.textContent=(error.message||'Não foi possível liberar o acesso.');b.hidden=false;toast(error.message||'Não foi possível liberar o acesso.');return}
   el('accForm').reset();roleHint();syncAccUnit();
   await loadAccess();
   const r=accData.find(x=>x.email===email);
@@ -1161,7 +1168,7 @@ el('accessView').addEventListener('click',async e=>{
  const {act,email,name}=b.dataset;
  if(act==='copy')toast(await copyText(inviteText(name,email))?'Convite copiado — cola no WhatsApp da pessoa.':'Não deu pra copiar. Selecione o texto e copie.');
  else if(act==='invite'){showInvite(name,email);el('accForm').scrollIntoView({behavior:'smooth',block:'start'})}
- else if(act==='prefill'){el('accName').value=name;el('accEmail').value=email;el('accForm').scrollIntoView({behavior:'smooth',block:'start'});el('accRole').focus();toast('Confira o perfil e clique em Liberar acesso.')}
+ else if(act==='prefill'){el('accName').value=name;el('accEmail').value=email;el('accForm').scrollIntoView({behavior:'smooth',block:'start'});el('accRole').focus();toast('Confira o perfil, escolha a unidade (para Gerente e Recepção) e clique em Liberar acesso.')}
  else if(act==='remove'){
   if(!confirm(`Remover o acesso de ${name}? A pessoa não vai mais conseguir ver o sistema.`))return;
   b.disabled=true;
