@@ -418,12 +418,13 @@ const ICONS={
  check:svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12.5l3 3 5-6"/>'),
  book:svg('<path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/>'),
  sched:svg('<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2.5v3M16 2.5v3"/><circle cx="15.5" cy="15" r="3"/><path d="M15.5 13.6v1.5l1 .7"/>'),
+ rot:svg('<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8.5l1.4 1.4L12 7.3M8 15.5l1.4 1.4 2.6-2.6M14.5 9h2.5M14.5 16h2.5"/>'),
  camp:svg('<path d="M3 11v2a2 2 0 0 0 2 2h2l5 4V5L7 9H5a2 2 0 0 0-2 2z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>'),
  insta:svg('<rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor"/>'),
  board:svg('<rect x="3" y="4" width="18" height="16" rx="2.5"/><rect x="6" y="8" width="5" height="3.2" rx=".6"/><rect x="6" y="13" width="5" height="3.2" rx=".6"/><rect x="13" y="8" width="5" height="3.2" rx=".6"/><rect x="13" y="13" width="5" height="3.2" rx=".6"/>')
 };
 const MODULES=[
- {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Rotina',title:'A fazer',visual:'tasks',
+ {key:'checklist',status:'live',src:'sistema/checklist.html',icon:'check',tag:'Pessoal',title:'A fazer',visual:'tasks',
   desc:'Sua lista do que precisa ser feito, com aviso na hora marcada. Só você vê a sua.',
   features:['Anote a tarefa em segundos','Dia, hora, detalhes e repetição','Aviso na hora que você marcou']},
  {key:'hierarquia',content:'dashboard',status:'live',icon:'org',tag:'Equipe',title:'Hierarquia',visual:'org',
@@ -441,9 +442,12 @@ const MODULES=[
  {key:'mural',status:'live',src:'sistema/mural.html',icon:'board',tag:'Operação',title:'Mural do mês',visual:'mural',
   desc:'O quadro de avisos da rede em versão digital: veja o mês atual e planeje o próximo.',
   features:['Uma folha para cada porta-folha A4 do quadro','Anexe ou arraste a foto de cada folha','Navegue pelos meses e planeje o seguinte','Nota em cada folha para lembrar o que falta produzir']},
- {key:'escalas',status:'live',src:'sistema/escalas.html',icon:'sched',tag:'Equipe',title:'Escalas e rotina',visual:'esc',
-  desc:'Quem trabalha em cada turno, a escala da semana por unidade e o checklist de rotina do dia.',
-  features:['Escala semanal por unidade, com horas e cobertura','Quem está hoje em cada turno','Rotina por função: abertura, durante o dia e fechamento','Checklist do dia e % da rotina cumprida']},
+ {key:'escalas',status:'live',src:'sistema/escalas.html',icon:'sched',tag:'Equipe',title:'Escalas',visual:'esc',
+  desc:'Quem trabalha em cada turno, a escala da semana por unidade, as horas e a cobertura.',
+  features:['Escala semanal por unidade, com horas por pessoa','Quem está hoje em cada turno','Cobertura de manhã, tarde e noite','Copiar a semana anterior e imprimir']},
+ {key:'rotina',status:'live',src:'sistema/rotina.html',icon:'rot',tag:'Operação',title:'Rotina',visual:'rot',
+  desc:'O que cada função faz todo dia, da abertura ao fechamento, com checklist por unidade.',
+  features:['Tarefas por função: recepção, musculação, limpeza e mais','Checklist do dia com quem marcou e a que horas','% da rotina cumprida nos últimos 7 dias','Modelo pronto de rotina de academia']},
  {key:'campanhas',status:'live',src:'sistema/campanhas.html',icon:'camp',tag:'Marketing',title:'Campanhas',visual:'camp',
   desc:'Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu resultado.',
   features:['Campanha do mês com oferta, metas e plano de ação','Funil: lead, experimental, comparecimento e matrícula','Banco de ideias e datas para inspirar','Balanço mês a mês: o que mais trouxe matrículas']},
@@ -473,7 +477,7 @@ const MODULES=[
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
-let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas'],marketing:['marketing','mural','instagram','campanhas','compras','escalas'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -539,7 +543,12 @@ const VISUALS={
  esc(){
   const k=stats.esc;
   if(!k)return '<div class="vz-head"><span>Hoje nas unidades</span><b>carregando…</b></div>';
-  return `<div class="vz-head"><span>Hoje nas unidades</span><b>${k.working} na escala</b></div>`+k.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.working?u.working+' pessoa'+(u.working===1?'':'s')+' escalada'+(u.working===1?'':'s'):'sem escala para hoje'}</span></div><span style="display:flex;gap:8px;align-items:center;min-width:104px"><span style="flex:1;height:7px;background:#222;border-radius:9px;overflow:hidden"><i style="display:block;height:100%;width:${u.tot?u.done/u.tot*100:0}%;background:${u.tot&&u.done===u.tot?'#3ddc84':'#fff000'}"></i></span><b style="font-size:12.5px;min-width:34px;text-align:right">${u.tot?u.done+'/'+u.tot:'—'}</b></span></div>`).join('')+'<p style="color:var(--muted);font-size:12px;margin:12px 0 0">Barra: tarefas da rotina de hoje já marcadas.</p>';
+  return `<div class="vz-head"><span>Hoje nas unidades</span><b>${k.working} na escala</b></div>`+k.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.working?u.working+' pessoa'+(u.working===1?'':'s')+' escalada'+(u.working===1?'':'s'):'sem escala para hoje'}</span></div><b style="font-size:20px;font-family:Anton,Impact,sans-serif;color:${u.working?'#fff000':'#9b9b9b'}">${u.working}</b></div>`).join('');
+ },
+ rot(){
+  const k=stats.rot;
+  if(!k)return '<div class="vz-head"><span>Rotina de hoje</span><b>carregando…</b></div>';
+  return `<div class="vz-head"><span>Rotina de hoje</span><b>${k.tot?k.done+' de '+k.tot:'sem rotina'}</b></div>`+k.units.map((u,i)=>`<div class="mrow" style="animation-delay:${i*70}ms"><div><b>${u.name}</b><span>${u.tot?u.done+' de '+u.tot+' tarefas':'sem tarefas hoje'}</span></div><span style="display:flex;gap:8px;align-items:center;min-width:104px"><span style="flex:1;height:7px;background:#222;border-radius:9px;overflow:hidden"><i style="display:block;height:100%;width:${u.tot?u.done/u.tot*100:0}%;background:${u.tot&&u.done===u.tot?'#3ddc84':'#fff000'}"></i></span><b style="font-size:12.5px;min-width:34px;text-align:right">${u.tot?Math.round(u.done/u.tot*100)+'%':'—'}</b></span></div>`).join('');
  },
  camp(){
   const k=stats.camp;
@@ -648,7 +657,8 @@ function metaText(m){
  if(m.key==='acessos')return !stats.access?'Abrir módulo':`${stats.access.total} com acesso`+(stats.access.requests?` · ${stats.access.requests} pediram acesso`:'');
  if(m.key==='resultados')return stats.evo?'Último mês fechado: '+stats.evo.label:'Abrir módulo';
  if(m.key==='compras'){const r=stats.req;if(!r)return 'Abrir módulo';return r.open?`${r.open} em aberto`+(r.urgent?` · ${r.urgent} urgente${r.urgent===1?'':'s'}`:''):'Nada em aberto'}
- if(m.key==='escalas'){const k=stats.esc;if(!k)return 'Abrir módulo';return `${k.working} na escala hoje${k.tot?' · rotina '+k.done+'/'+k.tot:''}`}
+ if(m.key==='escalas'){const k=stats.esc;if(!k)return 'Abrir módulo';return k.working?`${k.working} ${k.working===1?'pessoa escalada':'pessoas escaladas'} hoje`:'Ninguém escalado hoje'}
+ if(m.key==='rotina'){const k=stats.rot;if(!k)return 'Abrir módulo';return k.tot?`${k.done} de ${k.tot} tarefas feitas hoje`:'Sem rotina cadastrada para hoje'}
  if(m.key==='campanhas'){const k=stats.camp;if(!k)return 'Abrir módulo';return k.name?`${k.sales} matrícula${k.sales===1?'':'s'}${k.goalSales?' de '+k.goalSales:''} · ${k.tasksTotal?k.tasksDone+'/'+k.tasksTotal+' ações':'sem plano'}`:'Sem campanha em '+k.label}
  if(m.key==='instagram'){const k=stats.insta;if(!k)return 'Abrir módulo';return k.late.length?`Falta registrar: ${k.late.join(', ')}`:'Em dia nas 3 unidades'}
  if(m.key==='mural'){const k=stats.mural;if(!k)return 'Abrir módulo';return k.n?`${k.n} de 8 folhas em ${k.label}`:`${k.label}: sem fotos ainda`}
@@ -669,7 +679,7 @@ async function loadStats(){
   const {count,error}=await client.from('boha_members').select('id',{count:'exact',head:true});
   if(!error&&typeof count==='number'){stats.members=count;refreshMeta('hierarquia')}
  }catch{}
- loadTasks();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();
+ loadTasks();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();loadRotStats();
  if(profile?.role!=='admin')return;
  loadEvoStats();
  try{
@@ -677,7 +687,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261124a';
+const VERSION='20261125a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -695,12 +705,22 @@ async function loadEvoStats(){
 async function loadEscStats(){
  if(!profile||!canModule('escalas'))return;
  try{
-  const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date()),dow=new Date(today+'T12:00:00Z').getUTCDay();
-  const [sh,em,ro,ch]=await Promise.all([client.from('boha_shifts').select('employee_id,kind').eq('work_date',today),client.rpc('boha_employee_options'),client.from('boha_routines').select('id,unit,weekdays,active').limit(1000),client.from('boha_routine_checks').select('routine_id,unit').eq('check_date',today)]);
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
+  const [sh,em]=await Promise.all([client.from('boha_shifts').select('employee_id,kind').eq('work_date',today),client.rpc('boha_employee_options')]);
   if(sh.error||em.error||!Array.isArray(sh.data)||!Array.isArray(em.data))return;
-  const unitOf={};em.data.forEach(e=>{unitOf[e.id]=e.unit});const routines=Array.isArray(ro.data)?ro.data:[],checks=Array.isArray(ch.data)?ch.data:[];
-  const units=[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>{const ap=routines.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow)));return {name,working:sh.data.filter(x=>['manha','tarde','noite','integral'].includes(x.kind)&&unitOf[x.employee_id]===k).length,tot:ap.length,done:ap.filter(r=>checks.some(c=>c.routine_id===r.id&&c.unit===k)).length}});
-  stats.esc={units,working:units.reduce((a,u)=>a+u.working,0),tot:units.reduce((a,u)=>a+u.tot,0),done:units.reduce((a,u)=>a+u.done,0)};refreshMeta('escalas');
+  const unitOf={};em.data.forEach(e=>{unitOf[e.id]=e.unit});
+  const units=[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>({name,working:sh.data.filter(x=>['manha','tarde','noite','integral'].includes(x.kind)&&unitOf[x.employee_id]===k).length}));
+  stats.esc={units,working:units.reduce((a,u)=>a+u.working,0)};refreshMeta('escalas');
+ }catch{}
+}
+async function loadRotStats(){
+ if(!profile||!canModule('rotina'))return;
+ try{
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date()),dow=new Date(today+'T12:00:00Z').getUTCDay();
+  const [ro,ch]=await Promise.all([client.from('boha_routines').select('id,unit,weekdays,active').limit(1000),client.from('boha_routine_checks').select('routine_id,unit').eq('check_date',today)]);
+  if(ro.error||ch.error||!Array.isArray(ro.data)||!Array.isArray(ch.data))return;
+  const units=[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>{const ap=ro.data.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow)));return {name,tot:ap.length,done:ap.filter(r=>ch.data.some(c=>c.routine_id===r.id&&c.unit===k)).length}});
+  stats.rot={units,tot:units.reduce((a,u)=>a+u.tot,0),done:units.reduce((a,u)=>a+u.done,0)};refreshMeta('rotina');
  }catch{}
 }
 async function loadCampStats(){
@@ -791,7 +811,7 @@ function startReminders(){
  clearInterval(remTimer);remTimer=setInterval(()=>{checkReminders();if(Date.now()-startReminders.last>3e5){startReminders.last=Date.now();loadTasks();loadNotices()}},20000);startReminders.last=Date.now();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sistema/sw.js').then(r=>{swReg=r}).catch(()=>{});
 }
-window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats()}});
+window.addEventListener('focus',()=>{if(profile){loadTasks();loadNotices();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();loadRotStats()}});
 let notices=[],seenAt=null,npOpen=false,npSeenRef=null,npCompose=false,lastBell=0,npAnchor=null;
 const NI={
  clock:svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',17),
@@ -904,7 +924,7 @@ async function route(){
  if(!profile)return;
  const key=location.hash.slice(1);
  const m=visibleModules().find(x=>x.key===key&&x.status==='live');
- if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();return}
+ if(!m){currentView=null;el('workspace').hidden=true;el('accessView').hidden=true;setFrame();el('hub').hidden=false;tick();if(accData.length){stats.access=accessSummary(accData);refreshMeta('acessos')}loadTasks();loadReqStats();loadMuralStats();loadInstaStats();loadCampStats();loadEscStats();loadRotStats();return}
  if(currentView===key)return;
  currentView=key;
  if(m.key==='acessos'){el('hub').hidden=true;el('workspace').hidden=true;setFrame();el('accessView').hidden=false;window.scrollTo(0,0);loadAccess();return}
