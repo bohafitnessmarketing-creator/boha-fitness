@@ -17,15 +17,31 @@ const FORMATS: Record<string, { size: string; label: string; orient: string }> =
 };
 const UNITS: Record<string, string> = { cb: 'Casa Branca', te: 'Jardim Santa Tereza', ma: 'Macedônia' };
 
-// Regras da skill "Boha Fitness — Creative Studio" (resumo operacional para a direção de arte).
+// Regras da skill "Boha Fitness — Creative Studio 2.0" (SKILL.md + references/direcao-artistica.md, em ./skill/).
 const SKILL = `
-IDENTIDADE
-- Fundo preto ou grafite (#111111); amarelo de destaque #FFF000; branco para contraste. Tons neutros só quando úteis.
-- Estética premium, esportiva, contemporânea e enérgica. Diagonais, recortes e linhas amarelas com moderação. Evitar excesso de glow, texturas, efeitos, ícones e informação.
-- Hierarquia: headline dominante, benefício ou informação principal, detalhes, CTA e assinatura. Respiro, alinhamento, contraste e leitura rápida no celular.
-- Fotografia: pessoas com aparência natural e anatomia plausível; sem marcas reais; respeitar pedidos de peça sem pessoas.
+IDENTIDADE E CORES (v2)
+- Preto predominante: preto #080808 e grafite #191919 formam a base; amarelo #FFF000 e branco são acentos (referência flexível: 65% preto, 15% grafite, 12% amarelo, 8% branco; não é obrigação numérica). Nada de fundo amarelo dominante.
+- Estética premium, esportiva, contemporânea e enérgica. Diagonais, recortes e linhas amarelas com moderação. Evitar halos neon, fumaça, raios, excesso de partículas, glow, texturas e informação demais.
+- Hierarquia: headline dominante, informação principal, detalhes, CTA e assinatura. Respiro, contraste e leitura rápida no celular.
+PESSOAS E FOTOGRAFIA (v2)
+- Todas as pessoas vestidas com roupa esportiva adequada: camisetas ou regatas COBRINDO o torso, shorts ou leggings. NUNCA sem camisa, com torso nu, apenas top/sutiã esportivo, roupa íntima ou pose sexualizada. Preferir camisetas pretas. Adultos de idades e biotipos variados; a marca não é só para atletas avançados.
+- Fotografia publicitária cinematográfica, realista e humana: luz lateral ou contraluz suave, sombras profundas com detalhes preservados, contraste controlado, rosto natural, esforço plausível. Evitar pele plástica, músculos exagerados, anatomia errada, suor artificial excessivo.
+- Equipamentos, exercícios, reflexos e arquitetura plausíveis. Sem marcas reais.
 - Nunca inventar preço, condição, data, horário, endereço, contato ou benefício. Nunca prometer resultado físico ou médico. Evitar constrangimento corporal.
-- Português brasileiro correto, frases curtas e verbos ativos, sem clichês nem excesso de exclamações.
+- Português brasileiro correto, frases curtas, verbos ativos, sem clichês nem excesso de exclamações.
+AMBIENTAÇÃO (conceitual, sem alegar fidelidade a foto real da unidade)
+- DNA comum: academia brasileira moderna e industrial, teto escuro, iluminação LED branca com acentos amarelos, equipamentos pretos, espelhos amplos, piso amadeirado ou emborrachado.
+- Casa Branca: teto escuro quadriculado, LED geométrico, colunas amarelas, piso amadeirado, salão de musculação amplo.
+- Jardim Santa Tereza: vigas amarelas, teto industrial, espelhos e janelas, iluminação linear, piso amadeirado ou emborrachado.
+- Macedônia: estrutura metálica aparente, máquinas pretas, acentos amarelos, piso amadeirado e janelas na área de cardio.
+- Para a rede (três unidades), usar o DNA comum.
+SEIS FAMÍLIAS DE COMPOSIÇÃO (escolha a que combina com o objetivo e varie entre peças)
+1. Impacto e motivação: headline grande, pessoa vestida em enquadramento próximo ou médio, luz de recorte, fundo preto, uma palavra amarela. Mensagem curta.
+2. Comercial: benefício e preço confirmado dominantes, condições legíveis, CTA único, fotografia como apoio, sem selos e brilhos.
+3. Educação e autoridade: editorial, título claro, demonstração de exercício correta, blocos curtos, espaço para informação.
+4. Estrutura e equipamentos: enquadramento arquitetônico, linhas limpas, intervenção tipográfica discreta.
+5. Comunidade e aulas coletivas: ação espontânea, pessoas vestidas, diversidade, professor e alunos em interação, energia sem poluição visual.
+6. Institucional: tipografia forte, fundo predominantemente preto, respiro amplo, gráficos mínimos, leitura imediata (recepção: informação organizada; comunicação interna: ação e prazo).
 PADRÕES POR FINALIDADE
 - Comercial: preço/benefício em destaque, CTA como "Conheça a Boha" ou "Fale com nossa equipe" (somente se já estiver no texto).
 - Institucional: estrutura, atendimento, comunidade e evolução.
@@ -36,21 +52,26 @@ PADRÕES POR FINALIDADE
 `;
 
 const SYSTEM = `Você é o diretor de arte da Boha Fitness, uma academia em Embu das Artes e região (SP).
-Siga as regras da marca:
+Siga as regras da marca (skill v2):
 ${SKILL}
 TAREFA
-Você recebe TEXTO DO POST, OBJETIVO, UNIDADE e FORMATO. Responda SOMENTE o JSON do esquema.
+Você recebe TEXTO DO POST, OBJETIVO, UNIDADE, FORMATO e, às vezes, uma ORDEM sobre pessoas. Responda SOMENTE o JSON do esquema.
 - headline, support e cta: distribua EXATAMENTE o texto do usuário. Não acrescente, troque, corrija, traduza nem remova nenhuma palavra, número, preço ou data. Você só separa o texto nas três partes, mantendo a ordem.
   headline = a ideia principal, curta (ideal até 7 palavras; se o texto tiver mais de uma frase, a primeira vira o título e o restante vai para o apoio). support = informação de apoio (pode ser vazia). cta = chamada para ação SOMENTE se o texto do usuário já trouxer uma (senão vazia).
 - highlight: de 1 a 3 palavras CONSECUTIVAS da headline, copiadas exatamente, para destacar em amarelo; ou vazio.
-- zone: onde o texto ficará sobre a imagem ("bottom", "top" ou "center"), pensando na composição.
-- image_prompt: em inglês, descreva SOMENTE a imagem de fundo (a arte final terá logo e texto colocados depois, por cima). Regras do image_prompt:
+- family: número de 1 a 6 da família de composição que melhor serve ao texto e ao objetivo.
+- zone: onde o texto ficará sobre a imagem ("bottom", "top" ou "center"), pensando na composição da família escolhida.
+- with_person e person_reason: INTERPRETE o texto e DECIDA se a arte deve ter uma pessoa.
+  * COM pessoa (true) quando a mensagem é humana ou de ação: motivação, treino, aulas coletivas, matrículas e ofertas que pedem energia, comunidade, boas-vindas, evolução, eventos esportivos, datas ligadas a movimento.
+  * SEM pessoa (false) quando a mensagem é informativa ou factual: avisos e comunicados (horário alterado, feriado, manutenção, fechamento), tabelas de horários, preços ou planos puros, regras, comunicação interna, metas e números, estrutura e equipamentos, depoimento de aluno (não simule uma pessoa real), assuntos sérios ou delicados.
+  * Se houver uma ORDEM do gerente sobre pessoas ("com pessoa" ou "sem pessoa"), obedeça.
+  * person_reason: UMA frase curta em português explicando a decisão (ex.: "Texto de motivação, uma pessoa treinando reforça a energia." ou "Aviso de horário: arte limpa, sem pessoa, para leitura rápida.").
+- image_prompt: em inglês, descreva SOMENTE a imagem de fundo (a arte final terá logo e texto colocados depois, por cima). Regras:
   * Absolutamente NENHUM texto, letra, número, logotipo, marca d'água, sinalização ou interface na imagem.
-  * Estética premium esportiva escura: base preta/grafite (#111111) com acentos amarelos (#FFF000) usados com moderação.
-  * Deixe a região da zona escolhida (cerca de 45% do quadro) calma, escura e livre para receber o texto; o assunto principal fica no restante.
-  * Mantenha também o canto superior esquerdo (cerca de 30% da largura e 18% da altura, onde o logo será colocado) livre de rostos e detalhes importantes.
-  * Pessoas, se houver, com aparência natural e anatomia plausível, em ambiente de academia moderna. Sem marcas reais.
-  * Adapte ao objetivo e ao formato informado.`;
+  * Base preta/grafite (#080808/#191919) com acentos amarelos (#FFF000) usados com moderação; fotografia publicitária cinematográfica, realista e humana.
+  * Deixe a região da zona escolhida (cerca de 45% do quadro) calma, escura e livre para o texto; o assunto principal fica no restante. Mantenha também o canto superior esquerdo (cerca de 30% da largura e 18% da altura, onde o logo será colocado) livre de rostos e detalhes importantes.
+  * Se with_person for true: UMA ou poucas pessoas adultas, SEMPRE com camiseta ou regata cobrindo o torso (nunca sem camisa, só com top esportivo ou roupa íntima), shorts ou leggings, aparência natural e anatomia plausível, ambiente conforme a unidade. Se for false: NENHUMA pessoa na imagem (use equipamentos, arquitetura da academia, composição gráfica sóbria ou ambiente vazio).
+  * Adapte ao objetivo, à família e ao formato informado. Sem marcas reais.`;
 
 const SCHEMA = {
   name: 'direcao_arte',
@@ -58,13 +79,16 @@ const SCHEMA = {
   schema: {
     type: 'object',
     additionalProperties: false,
-    required: ['headline', 'support', 'cta', 'highlight', 'zone', 'image_prompt'],
+    required: ['headline', 'support', 'cta', 'highlight', 'family', 'zone', 'with_person', 'person_reason', 'image_prompt'],
     properties: {
       headline: { type: 'string' },
       support: { type: 'string' },
       cta: { type: 'string' },
       highlight: { type: 'string' },
+      family: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] },
       zone: { type: 'string', enum: ['top', 'center', 'bottom'] },
+      with_person: { type: 'boolean' },
+      person_reason: { type: 'string' },
       image_prompt: { type: 'string' },
     },
   },
@@ -134,6 +158,7 @@ Deno.serve(async (req) => {
   const text = String(b.text ?? '').trim().slice(0, 400);
   const objective = String(b.objective ?? '').trim().slice(0, 120);
   const format = String(b.format ?? '');
+  const person = ['yes', 'no'].includes(String(b.person)) ? String(b.person) : 'auto';
   if (text.length < 3) return json({ error: 'Escreva o texto do post.' }, 400);
   if (!objective) return json({ error: 'Escolha o objetivo do post.' }, 400);
   if (!FORMATS[format]) return json({ error: 'Formato inválido.' }, 400);
@@ -172,13 +197,16 @@ Deno.serve(async (req) => {
       response_format: { type: 'json_schema', json_schema: SCHEMA },
       messages: [
         { role: 'system', content: SYSTEM },
-        { role: 'user', content: `TEXTO DO POST:\n${text}\n\nOBJETIVO: ${objective}\nUNIDADE: ${unitName}\nFORMATO: ${F.label} (${F.orient})` },
+        { role: 'user', content: `TEXTO DO POST:\n${text}\n\nOBJETIVO: ${objective}\nUNIDADE: ${unitName}\nFORMATO: ${F.label} (${F.orient})` + (person === 'yes' ? '\n\nORDEM DO GERENTE: a arte deve ter pessoa (with_person = true).' : person === 'no' ? '\n\nORDEM DO GERENTE: a arte NÃO deve ter pessoa (with_person = false).' : '') },
       ],
     }, key, 60000));
-    let layout: Record<string, string>;
+    // deno-lint-ignore no-explicit-any
+    let layout: Record<string, any>;
     try { layout = JSON.parse(dir.choices[0].message.content); } catch { throw new Error('Resposta da direção de arte veio em formato inesperado.'); }
 
-    const prompt = `${layout.image_prompt}\n\nStrict rules: background artwork only, no text, no letters, no numbers, no logos, no watermarks anywhere in the image. Keep the ${layout.zone} area of the frame dark, calm and uncluttered, and keep the top-left corner free of faces and key details. ${F.orient} composition. Premium dark sports look, black/graphite base with sparing yellow (#FFF000) accents.`;
+    if (person !== 'auto') layout.with_person = person === 'yes';
+    const withPerson = layout.with_person === true;
+    const prompt = `${layout.image_prompt}\n\nStrict rules: background artwork only; no text, no letters, no numbers, no logos, no watermarks, no signage anywhere in the image. Keep the ${layout.zone} area of the frame dark, calm and uncluttered, and keep the top-left corner free of faces and key details. ${F.orient} composition. Predominantly black (#080808) and graphite (#191919) with sparing yellow (#FFF000) accents; cinematic, realistic advertising photography; no neon halos, smoke, lens flares or floating particles. ` + (withPerson ? 'Any person must be an adult fully clothed in sportswear: a t-shirt or tank top covering the whole torso (never shirtless, never only a sports bra or crop top, never underwear, never sexualized), shorts or leggings, natural face, plausible anatomy, no plastic skin, no exaggerated muscles.' : 'Do not include any people in the image.');
     const { out: img, model: usedImage } = await firstThatWorks(imageModels, (model) => openai('/v1/images/generations', {
       model, prompt, size: F.size, quality, n: 1, output_format: 'jpeg', output_compression: 88,
     }, key, 120000));
