@@ -465,8 +465,8 @@ const MODULES=[
   desc:'Quem trabalha em cada turno, a escala da semana por unidade, as horas e a cobertura.',
   features:['Escala semanal por unidade, com horas por pessoa','Quem está hoje em cada turno','Cobertura de manhã, tarde e noite','Copiar a semana anterior e imprimir']},
  {key:'rotina',status:'live',src:'sistema/rotina.html',icon:'rot',tag:'Operação',title:'Rotina da recepção',visual:'rot',
-  desc:'O checklist completo da recepção, em 6 blocos, e o painel do gerente por recepcionista.',
-  features:['Toda recepcionista criada já recebe o checklist','6 blocos: da abertura à passagem de turno','Painel do gerente: progresso de cada pessoa em tempo real','Cada unidade vê só a própria recepção']},
+  desc:'As prioridades do dia da recepção, em blocos, e o painel do gerente por recepcionista.',
+  features:['Toda recepcionista criada já recebe o checklist','14 tarefas em 5 blocos, da abertura ao fechamento','Painel do gerente: progresso de cada pessoa em tempo real','Cada unidade vê só a própria recepção']},
  {key:'campanhas',status:'live',src:'sistema/campanhas.html',icon:'camp',tag:'Marketing',title:'Campanhas',visual:'camp',
   desc:'Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu resultado.',
   features:['Campanha do mês com oferta, metas e plano de ação','Funil: lead, experimental, comparecimento e matrícula','Banco de ideias e datas para inspirar','Balanço mês a mês: o que mais trouxe matrículas']},
@@ -767,7 +767,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261128a';
+const VERSION='20261129a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
