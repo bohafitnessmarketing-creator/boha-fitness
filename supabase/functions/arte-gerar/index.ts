@@ -48,6 +48,7 @@ Você recebe TEXTO DO POST, OBJETIVO, UNIDADE e FORMATO. Responda SOMENTE o JSON
   * Absolutamente NENHUM texto, letra, número, logotipo, marca d'água, sinalização ou interface na imagem.
   * Estética premium esportiva escura: base preta/grafite (#111111) com acentos amarelos (#FFF000) usados com moderação.
   * Deixe a região da zona escolhida (cerca de 45% do quadro) calma, escura e livre para receber o texto; o assunto principal fica no restante.
+  * Mantenha também o canto superior esquerdo (cerca de 30% da largura e 18% da altura, onde o logo será colocado) livre de rostos e detalhes importantes.
   * Pessoas, se houver, com aparência natural e anatomia plausível, em ambiente de academia moderna. Sem marcas reais.
   * Adapte ao objetivo e ao formato informado.`;
 
@@ -125,7 +126,7 @@ Deno.serve(async (req) => {
   const key = Deno.env.get('OPENAI_API_KEY');
   if (!key) return json({ error: 'A chave da OpenAI ainda não foi configurada no servidor. Peça ao administrador.' }, 503);
   const textModel = Deno.env.get('OPENAI_TEXT_MODEL') || 'gpt-4.1-mini';
-  const imageModel = Deno.env.get('OPENAI_IMAGE_MODEL') || 'gpt-image-1';
+  const imageModel = Deno.env.get('OPENAI_IMAGE_MODEL') || 'gpt-image-2';
   const quality = Deno.env.get('OPENAI_IMAGE_QUALITY') || 'medium';
 
   // Limpeza de artes vencidas (30 dias): arquivos e linhas. Melhor esforço.
@@ -160,7 +161,7 @@ Deno.serve(async (req) => {
     let layout: Record<string, string>;
     try { layout = JSON.parse(dir.choices[0].message.content); } catch { throw new Error('Resposta da direção de arte veio em formato inesperado.'); }
 
-    const prompt = `${layout.image_prompt}\n\nStrict rules: background artwork only, no text, no letters, no numbers, no logos, no watermarks anywhere in the image. Keep the ${layout.zone} area of the frame dark, calm and uncluttered. ${F.orient} composition. Premium dark sports look, black/graphite base with sparing yellow (#FFF000) accents.`;
+    const prompt = `${layout.image_prompt}\n\nStrict rules: background artwork only, no text, no letters, no numbers, no logos, no watermarks anywhere in the image. Keep the ${layout.zone} area of the frame dark, calm and uncluttered, and keep the top-left corner free of faces and key details. ${F.orient} composition. Premium dark sports look, black/graphite base with sparing yellow (#FFF000) accents.`;
     const img = await openai('/v1/images/generations', {
       model: imageModel, prompt, size: F.size, quality, n: 1, output_format: 'jpeg', output_compression: 88,
     }, key, 120000);
