@@ -100,6 +100,12 @@ html.dense .dens-btn{color:var(--y);border-color:rgba(255,240,0,.5);background:r
 .card:hover,.card.is-active{transform:translateY(-4px);border-color:rgba(255,240,0,.55);box-shadow:0 22px 44px -22px rgba(255,240,0,.28)}
 .card:hover::before,.card.is-active::before{opacity:1}
 .card:focus-visible{outline:2px solid var(--y);outline-offset:3px}
+.card.tfind{border-color:var(--y);box-shadow:0 0 0 2px rgba(255,240,0,.55),0 22px 44px -18px rgba(255,240,0,.45);animation:tfpulse 1.6s ease-out}
+@keyframes tfpulse{0%{transform:translateY(-7px) scale(1.012)}100%{transform:none}}
+.tf-pill{position:fixed;left:50%;bottom:76px;transform:translate(-50%,14px);background:#1b1b1b;border:1px solid rgba(255,240,0,.5);color:var(--text);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:40;max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tf-pill.show{opacity:1;transform:translate(-50%,0)}.tf-pill.miss{border-color:var(--line2);color:var(--muted)}.tf-pill b{color:var(--y)}
+.tf-hint{font-style:normal;margin-left:12px;font-weight:600;letter-spacing:.02em;text-transform:none;font-size:12px;opacity:.75}
+@media (hover:none),(max-width:640px){.tf-hint{display:none}}
+
 .card>*{position:relative}
 .card-top{display:flex;justify-content:space-between;align-items:center}
 .card-icon{width:46px;height:46px;flex:none;border-radius:13px;background:#1e1e1e;border:1px solid var(--line2);display:grid;place-items:center;color:var(--y);transition:background .3s,color .3s,border-color .3s}
@@ -353,7 +359,7 @@ html.mtile .pv-empty h3{font-size:20px}
    <p class="today"><span class="dot"></span><span id="today"></span></p>
   </div>
   <div class="role-switch" id="roleSwitch" role="group" aria-label="Ver o sistema como outro perfil" hidden></div>
-  <div class="row-head"><span>Áreas do sistema</span><span class="rh-right"><button type="button" class="ord-btn" id="ordBtn" aria-pressed="false"></button><button type="button" class="dens-btn" id="densBtn"></button><span id="liveCount"></span></span></div>
+  <div class="row-head"><span>Áreas do sistema<em class="tf-hint">digite a inicial para encontrar</em></span><span class="rh-right"><button type="button" class="ord-btn" id="ordBtn" aria-pressed="false"></button><button type="button" class="dens-btn" id="densBtn"></button><span id="liveCount"></span></span></div>
   <div class="ord-bar" id="ordBar" hidden><span id="ordMsg">Arraste os cards para onde quiser, ou use as setas ‹ › de cada um. A ordem fica salva para você.</span><button type="button" class="ghost sm" id="ordReset">Restaurar ordem padrão</button><button type="button" class="btn-y" id="ordDone">Concluir</button></div>
   <div class="hub-grid">
    <div class="modules" id="modules"></div>
@@ -742,6 +748,44 @@ window.addEventListener('hashchange',hidePop);
 window.addEventListener('pagehide',hidePop);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)hidePop()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hidePop()});
+// Encontrar o módulo digitando a inicial (como na pasta do Windows): letra leva ao módulo, a mesma letra de novo passa para o próximo, mais letras refinam.
+const tfNorm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+let tfBuf='',tfTimer=null,tfPillTimer=null,tfClear=null;
+function tfPill(html,miss){let p=el('tfPill');if(!p){p=document.createElement('div');p.id='tfPill';p.className='tf-pill';p.setAttribute('role','status');p.setAttribute('aria-live','polite');document.body.appendChild(p)}p.innerHTML=html;p.classList.toggle('miss',!!miss);p.classList.add('show');clearTimeout(tfPillTimer);tfPillTimer=setTimeout(()=>p.classList.remove('show'),1600)}
+function tfFind(buf){
+ const list=[...document.querySelectorAll('#modules .card')].map(c=>({c,t:tfNorm(c.querySelector('h2')?.textContent)}));
+ const ae=document.activeElement,cur=ae&&ae.classList&&ae.classList.contains('card')?ae:document.querySelector('#modules .card.tfind');
+ const words=x=>x.t.split(/\s+/);
+ if(buf.split('').every(ch=>ch===buf[0])){
+  let pool=list.filter(x=>x.t.startsWith(buf[0]));if(!pool.length)pool=list.filter(x=>words(x).some(w=>w.startsWith(buf[0])));
+  if(!pool.length)return null;
+  const i=pool.findIndex(x=>x.c===cur);return pool[(i+1)%pool.length];
+ }
+ let pool=list.filter(x=>x.t.startsWith(buf));if(!pool.length)pool=list.filter(x=>words(x).some(w=>w.startsWith(buf)));
+ if(!pool.length)return null;
+ return pool.find(x=>x.c===cur)||pool[0];
+}
+function tfSelect(x,buf){
+ document.querySelectorAll('#modules .card.tfind').forEach(c=>c.classList.remove('tfind'));
+ x.c.classList.add('tfind');x.c.focus({preventScroll:true});x.c.scrollIntoView({block:'center',behavior:'smooth'});
+ clearTimeout(tfClear);tfClear=setTimeout(()=>x.c.classList.remove('tfind'),2200);
+ tfPill(`<b>${esc(buf.toUpperCase())}</b> → ${esc(x.c.querySelector('h2')?.textContent||'')}`);
+}
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey||e.metaKey||e.altKey||e.isComposing)return;
+ const hub=el('hub');if(!hub||hub.hidden||!profile)return;
+ const t=e.target;if(t&&t.matches&&t.matches('input,textarea,select,[contenteditable="true"]'))return;
+ if(document.querySelector('dialog[open]')||(el('profileMenu')&&!el('profileMenu').hidden)||(typeof npOpen!=='undefined'&&npOpen)||isReordering())return;
+ if(e.key==='Escape'){tfBuf='';return}
+ const k=e.key;if(!k||k.length!==1)return;
+ if(k===' '){if(!tfBuf)return}else if(!/^[\p{L}\p{N}]$/u.test(k))return;
+ e.preventDefault();e.stopPropagation();
+ const ch=tfNorm(k)||k.toLowerCase();
+ tfBuf+=ch;clearTimeout(tfTimer);tfTimer=setTimeout(()=>{tfBuf=''},1000);
+ let hit=tfFind(tfBuf);
+ if(!hit&&tfBuf.length>1){tfBuf=ch;hit=tfFind(tfBuf)}
+ if(hit)tfSelect(hit,tfBuf);else tfPill(`Nenhum módulo começa com <b>“${esc(tfBuf.toUpperCase())}”</b>`,true);
+},true);
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
 function renderRoleSwitch(){
  const box=el('roleSwitch');if(!box)return;
