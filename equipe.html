@@ -1109,8 +1109,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-me
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 // Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
 function lockHierarchy(html){
- // Gerente com unidade pode editar a Hierarquia da própria unidade (o banco também só aceita a unidade dele).
- let out=html.replace("canEdit=ROLE==='admin'||ROLE==='editor'","MYU=(()=>{try{return window.parent.bohaCtx.profile.unit||null}catch{return null}})(),canEdit=ROLE==='admin'||ROLE==='editor'||(ROLE==='gerente'&&!!MYU)")
+ // Gerente com unidade edita a Hierarquia da própria unidade (o banco também só aceita a unidade dele); marketing edita a rede toda.
+ let out=html.replace("canEdit=ROLE==='admin'||ROLE==='editor'","MYU=(()=>{try{return window.parent.bohaCtx.profile.unit||null}catch{return null}})(),canEdit=ROLE==='admin'||ROLE==='editor'||ROLE==='marketing'||(ROLE==='gerente'&&!!MYU)")
   .replace("const tools=editing&&canEdit?","const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?");
  const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return out;
  out=out.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
