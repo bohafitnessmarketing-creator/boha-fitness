@@ -30,7 +30,8 @@ button{font:inherit;cursor:pointer}
 #hub{min-height:100vh;background:radial-gradient(900px 420px at 8% -8%,rgba(255,240,0,.07),transparent 60%),var(--bg)}
 .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;background:rgba(10,10,10,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .topbar .logo-img{height:30px;display:block}
-.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-right{display:flex;align-items:center;gap:14px;min-width:0}
+html,body{overflow-x:clip;max-width:100%}
 .user{display:flex;align-items:center;gap:10px}
 .user-menu{background:none;border:0;color:inherit;cursor:pointer;border-radius:10px;padding:3px 5px}.user-menu:hover,.user-menu:focus-visible{background:#222;outline:2px solid var(--y);outline-offset:2px}.profile-menu{position:fixed;right:18px;top:62px;z-index:60;width:min(300px,calc(100vw - 24px));background:#191919;border:1px solid #494949;border-radius:15px;padding:13px;box-shadow:0 22px 60px rgba(0,0,0,.55)}.profile-menu h3{font:400 22px/1 Anton,Impact,sans-serif;text-transform:uppercase;margin:3px 4px 9px}.profile-menu p{color:var(--muted);font-size:11px;margin:4px 4px 10px}.profile-menu button{display:block;width:100%;padding:10px 12px;border:1px solid transparent;border-radius:9px;background:none;color:var(--text);font:700 13px Inter,sans-serif;text-align:left;cursor:pointer}.profile-menu button:hover,.profile-menu button[aria-pressed="true"]{border-color:var(--y);background:#292812;color:var(--y)}.preview-flag{position:fixed;z-index:55;left:16px;bottom:16px;background:#fff000;color:#111;border-radius:11px;box-shadow:0 12px 36px rgba(0,0,0,.5);padding:10px 13px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:800}.preview-flag button{border:1px solid #111;background:none;border-radius:7px;padding:5px 8px;font:800 11px Inter,sans-serif;cursor:pointer}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--y);color:#111;font-weight:800;display:grid;place-items:center;font-size:15px}
@@ -315,6 +316,7 @@ html.mtile .pv-empty h3{font-size:20px}
 @media (max-width:640px){
  .login{margin:16px;padding:24px}
  .topbar{padding:10px 16px}.topbar .logo-img{height:26px}.user div{display:none}
+ @media (max-width:400px){.topbar{padding:10px 12px;gap:8px}.topbar .logo-img{height:22px}.topbar-right{gap:6px}.topbar .ghost{padding:7px 12px}}
  .hub-wrap{padding:30px 16px 48px}
  .modules{grid-template-columns:1fr}
  .row-head{margin-top:32px}
@@ -767,7 +769,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261129a';
+const VERSION='20261130a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;

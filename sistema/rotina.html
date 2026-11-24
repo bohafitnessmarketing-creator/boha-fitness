@@ -114,13 +114,12 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},TZ='America/Sao_Paulo';
 const ROLE='Recepção';
 const BLOCKS=[
- {k:'abertura',n:1,t:'Abertura do expediente',short:'Abertura',s:'Diário · Início do turno',note:{label:'Instrução',text:'Comece vendo se a recepção está pronta para receber alunos e interessados. Não deixe pendência do turno anterior sem acompanhamento (veja a passagem de turno acima).'}},
+ {k:'abertura',n:1,t:'Abertura do expediente',short:'Abertura',s:'Diário · Início do turno',note:{label:'Instrução',text:'Comece vendo se a recepção está pronta para receber alunos e interessados. Não deixe pendência do turno anterior sem acompanhamento.'}},
  {k:'atendimento',n:2,t:'Atendimento',short:'Atendimento',s:'Diário · Durante todo o expediente',note:{label:'Padrão esperado',text:'Nenhum cliente fica sem atendimento ou orientação. O que não puder ser resolvido na hora é registrado e encaminhado.'}},
  {k:'vendas',n:3,t:'Alunos e vendas',short:'Alunos e vendas',s:'Diário · Ao longo do turno',note:{label:'Regra operacional',text:'Todo contato precisa ficar registrado. Marcar como feito não é concluir: registre também o resultado.',listLabel:'O registro deve conter:',list:['Nome da pessoa.','Data do contato.','Resultado da conversa.','Próxima ação, quando necessária.']}},
  {k:'administrativo',n:4,t:'Administrativo',short:'Administrativo',s:'Diário · Em horário reservado',note:{label:'Orientação',text:'Nenhum cancelamento, transferência ou solicitação financeira fica só em conversa verbal ou mensagem. Registre no sistema.'}},
- {k:'fechamento',n:5,t:'Fechamento e passagem de turno',short:'Fechamento',s:'Diário · Últimos 20 minutos',handoff:true}
+ {k:'fechamento',n:5,t:'Fechamento do expediente',short:'Fechamento',s:'Diário · Últimos 20 minutos'}
 ];
-const HANDOFF=[['pendentes','Atendimentos pendentes'],['retornos','Interessados e alunos que precisam de retorno'],['administrativo','Solicitações administrativas e ocorrências'],['outras','Outras informações importantes']];
 const DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],DOWF=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],ORDER=[1,2,3,4,5,6,0];
 const MN=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
@@ -141,7 +140,7 @@ const UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
 const isRecep=()=>ROLE_NOW()==='recepcao';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(ROLE_NOW());
 const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK());
-let ROUTINES=[],CHECKS=[],HANDOFFS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb'},OPEN=new Set(),editR=null,updated=null,timer=null;
+let ROUTINES=[],CHECKS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb'},OPEN=new Set(),editR=null,updated=null,timer=null;
 const rebuild=()=>{CK=new Map(CHECKS.map(c=>[c.routine_id+'|'+c.check_date+'|'+c.done_by,c]))};
 const checkOf=(rid,d,who)=>CK.get(rid+'|'+d+'|'+who);
 const bk=r=>BLOCKS.some(b=>b.k===r.block)?r.block:'atendimento';
@@ -160,7 +159,7 @@ function teamDay(u,d){ // média das recepcionistas da unidade nesse dia (null =
 function head(){
  const tabs=canManage()?[['hoje','Painel de hoje'],['rotinas','Checklist da recepção']]:[];
  const units=UNITS();
- return `<header class="hd"><p class="eyebrow">Operação · dia a dia</p><h1 class="display">Rotina da recepção</h1><p class="sub">${isRecep()?'Suas prioridades do dia, da abertura à passagem de turno. Marque cada tarefa assim que fizer.':'Acompanhe cada recepcionista da unidade: o que já fez hoje, em qual bloco está e como foi nos últimos dias.'}</p></header>
+ return `<header class="hd"><p class="eyebrow">Operação · dia a dia</p><h1 class="display">Rotina da recepção</h1><p class="sub">${isRecep()?'Suas prioridades do dia, da abertura ao fechamento. Marque cada tarefa assim que fizer.':'Acompanhe cada recepcionista da unidade: o que já fez hoje, em qual bloco está e como foi nos últimos dias.'}</p></header>
  <div class="bar">${tabs.length?`<div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>`:''}${units.length>1?`<div class="seg" role="group" aria-label="Unidade">${units.map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[units[0]]}</span>`}${S.tab==='hoje'?`<span class="live" role="status"><i></i>Atualiza sozinho${updated?' · '+tm(updated):''}</span>`:''}</div>`;
 }
 
@@ -176,19 +175,9 @@ function rowHTML(r,d,who,interactive){
 }
 function blockHTML(b,items,d,who,interactive,u){
  const done=items.filter(r=>checkOf(r.id,d,who)).length,all=items.length&&done===items.length;
- const handoff=b.handoff&&interactive?handoffForm(u,d):'';
  return `<section class="panel blk"><div class="ph"><div><p class="bn">Bloco ${String(b.n).padStart(2,'0')}</p><h2 class="display">${esc(b.t)}</h2><p>${esc(b.s)}</p></div><span class="bcount ${all?'ok':''}">${done}/${items.length}</span></div>
  ${b.intro?`<p class="intro">${esc(b.intro)}</p>`:''}<div class="prog"><i class="${all?'ok':''}" style="width:${items.length?done/items.length*100:0}%"></i></div>
- ${items.sort((a,b2)=>a.sort-b2.sort).map(r=>rowHTML(r,d,who,interactive)).join('')}${noteHTML(b)}${handoff}</section>`;
-}
-function handoffForm(u,d){
- const mine=HANDOFFS.find(h=>h.unit===u&&h.handoff_date===d&&h.author_email===ME()),v=mine?.data||{};
- return `<div class="ho"><h3>Passagem de turno</h3><p class="sm">Preencha no fim do turno. Quem entra depois de você e o gerente leem aqui.</p><form id="hoForm" novalidate>${HANDOFF.map(([k,l])=>`<label>${esc(l)}<textarea id="ho_${k}" maxlength="1000">${esc(v[k]||'')}</textarea></label>`).join('')}<div class="row2"><button type="submit" class="btn-y">Salvar passagem de turno</button>${mine?`<small>Salva às ${tm(mine.updated_at)}</small>`:''}</div></form></div>`;
-}
-function prevHandoff(u,d){
- const h=HANDOFFS.filter(x=>x.unit===u&&x.author_email!==ME()&&x.handoff_date>=addDays(d,-2)).sort((a,b)=>b.updated_at.localeCompare(a.updated_at))[0];
- if(!h)return '';const rows=HANDOFF.filter(([k])=>String(h.data?.[k]||'').trim());
- return `<section class="panel prev"><div class="ph"><div><h2 class="display">Passagem do turno anterior</h2><p>${esc(first(h.author_name)||'Colega')} · ${dm(h.handoff_date)} às ${tm(h.updated_at)}</p></div></div>${rows.length?`<dl>${rows.map(([k,l])=>`<dt>${esc(l)}</dt><dd>${esc(h.data[k])}</dd>`).join('')}</dl>`:'<p style="color:var(--muted);margin:0">Sem pendências registradas.</p>'}</section>`;
+ ${items.sort((a,b2)=>a.sort-b2.sort).map(r=>rowHTML(r,d,who,interactive)).join('')}${noteHTML(b)}</section>`;
 }
 const unitChips=(d)=>UNITS().length>1?`<div class="units" role="group" aria-label="Resumo por unidade">${UNITS().map(k=>{const ps=teamOf(k),t=applicable(d,k).length;const avg=ps.length&&t?Math.round(ps.reduce((a,p)=>a+personDay(p.email,k,d).n/t*100,0)/ps.length):null;return `<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}<b>${ps.length?(avg==null?'—':avg+'%'):'sem recepção'}</b></button>`}).join('')}</div>`:'';
 
@@ -198,7 +187,7 @@ function tabRecepcao(){
  if(!items.length)return `<section class="panel"><div class="empty">Ainda não há checklist cadastrado para esta unidade. Fale com o seu gerente.</div></section>`;
  const interactive=isRecep();
  return `<section class="panel"><div class="ph"><div><h2 class="display">Hoje · ${UN[u]}</h2><p>${fmtLong(d)} · ${all?'tudo feito por hoje':`${done} de ${items.length} tarefas feitas`}</p></div></div><div class="prog"><i class="${all?'ok':''}" style="width:${done/items.length*100}%"></i></div></section>
- ${prevHandoff(u,d)}${BLOCKS.map(b=>{const l=items.filter(r=>bk(r)===b.k);return l.length||b.handoff?blockHTML(b,l,d,me,interactive,u):''}).join('')}`;
+ ${BLOCKS.map(b=>{const l=items.filter(r=>bk(r)===b.k);return l.length?blockHTML(b,l,d,me,interactive,u):''}).join('')}`;
 }
 
 /* ---------- painel do gerente ---------- */
@@ -207,13 +196,12 @@ function personCard(p,u,d){
  const d7=Array.from({length:7},(_,i)=>personDay(p.email,u,addDays(d,i-7))).filter(x=>x.t),avg7=d7.length?Math.round(d7.reduce((a,x)=>a+x.n/x.t*100,0)/d7.length):null;
  const items=applicable(d,u);
  const bl=BLOCKS.map(b=>{const l=items.filter(r=>bk(r)===b.k);if(!l.length)return '';const n=l.filter(r=>checkOf(r.id,d,p.email)).length;return `<div>${esc(b.short)}<b>${n}/${l.length}</b><div class="prog"><i class="${n===l.length?'ok':''}" style="width:${n/l.length*100}%"></i></div></div>`}).join('');
- const ho=HANDOFFS.find(h=>h.unit===u&&h.handoff_date===d&&h.author_email===p.email),hoRows=ho?HANDOFF.filter(([k])=>String(ho.data?.[k]||'').trim()):[];
  const detail=BLOCKS.map(b=>{const l=items.filter(r=>bk(r)===b.k).sort((a,c)=>a.sort-c.sort);return l.length?`<div class="mom"><h3>${esc(b.n+'. '+b.t)}</h3>${l.map(r=>rowHTML(r,d,p.email,false)).join('')}</div>`:''}).join('');
  return `<article class="pcard"><div class="top"><span class="av2">${esc((p.name||'?').charAt(0).toUpperCase())}</span><div class="who2"><b>${esc(p.name)}</b><small>${esc(p.email)}${st.last?' · última marcação às '+tm(st.last.done_at):''}</small></div><div class="num">${st.t?st.n+'/'+st.t:'—'}<small>${pct==null?'':pct+'%'}</small></div><span class="stt ${state[0]}">${state[1]}</span></div>
  <div class="prog" style="margin-top:12px"><i class="${st.t&&st.n===st.t?'ok':''}" style="width:${pct||0}%"></i></div>
  <div class="bl6">${bl}</div>
- <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">Média dos últimos 7 dias: <b style="color:var(--text)">${avg7==null?'—':avg7+'%'}</b>${ho?` · passagem de turno registrada às ${tm(ho.updated_at)}`:' · sem passagem de turno hoje'}</p>
- <details class="pd" data-open="${esc(p.email)}" ${OPEN.has(p.email)?'open':''}><summary>Ver tarefas de hoje${hoRows.length?' e passagem de turno':''}</summary>${detail}${hoRows.length?`<div class="mom"><h3>Passagem de turno</h3><dl class="prev" style="border:0;padding:0">${hoRows.map(([k,l])=>`<dt style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:6px">${esc(l)}</dt><dd style="margin:0;white-space:pre-wrap;overflow-wrap:anywhere">${esc(ho.data[k])}</dd>`).join('')}</dl></div>`:''}</details></article>`;
+ <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">Média dos últimos 7 dias: <b style="color:var(--text)">${avg7==null?'—':avg7+'%'}</b></p>
+ <details class="pd" data-open="${esc(p.email)}" ${OPEN.has(p.email)?'open':''}><summary>Ver tarefas de hoje</summary>${detail}</details></article>`;
 }
 function tabPainel(){
  const d=today(),u=S.unit,ps=teamOf(u),items=applicable(d,u);
@@ -245,8 +233,6 @@ function tabRotinas(){
 }
 function render(){
  if(document.querySelector('dialog[open]'))return;
- const ae=document.activeElement,typing=ae&&ae.tagName==='TEXTAREA'&&ae.closest('#hoForm');
- if(typing)return; // não atropela quem está escrevendo a passagem de turno
  const keep=window.scrollY;
  $('page').innerHTML=head()+(isRecep()||!canManage()?tabRecepcao():S.tab==='hoje'?tabPainel():tabRotinas());
  window.scrollTo(0,keep);
@@ -287,16 +273,6 @@ async function toggleCheck(rid,on){
  else{const {error}=await CTX.client.from('boha_routine_checks').delete().eq('routine_id',rid).eq('check_date',d).eq('done_by',me);if(error){toast('Não foi possível desmarcar.');render();return}CHECKS=CHECKS.filter(c=>!(c.routine_id===rid&&c.check_date===d&&c.done_by===me))}
  rebuild();render();
 }
-document.addEventListener('submit',async e=>{
- if(e.target.id!=='hoForm')return;e.preventDefault();
- const data={};HANDOFF.forEach(([k])=>{const v=$('ho_'+k).value.trim().slice(0,1000);if(v)data[k]=v});
- const row={unit:S.unit,handoff_date:today(),author_email:ME(),author_name:(CTX.profile?.name||'').slice(0,80),data};
- const {data:out,error}=await CTX.client.from('boha_handoffs').upsert(row,{onConflict:'author_email,handoff_date'}).select().single();
- if(error){toast('Não foi possível salvar a passagem de turno.');return}
- HANDOFFS=HANDOFFS.filter(h=>!(h.author_email===ME()&&h.handoff_date===row.handoff_date));HANDOFFS.push(out||{...row,id:'x',updated_at:new Date().toISOString()});
- document.activeElement?.blur();render();toast('Passagem de turno salva.');
-});
-
 /* ---------- eventos ---------- */
 document.addEventListener('click',e=>{
  const t=e.target;let b;
@@ -314,8 +290,8 @@ $('rdlg').addEventListener('click',e=>{if(e.target===$('rdlg'))$('rdlg').close()
 
 async function load(){
  const c=CTX.client,cfrom=addDays(today(),-30),mg=canManage();
- const [ro,ch,ho,tm2]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(2000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(20000),c.from('boha_handoffs').select('*').gte('handoff_date',addDays(today(),-7)).limit(2000),mg?c.rpc('boha_reception_team'):Promise.resolve({data:[]})]);
- if(ro.error)throw ro.error;ROUTINES=ro.data||[];if(!ch.error){CHECKS=ch.data||[]}if(!ho.error)HANDOFFS=ho.data||[];if(!tm2.error)TEAM=(tm2.data||[]).map(p=>({...p,email:String(p.email).toLowerCase()}));
+ const [ro,ch,tm2]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(2000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(20000),mg?c.rpc('boha_reception_team'):Promise.resolve({data:[]})]);
+ if(ro.error)throw ro.error;ROUTINES=ro.data||[];if(!ch.error){CHECKS=ch.data||[]}if(!tm2.error)TEAM=(tm2.data||[]).map(p=>({...p,email:String(p.email).toLowerCase()}));
  rebuild();updated=new Date().toISOString();render();
 }
 function startLive(){clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('dialog[open]'))load().catch(()=>{})},30000)}
