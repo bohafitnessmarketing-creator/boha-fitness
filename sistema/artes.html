@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Criação de artes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:12px 18px;font-size:14.5px;white-space:nowrap;text-align:center}.btn-y:disabled{opacity:.55;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:8px 15px;font-size:13px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s}
+.btn-g:hover{border-color:var(--y);color:var(--y)}.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}.btn-g:disabled{opacity:.5;cursor:wait}
+.page{max-width:1280px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.hd h1{font-size:clamp(34px,5vw,60px);line-height:1;margin:12px 0 6px}.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:560px}
+.quota{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 16px;font-size:13px;color:var(--muted)}.quota b{color:var(--text);font-size:20px;font-family:Anton,Impact,sans-serif;font-weight:400;margin:0 3px}.quota.zero b{color:var(--bad)}
+.grid{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.panel h2{font-size:22px;margin:0 0 4px;line-height:1}.panel .help{margin:2px 0 12px;color:var(--muted);font-size:13px}
+label.l{display:grid;gap:5px;margin-top:12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}label.l small{font-size:11.5px;font-weight:500;text-transform:none;letter-spacing:0;color:#7d7d7d}
+.inp{width:100%;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px;outline:none;text-transform:none;letter-spacing:0;font-weight:500}.inp:focus{border-color:var(--y)}
+textarea.inp{min-height:120px;resize:vertical;line-height:1.45}
+.cnt{justify-self:end;font-size:11.5px;color:#7d7d7d;font-weight:500;text-transform:none;letter-spacing:0}
+.fmts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
+.fmt{border:1px solid var(--line2);border-radius:12px;padding:10px 8px;text-align:center;display:grid;gap:6px;justify-items:center;transition:border-color .2s,background .2s}
+.fmt:hover{border-color:#555}.fmt[aria-pressed=true]{border-color:var(--y);background:rgba(255,240,0,.07)}
+.fmt i{display:block;border:2px solid #777;border-radius:3px}.fmt[aria-pressed=true] i{border-color:var(--y)}
+.fmt b{font-size:14px}.fmt small{font-size:11px;color:var(--muted);line-height:1.25}
+.chip{font-size:12.5px;border:1px solid var(--line2);border-radius:99px;padding:6px 14px;color:#d0d0d0;white-space:nowrap;display:inline-block}
+.gen{margin-top:16px;display:grid;gap:8px}
+.gen .btn-y{width:100%}
+.msg{margin:0;font-size:13px;color:var(--muted)}.msg.err{color:var(--bad);font-weight:600}
+.bar{height:6px;border-radius:99px;background:#222;overflow:hidden}.bar i{display:block;height:100%;width:35%;background:var(--y);border-radius:99px;animation:slide 1.3s var(--ease) infinite}
+@keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
+.stage{display:grid;place-items:center;min-height:360px;background:repeating-conic-gradient(#161616 0 25%,#121212 0 50%) 0 0/24px 24px;border:1px solid var(--line);border-radius:14px;padding:14px;position:relative}
+.stage canvas{max-width:100%;max-height:74vh;width:auto;height:auto;display:block;border-radius:6px;box-shadow:0 18px 50px -20px rgba(0,0,0,.8)}
+.stage .ph{color:var(--muted);text-align:center;max-width:300px;font-size:14px}.stage .ph b{display:block;color:var(--text);font-family:Anton,Impact,sans-serif;font-weight:400;font-size:24px;text-transform:uppercase;margin-bottom:6px}
+.stage .busy{position:absolute;inset:0;background:rgba(10,10,10,.72);display:grid;place-items:center;border-radius:14px;text-align:center;padding:20px;gap:10px;align-content:center}
+.stage .busy p{margin:0;font-size:14px}.stage .busy .bar{width:min(260px,70%)}
+.edit{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.edit .full{grid-column:1/-1}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;max-width:100%}
+.seg button{flex:1;padding:7px 10px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-align:center;white-space:nowrap}.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.note{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.hist{margin-top:22px}.hist h2{font-size:26px}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-top:12px}
+.hcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.hcard .th{background:#101010;aspect-ratio:1/1;display:grid;place-items:center;overflow:hidden;cursor:pointer}.hcard .th img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.hcard .th span{color:#666;font-size:12px}
+.hcard .in{padding:10px 12px 12px;display:grid;gap:4px;font-size:12.5px}.hcard .in b{font-size:13px;line-height:1.3;overflow-wrap:anywhere}.hcard .in small{color:var(--muted)}
+.hcard .row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.hcard .row button{font-size:12px;padding:5px 11px}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}.state{padding:60px 20px;text-align:center;color:var(--muted)}
+dialog{width:min(760px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:1px solid #444;border-radius:18px;background:#121212;color:#f4f4f4;padding:0;overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(3px)}
+.dl{padding:16px}.dl img{width:100%;max-height:70vh;object-fit:contain;display:block;border-radius:8px;background:#0c0c0c}.dl .acts{justify-content:space-between}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.page{padding:16px 16px 70px}.stage{min-height:280px}}
+@media (max-width:420px){.edit{grid-template-columns:minmax(0,1fr)}.fmt small{font-size:10.5px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+<dialog id="vdlg" aria-label="Arte do histórico"><div class="dl"><img id="vimg" alt="Arte do histórico"><div class="acts"><span id="vinfo" class="msg"></span><span style="display:flex;gap:8px"><button class="btn-g" id="vdl">Baixar PNG</button><button class="btn-g" data-close>Fechar</button></span></div></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},TZ='America/Sao_Paulo';
+const FORMATS={'9x16':{w:1080,h:1920,t:'9x16',s:'Stories e Reels',px:'1080×1920',ic:[14,25]},'4x3':{w:1440,h:1080,t:'4x3',s:'Feed horizontal',px:'1440×1080',ic:[24,18]},'16x9':{w:1920,h:1080,t:'16x9',s:'TV e telas',px:'1920×1080',ic:[28,16]}};
+const OBJECTIVES=['Promoção ou oferta','Aviso ou comunicado','Aula ou modalidade','Evento','Depoimento ou resultado de aluno','Institucional','Data comemorativa','Outro'];
+const HFONT='"Bebas Neue",Anton,Impact,"Arial Narrow",sans-serif',BFONT='Poppins,Inter,Arial,sans-serif';
+const LOCK=()=>CTX?.profile?.unit||null;
+const dmy=iso=>new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',timeZone:TZ});
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3400)}
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9%$]+/g,' ').trim();
+
+let S={text:'',obj:OBJECTIVES[0],objOther:'',fmt:'9x16',unit:LOCK()||'',busy:false,err:'',quota:null};
+let ART=null; // {id,img,fmt,unit,layout:{headline,support,cta,highlight,zone},logoPos,saved}
+let HIST=[],URLS={},LOGO=null,viewing=null,saveTimer=null;
+
+/* ---------- logo e fontes ---------- */
+function loadLogo(){return new Promise(res=>{const i=new Image();i.onload=()=>{LOGO=i;res(i)};i.onerror=()=>res(null);i.src='../assets/logo-boha-arte.png'})}
+async function loadFonts(){try{await Promise.all(['400 100px "Bebas Neue"','500 30px Poppins','600 30px Poppins','700 30px Poppins'].map(f=>document.fonts.load(f)))}catch{}}
+
+/* ---------- texto: garante que só usa as palavras do usuário ---------- */
+function sameWords(layout,input){
+ const allowed=new Set(norm(input).split(' ').filter(Boolean)),got=norm([layout.headline,layout.support,layout.cta].join(' ')).split(' ').filter(Boolean);
+ return got.length>0&&got.every(w=>allowed.has(w));
+}
+function splitFallback(input){
+ const lines=input.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+ if(lines.length>=2)return {headline:lines[0],support:lines.slice(1,-1).join(' ')||lines[1],cta:lines.length>2?lines[lines.length-1]:''};
+ const parts=input.match(/[^.!?]+[.!?]?/g)?.map(x=>x.trim()).filter(Boolean)||[input];
+ return {headline:parts[0],support:parts.slice(1).join(' '),cta:''};
+}
+
+/* ---------- desenho da arte ---------- */
+function wrap(ctx,text,maxW){
+ const words=String(text).split(/\s+/).filter(Boolean),lines=[];let cur='';
+ for(const w of words){const t=cur?cur+' '+w:w;if(ctx.measureText(t).width<=maxW||!cur)cur=t;else{lines.push(cur);cur=w}}
+ if(cur)lines.push(cur);return lines;
+}
+function compose(canvas,A){
+ const F=FORMATS[A.fmt],W=F.w,H=F.h,ctx=canvas.getContext('2d');canvas.width=W;canvas.height=H;
+ const L=A.layout,zone=L.zone||'bottom',story=A.fmt==='9x16';
+ // fundo (cover)
+ ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+ if(A.img){const s=Math.max(W/A.img.width,H/A.img.height),dw=A.img.width*s,dh=A.img.height*s;ctx.drawImage(A.img,(W-dw)/2,(H-dh)/2,dw,dh)}
+ // véu para contraste
+ const g=ctx.createLinearGradient(0,0,0,H);
+ if(zone==='bottom'){g.addColorStop(0,'rgba(17,17,17,.15)');g.addColorStop(.38,'rgba(17,17,17,.35)');g.addColorStop(1,'rgba(17,17,17,.94)')}
+ else if(zone==='top'){g.addColorStop(0,'rgba(17,17,17,.94)');g.addColorStop(.62,'rgba(17,17,17,.35)');g.addColorStop(1,'rgba(17,17,17,.15)')}
+ else{g.addColorStop(0,'rgba(17,17,17,.55)');g.addColorStop(1,'rgba(17,17,17,.55)')}
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ // margens (Stories: longe das áreas de interface)
+ const M=Math.round(W*.075),safeT=story?250:M,safeB=story?340:M,maxW=W-2*M;
+ // bloco de texto
+ const hl=norm(L.highlight||'').split(' ').filter(Boolean),hlSet=new Set(hl);
+ const head=String(L.headline||'').toUpperCase(),support=String(L.support||''),cta=String(L.cta||'');
+ const availH=H-safeT-safeB-(zone==='center'?0:Math.round(H*.16));
+ let hs=Math.round(W*(story?.15:.115)),hLines=[];
+ const fit=()=>{ctx.font=`400 ${hs}px ${HFONT}`;hLines=wrap(ctx,head,maxW)};
+ fit();while((hLines.length>(story?5:4)||hLines.length*hs*.98>availH*.6)&&hs>W*.05){hs-=4;fit()}
+ const ss=Math.round(W*(story?.04:.03)),sl=[];let sLines=[];
+ ctx.font=`500 ${ss}px ${BFONT}`;sLines=support?wrap(ctx,support,maxW).slice(0,5):[];
+ const cs=Math.round(W*(story?.036:.027));ctx.font=`700 ${cs}px ${BFONT}`;const ctaW=cta?Math.min(maxW,ctx.measureText(cta).width+cs*1.8):0,ctaH=cta?Math.round(cs*2.3):0;
+ const bar=Math.round(W*.012),gap=Math.round(W*.022);
+ const blockH=bar+gap+hLines.length*hs*.98+(sLines.length?gap+sLines.length*ss*1.4:0)+(cta?gap*1.4+ctaH:0);
+ let y=zone==='top'?safeT:zone==='center'?(H-blockH)/2:H-safeB-blockH;
+ // logo e assinatura (lado oposto ao texto)
+ const logoTop=(A.logoPos||(zone==='top'?'bottom':'top'))==='top';
+ let lw=Math.round(W*(story?.36:.26)),lh=LOGO?Math.round(lw*LOGO.height/LOGO.width):0;
+ if(!logoTop&&zone==='top'){/* logo no rodapé */}
+ const ly=logoTop?(story?Math.round(H*.085):M):H-(story?Math.round(H*.12):M)-lh;
+ if(LOGO){ctx.drawImage(LOGO,M,ly,lw,lh)}
+ if(A.unit){ctx.font=`600 ${Math.round(W*.022)}px ${BFONT}`;ctx.fillStyle='rgba(255,255,255,.85)';ctx.textAlign='right';ctx.textBaseline='middle';const t=('BOHA FITNESS · '+UN[A.unit]).toUpperCase();try{ctx.letterSpacing='2px'}catch{}ctx.fillText(t,W-M,ly+lh/2);try{ctx.letterSpacing='0px'}catch{}}
+ ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ // desenha o bloco
+ ctx.fillStyle='#fff000';ctx.fillRect(M,y,Math.round(W*.13),bar);y+=bar+gap;
+ ctx.font=`400 ${hs}px ${HFONT}`;
+ for(const line of hLines){let x=M;const ws=line.split(' ');for(let i=0;i<ws.length;i++){const w=ws[i],isH=hlSet.has(norm(w));ctx.fillStyle=isH?'#fff000':'#ffffff';ctx.fillText(w,x,y+hs*.84);x+=ctx.measureText(w+(i<ws.length-1?' ':'')).width}y+=hs*.98}
+ if(sLines.length){y+=gap;ctx.font=`500 ${ss}px ${BFONT}`;ctx.fillStyle='#f2f2f2';for(const line of sLines){ctx.fillText(line,M,y+ss);y+=ss*1.4}}
+ if(cta){y+=gap*1.4;ctx.fillStyle='#fff000';const r=ctaH/2;ctx.beginPath();ctx.moveTo(M+r,y);ctx.arcTo(M+ctaW,y,M+ctaW,y+ctaH,r);ctx.arcTo(M+ctaW,y+ctaH,M,y+ctaH,r);ctx.arcTo(M,y+ctaH,M,y,r);ctx.arcTo(M,y,M+ctaW,y,r);ctx.closePath();ctx.fill();ctx.fillStyle='#111';ctx.font=`700 ${cs}px ${BFONT}`;ctx.textBaseline='middle';ctx.fillText(cta,M+cs*.9,y+ctaH/2+1);ctx.textBaseline='alphabetic'}
+}
+function redraw(){if(ART)compose($('cv'),ART)}
+
+/* ---------- gerar ---------- */
+async function apiError(error){
+ try{const r=error.context;if(r&&r.json){const j=await r.json();if(j&&j.error)return {msg:j.error,quota:j.quota}}}catch{}
+ return {msg:'Não foi possível gerar a arte agora. Tente de novo em instantes.'};
+}
+async function generate(){
+ const text=$('f_text').value.trim(),objective=S.obj==='Outro'?($('f_other')?.value.trim()||''):S.obj;
+ S.text=text;S.objOther=$('f_other')?.value||'';S.err='';
+ if(text.length<3){S.err='Escreva o texto do post.';return paint()}
+ if(!objective){S.err='Diga qual é o objetivo do post.';return paint()}
+ if(S.quota&&S.quota.used>=S.quota.lim){S.err=`Você já usou as ${S.quota.lim} artes de hoje. O limite volta amanhã.`;return paint()}
+ S.busy=true;paint();
+ try{
+  const {data,error}=await CTX.client.functions.invoke('arte-gerar',{body:{text,objective,format:S.fmt,unit:S.unit||null}});
+  if(error){const e=await apiError(error);S.err=e.msg;if(e.quota)S.quota=e.quota;S.busy=false;return paint()}
+  if(data?.error){S.err=data.error;S.busy=false;return paint()}
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src='data:'+(data.mime||'image/jpeg')+';base64,'+data.image_b64});
+  let L=data.layout||{};
+  if(!sameWords(L,text)){L={...L,...splitFallback(text)}}
+  L={headline:L.headline||'',support:L.support||'',cta:L.cta||'',highlight:L.highlight||'',zone:['top','center','bottom'].includes(L.zone)?L.zone:'bottom'};
+  ART={id:data.id,img,fmt:S.fmt,unit:S.unit||null,layout:L,logoPos:null,saved:false,dirty:true};
+  if(data.quota)S.quota=data.quota;
+  S.busy=false;paint();await loadFonts();redraw();saveFinal(true);
+ }catch(e){S.err='Não foi possível gerar a arte agora. Tente de novo em instantes.';S.busy=false;paint()}
+}
+
+/* ---------- salvar no histórico / baixar ---------- */
+function blobOf(canvas){return new Promise(res=>canvas.toBlob(res,'image/png'))}
+async function saveFinal(silent){
+ if(!ART)return;const id=ART.id,cv=$('cv');if(!cv)return;
+ try{
+  const blob=await blobOf(cv),uid=CTX.profile?.uid,path=`${uid}/${id}.png`;
+  const up=await CTX.client.storage.from('boha-artes').upload(path,blob,{contentType:'image/png',upsert:true});
+  if(up.error)throw up.error;
+  const fin=await CTX.client.rpc('boha_art_finish',{p_id:id});if(fin.error)throw fin.error;
+  if(ART&&ART.id===id){ART.saved=true;ART.dirty=false}
+  await loadHistory();if(!silent)toast('Salvo no histórico.');
+ }catch{if(!silent)toast('Não foi possível salvar no histórico.')}
+}
+function scheduleSave(){clearTimeout(saveTimer);if(ART){ART.dirty=true;saveTimer=setTimeout(()=>saveFinal(true),2500)}}
+async function download(){
+ if(!ART)return;const cv=$('cv'),blob=await blobOf(cv);
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`boha-${ART.fmt}-${new Date().toISOString().slice(0,10)}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+ clearTimeout(saveTimer);saveFinal(true);toast('Arte baixada.');
+}
+
+/* ---------- histórico ---------- */
+async function loadHistory(){
+ const c=CTX.client;
+ const {data,error}=await c.from('boha_art_history').select('id,format,objective,input_text,unit,final_path,status,created_at,expires_at,created_by_name').order('created_at',{ascending:false}).limit(60);
+ if(error){return}
+ HIST=data||[];
+ const paths=HIST.filter(h=>h.final_path).map(h=>h.final_path);
+ if(paths.length){const r=await c.storage.from('boha-artes').createSignedUrls(paths,3600);URLS={};(r.data||[]).forEach(x=>{if(x.signedUrl)URLS[x.path]=x.signedUrl})}
+ drawHistory();
+}
+async function purgeOrphans(){ // apaga os arquivos próprios que já venceram (a linha some sozinha, o arquivo some aqui e no servidor)
+ try{const uid=CTX.profile?.uid;if(!uid)return;const ls=await CTX.client.storage.from('boha-artes').list(uid,{limit:200});
+  const keep=new Set(HIST.map(h=>h.id));const dead=(ls.data||[]).filter(f=>/\.png$/.test(f.name)&&!keep.has(f.name.replace('.png',''))).map(f=>uid+'/'+f.name);
+  if(dead.length&&HIST.length>=0)await CTX.client.storage.from('boha-artes').remove(dead)}catch{}
+}
+const daysLeft=h=>Math.max(0,Math.ceil((new Date(h.expires_at)-Date.now())/864e5));
+function drawHistory(){
+ const box=$('hist');if(!box)return;const adm=CTX.profile?.role==='admin';
+ box.innerHTML=HIST.length?`<div class="hgrid">${HIST.map(h=>{const u=URLS[h.final_path],f=FORMATS[h.format];return `<article class="hcard"><div class="th" data-view="${h.id}" role="button" tabindex="0" aria-label="Ver arte">${u?`<img src="${esc(u)}" alt="" loading="lazy">`:'<span>'+(h.status==='pending'?'sem arquivo':'—')+'</span>'}</div><div class="in"><b>${esc(h.input_text.slice(0,70))}${h.input_text.length>70?'…':''}</b><small>${esc(f?f.t:h.format)} · ${esc(h.objective)}${h.unit?' · '+UN[h.unit]:''}</small><small>${dmy(h.created_at)}${adm&&h.created_by_name?' · '+esc(h.created_by_name.split(' ')[0]):''} · expira em ${daysLeft(h)} dia${daysLeft(h)===1?'':'s'}</small><div class="row">${u?`<button class="btn-g" data-hdl="${h.id}">Baixar</button>`:''}<button class="btn-g danger" data-hdel="${h.id}">Excluir</button></div></div></article>`}).join('')}</div>`:'<div class="empty">Nenhuma arte ainda. As que você criar ficam aqui por 30 dias.</div>';
+}
+async function downloadUrl(url,name){
+ try{const r=await fetch(url),b=await r.blob(),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch{window.open(url,'_blank','noopener')}
+}
+async function delHist(id){
+ const h=HIST.find(x=>x.id===id);if(!h||!confirm('Excluir esta arte do histórico? Isso não gasta nem devolve a cota do dia.'))return;
+ if(h.final_path)await CTX.client.storage.from('boha-artes').remove([h.final_path]);
+ const {error}=await CTX.client.from('boha_art_history').delete().eq('id',id);if(error){toast('Não foi possível excluir.');return}
+ HIST=HIST.filter(x=>x.id!==id);drawHistory();toast('Arte excluída.');
+}
+
+/* ---------- tela ---------- */
+function paint(){
+ const q=S.quota,left=q?Math.max(0,q.lim-q.used):null,units=LOCK()?[LOCK()]:Object.keys(UN);
+ const locked=!!LOCK();
+ $('page').innerHTML=`<header class="hd"><div><p class="eyebrow">Marketing · criação</p><h1 class="display">Criação de artes</h1><p class="sub">Escreva o texto e o objetivo. A Boha cria o fundo, e o logo e o texto entram com a identidade da marca.</p></div><div class="quota ${left===0?'zero':''}" role="status">${q?`Hoje você ainda pode criar<b>${left}</b>de ${q.lim} artes`:'Carregando cota…'}</div></header>
+ <div class="grid"><section class="panel"><h2 class="display">Novo post</h2><p class="help">O texto da arte sai exatamente como você escrever, com os acentos certos.</p>
+  <label class="l">Texto do post<textarea class="inp" id="f_text" maxlength="400" placeholder="Ex.: Matrículas abertas na Boha Casa Branca. Fale com a nossa equipe.">${esc(S.text)}</textarea><span class="cnt" id="cnt">${S.text.length}/400</span></label>
+  <label class="l">Objetivo do post<select class="inp" id="f_obj">${OBJECTIVES.map(o=>`<option ${S.obj===o?'selected':''}>${o}</option>`).join('')}</select></label>
+  ${S.obj==='Outro'?`<label class="l">Qual objetivo?<input class="inp" id="f_other" maxlength="100" value="${esc(S.objOther)}" placeholder="Ex.: avisar sobre mudança de horário"></label>`:''}
+  <label class="l">Unidade${locked?'':'<small>Aparece na assinatura da arte</small>'}${locked?`<span class="chip" style="justify-self:start">${UN[LOCK()]}</span>`:`<select class="inp" id="f_unit"><option value="">Rede toda (3 unidades)</option>${units.map(k=>`<option value="${k}" ${S.unit===k?'selected':''}>${UN[k]}</option>`).join('')}</select>`}</label>
+  <label class="l" style="margin-bottom:0">Formato</label><div class="fmts" role="group" aria-label="Formato">${Object.values(FORMATS).map(f=>`<button type="button" class="fmt" data-fmt="${f.t}" aria-pressed="${S.fmt===f.t}"><i style="width:${f.ic[0]}px;height:${f.ic[1]}px"></i><b>${f.t.replace('x',':')}</b><small>${f.s}<br>${f.px}</small></button>`).join('')}</div>
+  <div class="gen"><button class="btn-y" id="go" ${S.busy||left===0?'disabled':''}>${S.busy?'Gerando…':ART?'Gerar outra versão':'Gerar arte'}</button>${S.err?`<p class="msg err" role="alert">${esc(S.err)}</p>`:`<p class="msg">${left===0?'O limite de hoje acabou. Volta amanhã.':'Cada geração usa 1 das suas artes do dia. Ajustar texto e posição não gasta.'}</p>`}</div></section>
+ <section class="panel"><h2 class="display">Prévia</h2><div class="stage">${ART?'<canvas id="cv" aria-label="Prévia da arte"></canvas>':`<div class="ph"><b>Sua arte aparece aqui</b>Preencha o texto, escolha o objetivo e o formato e clique em Gerar arte.</div>`}${S.busy?'<div class="busy"><p><b>Criando a sua arte…</b></p><div class="bar"><i></i></div><p class="msg">Costuma levar de 20 a 60 segundos.</p></div>':''}</div>
+  ${ART?`<div class="edit"><label class="l full">Título<input class="inp" id="e_head" maxlength="120" value="${esc(ART.layout.headline)}"></label><label class="l full">Apoio<input class="inp" id="e_sup" maxlength="240" value="${esc(ART.layout.support)}"></label><label class="l">Chamada (botão)<input class="inp" id="e_cta" maxlength="60" value="${esc(ART.layout.cta)}"></label><label class="l">Destaque em amarelo<input class="inp" id="e_hl" maxlength="40" value="${esc(ART.layout.highlight)}" placeholder="palavra do título"></label>
+   <div class="full"><label class="l" style="margin-top:0">Posição do texto</label><div class="seg" role="group" aria-label="Posição do texto">${[['top','Cima'],['center','Centro'],['bottom','Baixo']].map(([k,l])=>`<button type="button" data-zone="${k}" aria-pressed="${ART.layout.zone===k}">${l}</button>`).join('')}</div></div>
+   <div class="full"><label class="l" style="margin-top:0">Posição do logo</label><div class="seg" role="group" aria-label="Posição do logo">${[['top','Topo'],['bottom','Rodapé']].map(([k,l])=>`<button type="button" data-logo="${k}" aria-pressed="${(ART.logoPos||(ART.layout.zone==='top'?'bottom':'top'))===k}">${l}</button>`).join('')}</div></div></div>
+   <div class="acts"><button class="btn-y" id="dl">Baixar PNG</button><span class="msg">${FORMATS[ART.fmt].px} · ${ART.saved?'salva no histórico':'salvando…'}</span></div>
+   <p class="note">Confira o texto, os acentos e os números antes de publicar. A arte não inventa preço, data nem horário: tudo o que aparece é o que você escreveu.</p>`:''}</section></div>
+ <section class="hist"><h2 class="display">Histórico</h2><p class="msg">As artes ficam guardadas por 30 dias e depois saem sozinhas.</p><div id="hist"></div></section>`;
+ if(ART){loadFonts().then(redraw)}
+ drawHistory();
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('input',e=>{
+ const t=e.target;
+ if(t.id==='f_text'){S.text=t.value;$('cnt').textContent=t.value.length+'/400';return}
+ if(ART&&['e_head','e_sup','e_cta','e_hl'].includes(t.id)){const L=ART.layout;L.headline=$('e_head').value;L.support=$('e_sup').value;L.cta=$('e_cta').value;L.highlight=$('e_hl').value;redraw();scheduleSave()}
+});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.id==='f_obj'){S.text=$('f_text').value;S.obj=t.value;paint();$('f_text').focus()}
+ if(t.id==='f_unit'){S.unit=t.value}
+});
+document.addEventListener('click',e=>{
+ const t=e.target;let b;
+ if(t.closest('#go')){generate();return}
+ if(t.closest('#dl')){download();return}
+ if(b=t.closest('[data-fmt]')){S.text=$('f_text')?.value??S.text;S.fmt=b.dataset.fmt;paint();return}
+ if(b=t.closest('[data-zone]')&&ART){ART.layout.zone=t.closest('[data-zone]').dataset.zone;ART.logoPos=null;paint();scheduleSave();return}
+ if(b=t.closest('[data-logo]')&&ART){ART.logoPos=t.closest('[data-logo]').dataset.logo;paint();scheduleSave();return}
+ if(b=t.closest('[data-view]')){const h=HIST.find(x=>x.id===b.dataset.view);if(h&&URLS[h.final_path]){viewing=h;$('vimg').src=URLS[h.final_path];$('vinfo').textContent=`${h.format.replace('x',':')} · ${dmy(h.created_at)}`;$('vdlg').showModal()}return}
+ if(b=t.closest('[data-hdl]')){const h=HIST.find(x=>x.id===b.dataset.hdl);if(h&&URLS[h.final_path])downloadUrl(URLS[h.final_path],`boha-${h.format}-${h.created_at.slice(0,10)}.png`);return}
+ if(b=t.closest('[data-hdel]')){delHist(b.dataset.hdel);return}
+ if(t.closest('[data-close]')){$('vdlg').close();return}
+});
+$('vdl').addEventListener('click',()=>{if(viewing&&URLS[viewing.final_path])downloadUrl(URLS[viewing.final_path],`boha-${viewing.format}-${viewing.created_at.slice(0,10)}.png`)});
+$('vdlg').addEventListener('click',e=>{if(e.target===$('vdlg'))$('vdlg').close()});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[data-view]')){e.preventDefault();e.target.click()}});
+
+async function boot(){
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#artes" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if(CTX.canModule&&!CTX.canModule('artes')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ await loadLogo();paint();
+ try{const r=await CTX.client.rpc('boha_art_quota');const q=Array.isArray(r.data)?r.data[0]:r.data;if(q)S.quota={used:q.used,lim:q.lim}}catch{}
+ paint();await loadHistory();purgeOrphans();
+}
+window.bohaReload=()=>{if(!S.busy&&!document.querySelector('dialog[open]'))loadHistory().catch(()=>{})};
+boot().catch(()=>{$('page').innerHTML='<div class="state">Não foi possível carregar o módulo. Atualize a página.</div>'});
+</script></body></html>
