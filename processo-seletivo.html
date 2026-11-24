@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Processo seletivo — Boha Fitness</title>
+<meta name="description" content="Formulário do processo seletivo da Boha Fitness.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/favicon/favicon-oficial.png">
+<link rel="apple-touch-icon" href="assets/favicon/favicon-oficial.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#262626;--line2:#383838;--text:#f4f4f4;--muted:#a3a3a3;--y:#fff000;--bad:#ff6b60;--good:#3ddc84}
+html{background:var(--bg);overflow-x:hidden;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;min-height:100dvh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.top{border-bottom:1px solid var(--line);background:#0d0d0d}
+.top .in{max-width:760px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.top img{height:38px;width:auto}
+.top span{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+main{max-width:760px;margin:0 auto;padding:22px 18px 90px}
+h1,h2{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px;line-height:1.02}
+h1{font-size:clamp(34px,9vw,54px)}h2{font-size:clamp(26px,6.5vw,36px)}
+.eyebrow{display:flex;align-items:center;gap:10px;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.unit{display:inline-block;margin-top:12px;background:var(--y);color:#111;font-weight:800;border-radius:8px;padding:5px 12px;font-size:14px}
+.intro p{color:#d6d6d6;margin-top:12px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.meta span{border:1px solid var(--line2);border-radius:99px;padding:6px 13px;font-size:13.5px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 26px;border-radius:12px;font-weight:800;font-size:16px;text-align:center}
+.btn.y{background:var(--y);color:#111}.btn.y:hover{filter:brightness(1.07)}.btn.y:disabled{opacity:.6;cursor:wait}
+.btn.g{border:1px solid var(--line2);color:#ddd}.btn.g:hover{border-color:var(--y);color:var(--y)}
+.progress{position:sticky;top:0;z-index:5;background:rgba(10,10,10,.96);backdrop-filter:blur(6px);margin:0 -18px;padding:12px 18px 10px;border-bottom:1px solid var(--line)}
+.progress .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600}
+.bar{height:6px;background:#222;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--y);border-radius:9px;transition:width .35s}
+.sec h2{margin:24px 0 4px}
+.q{margin-top:26px}
+.q>label,.q>legend{display:block;font-weight:700;font-size:16.5px;line-height:1.4;margin-bottom:6px}
+.q .hint{display:block;color:var(--muted);font-size:14px;margin:-2px 0 10px;font-weight:500}
+.q .req{color:var(--y);margin-left:3px}
+.inp{width:100%;background:#191919;border:1px solid var(--line2);border-radius:12px;padding:14px 15px;min-height:52px;font-size:16px;outline:none}
+.inp:focus{border-color:var(--y)}textarea.inp{min-height:130px;resize:vertical;line-height:1.5}
+select.inp{appearance:auto}
+fieldset{border:0;min-width:0}
+.opts{display:grid;gap:9px;margin-top:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line2);background:var(--panel);border-radius:12px;padding:14px 15px;cursor:pointer;min-height:52px;transition:border-color .15s,background .15s}
+.opt:hover{border-color:#666}
+.opt input{margin-top:3px;width:21px;height:21px;accent-color:var(--y);flex:none}
+.opt span{overflow-wrap:anywhere}
+.opt:has(input:checked){border-color:var(--y);background:rgba(255,240,0,.07)}
+.opt:has(input:focus-visible){outline:3px solid var(--y);outline-offset:2px}
+.count{font-size:12.5px;color:var(--muted);text-align:right;margin-top:4px}
+.err{color:var(--bad);font-size:14px;font-weight:600;margin-top:8px}
+.q.bad .inp,.q.bad .opt{border-color:var(--bad)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:34px;flex-wrap:wrap}
+.nav .btn{flex:1;min-width:140px}
+.notice{margin-top:26px;border:1px solid var(--line2);background:var(--panel2);border-radius:14px;padding:16px 17px;font-size:14.5px;color:#d2d2d2}
+.notice b{color:var(--text)}
+details{margin-top:12px}summary{cursor:pointer;color:var(--y);font-weight:700;font-size:14.5px}
+details p,details li{font-size:14px;color:#c4c4c4;margin-top:8px}details ul{padding-left:20px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.done{text-align:center;padding:30px 0}
+.done .ok{width:74px;height:74px;border-radius:50%;background:var(--y);color:#111;display:grid;place-items:center;font-size:40px;font-weight:800;margin:0 auto 18px}
+.done p{color:#d6d6d6;margin-top:12px}
+.banner{margin-top:16px;border-radius:12px;padding:12px 15px;font-size:14.5px;border:1px solid var(--line2);background:var(--panel2)}.banner.bad{border-color:var(--bad);color:var(--bad)}
+.draft{margin-top:14px;font-size:14px;color:var(--muted)}.draft button{color:var(--y);font-weight:700;text-decoration:underline}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><img src="assets/logo-boha.png" alt="Boha Fitness"><span>Processo seletivo</span></div></div>
+<main id="app"><p style="color:var(--muted)">Carregando…</p></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/talentos-form.js?v=20261207a"></script>
+<script>
+'use strict';
+const URL_SUPABASE='https://rgevjxpruqstctquxzoc.supabase.co';
+const PUBLIC_KEY='sb_publishable_7ZJQJfv5Bts-NgDR4rSXmg_wFgAYBC4';
+const T=window.BOHA_TAL,qs=new URLSearchParams(location.search);
+const VAGA_KEY=T.vagas[qs.get('v')]?qs.get('v'):'recepcao',VAGA=T.vagas[VAGA_KEY];
+const LINK_UNIT=T.units[qs.get('u')]?qs.get('u'):'';
+const AGES=[16,17,18,19,20];
+const LS='boha_tal_draft_v1:'+VAGA_KEY;
+const T0=Date.now();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+let client=null;try{client=window.supabase.createClient(URL_SUPABASE,PUBLIC_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}})}catch{client=null}
+
+let A={},UNIT=LINK_UNIT,BANK=false,STEP=-1,SENDING=false,DONE=false;
+const SECS=VAGA.sections;
+const total=SECS.length;
+const allQ=SECS.flatMap(s=>s.qs);
+
+/* rascunho local: se a pessoa fechar sem querer, volta de onde parou */
+function save(){try{localStorage.setItem(LS,JSON.stringify({a:A,u:UNIT,bank:BANK,step:STEP,t:Date.now()}))}catch{}}
+function load(){try{const d=JSON.parse(localStorage.getItem(LS)||'null');if(d&&Date.now()-d.t<7*864e5)return d}catch{}return null}
+function clearDraft(){try{localStorage.removeItem(LS)}catch{}}
+
+function fmtPhone(v){const d=String(v).replace(/\D/g,'').slice(0,11);if(d.length<=2)return d?'('+d:'';if(d.length<=6)return `(${d.slice(0,2)}) ${d.slice(2)}`;if(d.length<=10)return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`}
+
+function qHTML(q){
+ const v=A[q.id],req=!q.opt;
+ const lab=`${esc(q.label)}${req?'<span class="req" aria-hidden="true">*</span>':' <span style="color:var(--muted);font-weight:500">(opcional)</span>'}`;
+ if(q.type==='short'){
+  return `<div class="q" data-q="${q.id}"><label for="i_${q.id}">${lab}</label><input class="inp" id="i_${q.id}" data-id="${q.id}" ${q.id==='phone'?'inputmode="tel" autocomplete="tel"':q.id==='name'?'autocomplete="name"':'autocomplete="off"'} maxlength="${q.id==='phone'?16:160}" placeholder="${esc(q.ph||'')}" value="${esc(v||'')}"><div class="err" role="alert" hidden></div></div>`;
+ }
+ if(q.type==='area'){
+  return `<div class="q" data-q="${q.id}"><label for="i_${q.id}">${lab}</label><textarea class="inp" id="i_${q.id}" data-id="${q.id}" maxlength="1200" placeholder="Escreva com suas palavras">${esc(v||'')}</textarea><div class="count"><span data-cnt="${q.id}">${(v||'').length}</span>/1200</div><div class="err" role="alert" hidden></div></div>`;
+ }
+ const multi=q.type==='check',sel=multi?(Array.isArray(v)?v:[]):(v===undefined?-1:v);
+ return `<fieldset class="q" data-q="${q.id}"><legend>${lab}</legend>${q.hint?`<span class="hint">${esc(q.hint)}</span>`:''}<div class="opts">${q.opts.map((o,i)=>`<label class="opt"><input type="${multi?'checkbox':'radio'}" name="r_${q.id}" data-id="${q.id}" data-i="${i}" ${multi?(sel.includes(i)?'checked':''):(sel===i?'checked':'')}><span>${esc(o)}</span></label>`).join('')}</div><div class="err" role="alert" hidden></div></fieldset>`;
+}
+function unitQ(){
+ if(LINK_UNIT)return '';
+ return `<div class="q" data-q="unit"><label for="i_unit">Para qual unidade você está se candidatando?<span class="req" aria-hidden="true">*</span></label><select class="inp" id="i_unit"><option value="">Escolha a unidade</option>${Object.entries(T.units).map(([k,u])=>`<option value="${k}" ${UNIT===k?'selected':''}>${esc(u.name)}</option>`).join('')}</select><div class="err" role="alert" hidden></div></div>`;
+}
+function privacyHTML(){
+ const u=T.units[UNIT]||{name:'a unidade escolhida',email:'o e-mail da unidade'};
+ return `<div class="notice"><b>Aviso de privacidade.</b> A Boha Fitness usa os dados deste formulário somente para analisar sua candidatura e entrar em contato sobre esta oportunidade. Apenas a gerência e a administração da Boha Fitness têm acesso às suas respostas.
+ <details><summary>Ler o aviso completo</summary>
+  <ul>
+   <li><b>Quem cuida dos dados:</b> Boha Fitness${UNIT?`, unidade ${esc(u.name)}`:''}.</li>
+   <li><b>Quais dados:</b> nome, idade, telefone, bairro e cidade, escolaridade e as respostas do questionário.</li>
+   <li><b>Para quê:</b> análise do seu perfil e contato sobre a vaga. Não vendemos nem compartilhamos seus dados com terceiros.</li>
+   <li><b>Por quanto tempo:</b> até 6 meses. Se você marcar a opção do banco de talentos abaixo, até 12 meses. Depois disso os dados são apagados automaticamente.</li>
+   <li><b>Seus direitos:</b> pedir acesso, correção ou exclusão dos seus dados a qualquer momento, escrevendo para <b>${esc(u.email)}</b>.</li>
+   <li><b>Menor de 18 anos:</b> converse com um responsável sobre a sua candidatura. Podemos pedir a autorização dele durante o processo.</li>
+  </ul></details></div>
+ <label class="opt" style="margin-top:14px"><input type="checkbox" id="bank" ${BANK?'checked':''}><span>Quero que a Boha Fitness guarde meus dados por até 12 meses para me chamar em outras oportunidades. <i style="color:var(--muted)">(opcional)</i></span></label>`;
+}
+function progress(){const p=Math.round(((STEP)/total)*100);return `<div class="progress"><div class="row"><span>Etapa ${STEP+1} de ${total}</span><span>${esc(SECS[STEP].title)}</span></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><i style="width:${Math.max(p,4)}%"></i></div></div>`}
+
+function render(){
+ const app=$('app');
+ if(DONE){
+  app.innerHTML=`<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Candidatura enviada</h2>${VAGA.thanks.map(t=>`<p>${esc(t)}</p>`).join('')}</div>`;
+  window.scrollTo(0,0);return;
+ }
+ if(STEP<0){
+  const d=load();
+  app.innerHTML=`<section class="intro"><p class="eyebrow">Boha Fitness</p><h1>${esc(VAGA.title)}</h1>${LINK_UNIT?`<span class="unit">Unidade ${esc(T.units[LINK_UNIT].name)}</span>`:''}
+  ${VAGA.intro.map(t=>`<p>${esc(t)}</p>`).join('')}
+  <div class="meta"><span>⏱ Leva cerca de 10 minutos</span><span>📱 Pode responder pelo celular</span><span>🔒 Dados protegidos</span></div>
+  <div class="nav" style="margin-top:28px"><button class="btn y" id="go">${d&&d.step>=0?'Continuar de onde parei':'Começar'}</button></div>
+  ${d&&d.step>=0?`<p class="draft">Encontramos respostas salvas neste aparelho. <button id="fresh" type="button">Começar do zero</button></p>`:''}</section>`;
+  $('go').onclick=()=>{const dd=load();if(dd&&dd.step>=0){A=dd.a||{};if(!LINK_UNIT)UNIT=dd.u||'';BANK=!!dd.bank;STEP=Math.min(dd.step,total-1)}else STEP=0;save();render()};
+  const f=$('fresh');if(f)f.onclick=()=>{clearDraft();A={};if(!LINK_UNIT)UNIT='';BANK=false;render()};
+  return;
+ }
+ const s=SECS[STEP],last=STEP===total-1;
+ app.innerHTML=`${progress()}<form class="sec" id="form" novalidate><h2>${esc(s.title)}</h2>${STEP===0?unitQ():''}${s.qs.map(qHTML).join('')}${last?privacyHTML():''}
+ <div class="hp" aria-hidden="true"><label>Não preencha este campo<input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div>
+ <div id="top-err"></div>
+ <div class="nav">${STEP>0?'<button type="button" class="btn g" id="back">Voltar</button>':'<button type="button" class="btn g" id="back0">Início</button>'}<button type="submit" class="btn y" id="next">${last?'Enviar candidatura':'Continuar'}</button></div></form>`;
+ window.scrollTo(0,0);
+ $('form').addEventListener('submit',e=>{e.preventDefault();next()});
+ $('back')?.addEventListener('click',()=>{STEP--;save();render()});
+ $('back0')?.addEventListener('click',()=>{STEP=-1;render()});
+}
+document.addEventListener('input',e=>{
+ const t=e.target;if(!t.dataset)return;const id=t.dataset.id;
+ if(t.id==='i_unit'){UNIT=t.value;save();return}
+ if(!id)return;
+ if(t.type==='checkbox'||t.type==='radio'){
+  const q=allQ.find(x=>x.id===id),i=+t.dataset.i;
+  if(q.type==='check'){
+   let arr=Array.isArray(A[id])?A[id].slice():[];
+   if(t.checked){
+    if(q.none===i)arr=[i];else{arr=arr.filter(x=>x!==q.none);if(q.exact&&arr.length>=q.exact&&!arr.includes(i)){t.checked=false;showErr(id,`Escolha exatamente ${q.exact}. Desmarque uma para trocar.`);return}arr.push(i)}
+   }else arr=arr.filter(x=>x!==i);
+   A[id]=arr;
+   document.querySelectorAll(`[name="r_${id}"]`).forEach(c=>{c.checked=arr.includes(+c.dataset.i)});
+  }else A[id]=i;
+  clearErr(id);save();return;
+ }
+ if(id==='phone'){t.value=fmtPhone(t.value)}
+ A[id]=t.value;
+ const c=document.querySelector(`[data-cnt="${id}"]`);if(c)c.textContent=t.value.length;
+ clearErr(id);save();
+});
+document.addEventListener('change',e=>{if(e.target.id==='bank'){BANK=e.target.checked;save()}});
+
+function showErr(id,msg){const w=document.querySelector(`[data-q="${id}"]`);if(!w)return;w.classList.add('bad');const e=w.querySelector('.err');e.textContent=msg;e.hidden=false}
+function clearErr(id){const w=document.querySelector(`[data-q="${id}"]`);if(!w)return;w.classList.remove('bad');const e=w.querySelector('.err');if(e){e.hidden=true}}
+
+function validate(){
+ let first=null;const bad=(id,m)=>{showErr(id,m);if(!first)first=id};
+ document.querySelectorAll('.q.bad').forEach(w=>{w.classList.remove('bad')});document.querySelectorAll('.err').forEach(e=>e.hidden=true);
+ if(STEP===0&&!LINK_UNIT&&!T.units[UNIT])bad('unit','Escolha a unidade para a qual você está se candidatando.');
+ for(const q of SECS[STEP].qs){
+  if(q.opt)continue;const v=A[q.id];
+  if(q.id==='name'){const n=String(v||'').trim().replace(/\s+/g,' ');if(n.length<5||!n.includes(' '))bad(q.id,'Escreva seu nome completo (nome e sobrenome).')}
+  else if(q.id==='phone'){const d=String(v||'').replace(/\D/g,'');if(!/^[1-9]{2}9?\d{8}$/.test(d)||d.length<10)bad(q.id,'Informe o telefone com DDD. Ex.: (11) 99999-9999.')}
+  else if(q.type==='short'){if(String(v||'').trim().length<2)bad(q.id,'Responda esta pergunta.')}
+  else if(q.type==='area'){if(String(v||'').trim().length<8)bad(q.id,'Escreva um pouco mais (pelo menos uma frase).')}
+  else if(q.type==='radio'){if(v===undefined||v===null)bad(q.id,'Escolha uma opção.')}
+  else if(q.type==='check'){const n=Array.isArray(v)?v.length:0;if(!n)bad(q.id,'Escolha pelo menos uma opção.');else if(q.exact&&n!==q.exact)bad(q.id,`Escolha exatamente ${q.exact} opções (você escolheu ${n}).`)}
+ }
+ if(STEP===total-1){
+  if(A.q34===1)bad('q34','Para enviar, é preciso confirmar que as informações são verdadeiras.');
+  if(A.q35===1)bad('q35','Sem a sua autorização não conseguimos receber a sua candidatura.');
+ }
+ if(first){const w=document.querySelector(`[data-q="${first}"]`);w?.scrollIntoView({block:'center',behavior:'smooth'});const f=w?.querySelector('input,textarea,select');if(f)setTimeout(()=>f.focus({preventScroll:true}),250)}
+ return !first;
+}
+async function next(){
+ if(SENDING)return;
+ if(!validate())return;
+ if(STEP<total-1){STEP++;save();render();return}
+ await send();
+}
+async function send(){
+ const btn=$('next'),box=$('top-err');box.innerHTML='';
+ if(!client){box.innerHTML='<div class="banner bad">Não foi possível conectar. Verifique a internet e tente de novo.</div>';return}
+ if(!T.units[UNIT]){box.innerHTML='<div class="banner bad">Escolha a unidade na primeira etapa.</div>';return}
+ const ans={};for(const q of allQ){if(['name','age','phone','place'].includes(q.id))continue;const v=A[q.id];if(v===undefined||v===null||v===''||(Array.isArray(v)&&!v.length&&q.opt))continue;ans[q.id]=typeof v==='string'?v.trim():v}
+ SENDING=true;btn.disabled=true;btn.textContent='Enviando…';
+ try{
+  const {data,error}=await client.rpc('boha_talent_apply',{
+   p_unit:UNIT,p_vaga:VAGA_KEY,p_name:String(A.name||'').trim(),p_age:AGES[A.age],p_phone:String(A.phone||'').replace(/\D/g,''),p_place:String(A.place||'').trim(),
+   p_answers:ans,p_consent_bank:!!BANK,p_hp:($('hp')?.value||''),p_elapsed:Date.now()-T0});
+  if(error)throw error;
+  clearDraft();DONE=true;
+  if(data==='duplicado'){$('app').innerHTML=`<div class="done"><div class="ok" aria-hidden="true">✓</div><h2>Já recebemos você</h2><p>Encontramos uma candidatura recente com este telefone. Nossa equipe já está com as suas respostas e entrará em contato se você avançar para a próxima etapa.</p></div>`;window.scrollTo(0,0)}
+  else render();
+ }catch(e){
+  const m=String(e&&e.message||'');
+  box.innerHTML=`<div class="banner bad" role="alert">${m&&!/fetch|network|Failed/i.test(m)?esc(m):'Não conseguimos enviar agora. Suas respostas estão salvas neste aparelho: tente de novo em instantes.'}</div>`;
+  btn.disabled=false;btn.textContent='Enviar candidatura';
+ }finally{SENDING=false}
+}
+render();
+</script>
+</body>
+</html>

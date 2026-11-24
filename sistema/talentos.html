@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Banco de talentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--blue:#6aa9ff;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:11px 18px;font-size:14px;white-space:nowrap;text-align:center;display:inline-block;text-decoration:none}.btn-y:disabled{opacity:.55;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:13px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s;display:inline-block;text-decoration:none;color:inherit}.btn-g:hover{border-color:var(--y);color:var(--y)}.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}.btn-g:disabled{opacity:.45;cursor:not-allowed}
+.page{max-width:1500px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}.hd h1{font-size:clamp(34px,5vw,58px);line-height:1;margin:12px 0 6px}.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:600px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 15px;text-align:left;transition:border-color .15s}.kpi:hover{border-color:#555}.kpi span{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.kpi b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:32px;line-height:1.1;margin-top:2px}.kpi.hot b{color:var(--y)}.kpi.ok b{color:var(--good)}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-width:100%;overflow-x:auto;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+.seg button{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;text-align:center}.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}.seg button b{font-weight:800}
+.inp{background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:14px;outline:none;width:100%}.inp:focus{border-color:var(--y)}select.inp{width:auto;min-width:150px}textarea.inp{min-height:90px;resize:vertical;line-height:1.45}
+.search{flex:1;min-width:180px;max-width:300px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-top:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 15px;cursor:pointer;display:flex;flex-direction:column;gap:9px;transition:border-color .15s,transform .2s var(--ease)}.card:hover{border-color:#666;transform:translateY(-2px)}
+.card .t1{display:flex;gap:8px;align-items:center;justify-content:space-between}.card b.nm{font-size:16px;line-height:1.2;overflow-wrap:anywhere}
+.card .sub{font-size:12.5px;color:var(--muted);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.03em;border-radius:5px;padding:2px 6px;color:#111;background:var(--uc,#888)}.tag.cb{--uc:#3987e5}.tag.te{--uc:#e8793f}.tag.ma{--uc:#25b583}
+.fl{font-size:11px;font-weight:700;border-radius:99px;padding:2px 9px;border:1px solid var(--line2);color:#d0d0d0;white-space:nowrap}.fl.warn{border-color:var(--warn);color:var(--warn);background:rgba(255,159,46,.09)}.fl.bad{border-color:var(--bad);color:var(--bad);background:rgba(255,90,79,.09)}.fl.new{border-color:var(--y);color:var(--y)}
+.sc{display:grid;gap:5px}.sc .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.sc .top b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:24px;line-height:1}.sc .top span{font-size:12px;color:var(--muted)}
+.meter{height:7px;background:#242424;border-radius:9px;overflow:hidden;position:relative}.meter i{display:block;height:100%;border-radius:9px;background:var(--c,#6aa9ff)}.meter u{position:absolute;top:0;bottom:0;width:2px;background:#555;text-decoration:none}
+.cls{font-size:12px;font-weight:700}
+.st{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 10px;white-space:nowrap;border:1px solid var(--c);color:var(--c)}
+.empty{padding:40px 16px;text-align:center;color:var(--muted);font-size:14px;grid-column:1/-1}.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:4px}.state{padding:60px 20px;text-align:center;color:var(--muted)}
+.how{margin-top:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.how div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 14px;font-size:13.5px;color:#cfcfcf}.how b{display:block;color:var(--y);font-family:Anton,Impact,sans-serif;font-weight:400;font-size:22px;margin-bottom:2px}
+dialog{border:1px solid #444;border-radius:18px;background:#121212;color:#f4f4f4;padding:0;overflow:auto;max-height:calc(100dvh - 20px)}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+#ddlg{width:min(1120px,calc(100% - 20px))}#ldlg{width:min(640px,calc(100% - 20px))}
+.dd{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr)}.dd>div{padding:20px 22px}.dd .lft{border-right:1px solid var(--line)}
+.dd h2{font-size:32px;margin:6px 0 6px;line-height:1.05}.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sec{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13.5px}.kv dt{color:var(--muted)}.kv dd{margin:0;overflow-wrap:anywhere}
+.crit{display:grid;gap:9px}.crit .r{display:grid;gap:4px}.crit .r div{display:flex;justify-content:space-between;font-size:13px}.crit .r div b{font-weight:700}.crit .r div span{color:var(--muted)}
+.tot{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.tot b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:40px;line-height:1}
+.essay{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}.essay input{width:84px}
+.prac{display:grid;gap:7px}.prac .p{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.prac .p i{font-style:normal;font-weight:800}.prac .p.ok i{color:var(--good)}.prac .p.no i{color:var(--bad)}.prac .p small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:2px}
+.ans{display:grid;gap:9px}.ans .a{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 13px}.ans .a small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px;font-weight:600}.ans .a p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.stages{display:flex;gap:6px;flex-wrap:wrap}.stages button{border:1px solid var(--line2);border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--muted)}.stages button[aria-pressed=true]{border-color:var(--c);background:var(--c);color:#111}.stages button:hover:not(:disabled):not([aria-pressed=true]){border-color:var(--c);color:var(--c)}.stages button:disabled{opacity:.4;cursor:not-allowed}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;align-items:center}
+details.g{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:10px 13px;background:var(--panel2)}details.g summary{cursor:pointer;font-weight:700;color:var(--y);font-size:13.5px}details.g p,details.g li{font-size:13px;color:#cfcfcf;margin:6px 0 0}details.g ul{padding-left:18px}
+.lk{padding:20px 22px 22px}.lk h2{font-size:28px;margin:0 0 4px}.lk .help{color:var(--muted);font-size:13px;margin:0 0 6px}
+.lrow{display:grid;gap:7px;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:11px 13px;margin-top:10px}.lrow code{font-size:12.5px;overflow-wrap:anywhere;color:#d8d8d8;background:#0d0d0d;border:1px solid var(--line);border-radius:8px;padding:7px 9px}.lrow .b{display:flex;gap:6px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:60;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){.dd{grid-template-columns:minmax(0,1fr)}.dd .lft{border-right:0;border-bottom:1px solid var(--line)}.how{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.page{padding:16px 16px 70px}.grid{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dd>div{padding:16px}.how{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+<dialog id="ddlg" aria-label="Candidato"><div id="dbody"></div></dialog>
+<dialog id="ldlg" aria-label="Links do formulário"><div class="lk" id="lbody"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../assets/talentos-form.js?v=20261207a"></script>
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TZ='America/Sao_Paulo';
+const FORM=window.BOHA_TAL,VAGA=FORM.vagas.recepcao;
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},UST={cb:'CB',te:'TRZ',ma:'MCD'};
+const ST={novo:['Novo','#fff000'],entrevista:['Entrevista','#6aa9ff'],banco:['Banco de talentos','#3ddc84'],contratado:['Contratado','#b88cff'],descartado:['Descartado','#888']};
+const QMAP={};VAGA.sections.forEach(s=>s.qs.forEach(q=>{QMAP[q.id]=q}));
+const PRAC=['q15','q16','q17','q18','q19','q20'];
+const OPEN_Q=['q21','q22','q23','q24','q25','q26','q27','q28','q29','q33'];
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3400)}
+const fmtPhone=p=>{const d=String(p||'').replace(/\D/g,'');return d.length===11?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length===10?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:d};
+const tm=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:TZ});
+const dmy=iso=>new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:TZ});
+const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/6e4);return m<1?'agora':m<60?`há ${m} min`:m<1440?`há ${Math.round(m/60)} h`:`há ${Math.round(m/1440)} d`};
+const first=n=>String(n||'').trim().split(/\s+/)[0]||'';
+const isMgr=()=>['gerente','admin'].includes(CTX?.profile?.role);
+const myUnit=()=>(CTX?.profile?.role==='admin'&&!CTX?.profile?.unit)?null:(CTX?.profile?.unit||null);
+
+let ROWS=[],CUR=null,S={status:'all',unit:'all',q:'',sort:'recent'},FIRST=true,BUSY=false;
+
+/* ---------- nota (a parte automática vem do banco; as respostas abertas o gerente avalia) ---------- */
+function calc(r){
+ const s=r.score||{},auto=+s.auto||0,ess=(r.essay_score===null||r.essay_score===undefined)?null:+r.essay_score;
+ return {auto,ess,done:ess!==null,total:auto+(ess||0),com:+s.com||0,pra:+s.pra||0,res:+s.res||0,dis:+s.dis||0,ok:s.ok||{}};
+}
+function cls(t){return t>=85?['Excelente potencial','#3ddc84','Prioridade para entrevista']:t>=70?['Bom potencial','#6aa9ff','Convocar para entrevista']:t>=55?['Potencial em desenvolvimento','#ff9f2e','Avaliar individualmente']:['Abaixo do esperado','#ff5a4f','Não priorizar nesta etapa']}
+const ansText=(id,v)=>{const q=QMAP[id];if(!q||v===undefined||v===null)return '—';if(q.opts)return Array.isArray(v)?v.map(i=>q.opts[i]).filter(Boolean).join(' · '):(q.opts[v]??'—');return String(v)};
+function flags(r){
+ const f=[],a=r.answers||{};
+ if(r.age<17)f.push(['Abaixo de 17 anos','bad']);else if(r.age<18)f.push(['Menor de idade','warn']);
+ if(a.q8===3)f.push(['Sem disponibilidade','bad']);else if(a.q8===2)f.push(['Verificar horários','warn']);else if(a.q8===1)f.push(['Disponibilidade parcial','warn']);
+ if(a.q32===3)f.push(['Início a avaliar','warn']);
+ return f;
+}
+function visible(){
+ const q=S.q.trim().toLowerCase(),qd=q.replace(/\D/g,'');
+ let l=ROWS.filter(r=>(S.status==='all'||r.status===S.status)&&(S.unit==='all'||r.unit===S.unit)&&(!q||r.name.toLowerCase().includes(q)||(qd&&r.phone.includes(qd))));
+ const sc=r=>{const c=calc(r);return c.total};
+ if(S.sort==='score')l=l.slice().sort((a,b)=>sc(b)-sc(a)||String(b.created_at).localeCompare(String(a.created_at)));
+ return l;
+}
+
+/* ---------- lista ---------- */
+function cardHTML(r){
+ const c=calc(r),k=cls(c.total),fl=flags(r),stc=ST[r.status];
+ const max=c.done?100:75,pct=Math.min(100,Math.round(c.total/max*100));
+ return `<article class="card" data-open="${r.id}" tabindex="0" aria-label="${esc(r.name)}">
+ <div class="t1"><b class="nm">${esc(r.name)}</b><span class="st" style="--c:${stc[1]}">${stc[0]}</span></div>
+ <div class="sub"><span>${r.age} anos</span>${!myUnit()?`<span class="tag ${r.unit}">${UST[r.unit]}</span>`:''}<span>· ${ago(r.created_at)}</span><span>· ${esc(r.place)}</span></div>
+ <div class="sc"><div class="top"><b>${c.total}<small style="font-size:14px;color:var(--muted)"> /${c.done?100:'75'}</small></b><span>${c.done?'':'nota parcial'}</span></div>
+  <div class="meter" aria-hidden="true"><i style="width:${pct}%;--c:${c.done?k[1]:'#6aa9ff'}"></i></div>
+  <div class="cls" style="color:${c.done?k[1]:'var(--muted)'}">${c.done?esc(k[0])+' · '+esc(k[2]):'Falta avaliar as respostas abertas (0 a 25)'}</div></div>
+ ${fl.length?`<div class="sub">${fl.map(([t,c2])=>`<span class="fl ${c2}">${esc(t)}</span>`).join('')}</div>`:''}</article>`;
+}
+function drawGrid(){
+ const l=visible(),g=$('grid');if(!g)return;
+ g.innerHTML=l.length?l.map(cardHTML).join(''):`<div class="empty">${ROWS.length?'<b>Nenhum candidato nesse filtro.</b>Mude a etapa ou limpe a busca.':'<b>Ainda não chegou nenhuma candidatura.</b>Envie o link do formulário para quem entregar currículo (botão “Link do formulário”).'}</div>`;
+}
+function render(){
+ if(document.querySelector('dialog[open]'))return;
+ const cnt=k=>ROWS.filter(r=>r.status===k).length,mu=myUnit();
+ $('page').innerHTML=`<header class="hd"><div><p class="eyebrow">Gestão · recrutamento</p><h1 class="display">Banco de talentos</h1>
+ <p class="sub">Candidatos que responderam ao processo seletivo. ${mu?`Você vê apenas a unidade ${esc(UN[mu])}.`:'Você vê todas as unidades.'} Só gerente e administrador acessam estas respostas.</p></div>
+ <button type="button" class="btn-y" data-links>Link do formulário</button></header>
+ <div class="kpis"><button class="kpi ${cnt('novo')?'hot':''}" data-st="novo"><span>Novos</span><b>${cnt('novo')}</b></button><button class="kpi" data-st="entrevista"><span>Entrevista</span><b>${cnt('entrevista')}</b></button><button class="kpi ok" data-st="banco"><span>Banco de talentos</span><b>${cnt('banco')}</b></button><button class="kpi" data-st="contratado"><span>Contratados</span><b>${cnt('contratado')}</b></button><button class="kpi" data-st="all"><span>Total</span><b>${ROWS.length}</b></button></div>
+ ${ROWS.length?'':`<div class="how"><div><b>1</b>Receba o currículo na unidade.</div><div><b>2</b>Clique em “Link do formulário” e envie para a pessoa pelo WhatsApp.</div><div><b>3</b>Ela responde pelo celular em cerca de 10 minutos.</div><div><b>4</b>As respostas chegam aqui, com nota automática e aviso no sino.</div></div>`}
+ <div class="bar"><div class="seg" role="group" aria-label="Etapa"><button data-st="all" aria-pressed="${S.status==='all'}">Todos</button>${Object.entries(ST).map(([k,v])=>`<button data-st="${k}" aria-pressed="${S.status===k}">${v[0]} <b>${cnt(k)}</b></button>`).join('')}</div>
+ ${mu?'':`<div class="seg" role="group" aria-label="Unidade"><button data-un="all" aria-pressed="${S.unit==='all'}">Todas</button>${Object.entries(UST).map(([k,v])=>`<button data-un="${k}" aria-pressed="${S.unit===k}">${v}</button>`).join('')}</div>`}
+ <select class="inp" id="f_sort" aria-label="Ordenar"><option value="recent" ${S.sort==='recent'?'selected':''}>Mais recentes</option><option value="score" ${S.sort==='score'?'selected':''}>Maior nota</option></select>
+ <input class="inp search" id="f_q" type="search" placeholder="Buscar nome ou telefone" value="${esc(S.q)}" aria-label="Buscar"></div>
+ <div class="grid" id="grid"></div>`;
+ drawGrid();
+}
+
+/* ---------- candidato ---------- */
+function wa(r){
+ const txt=`Olá, ${first(r.name)}! Aqui é da Boha Fitness, unidade ${UN[r.unit]}. Recebemos sua candidatura para Jovem Aprendiz – Recepção e gostaríamos de conversar com você. Podemos falar agora?`;
+ return `https://wa.me/55${String(r.phone).replace(/\D/g,'')}?text=${encodeURIComponent(txt)}`;
+}
+function paintDetail(){
+ const r=ROWS.find(x=>x.id===CUR);if(!r){$('ddlg').close();return}
+ const c=calc(r),k=cls(c.total),a=r.answers||{},fl=flags(r);
+ const bars=[['Comunicação e interpretação',c.com,20],['Situações práticas',c.pra,25],['Responsabilidade e comprometimento',c.res,20],['Disponibilidade e compatibilidade',c.dis,10]];
+ const stBtns=Object.entries(ST).map(([key,v])=>`<button type="button" data-set="${key}" style="--c:${v[1]}" aria-pressed="${r.status===key}" ${key==='banco'&&!r.consent_bank?'disabled title="Este candidato não autorizou guardar os dados no banco de talentos."':''}>${v[0]}</button>`).join('');
+ $('dbody').innerHTML=`<div class="dd"><div class="lft">
+  <div class="meta"><span class="st" style="--c:${ST[r.status][1]}">${ST[r.status][0]}</span><span class="tag ${r.unit}">${esc(UN[r.unit])}</span>${fl.map(([t,c2])=>`<span class="fl ${c2}">${esc(t)}</span>`).join('')}<button type="button" class="btn-g" data-close style="margin-left:auto">Fechar</button></div>
+  <h2 class="display">${esc(r.name)}</h2>
+  <div class="acts" style="margin-top:6px"><a class="btn-y" href="${esc(wa(r))}" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="btn-g" href="tel:+55${esc(r.phone)}">Ligar ${esc(fmtPhone(r.phone))}</a></div>
+  <div class="sec"><span>Nota</span><span style="text-transform:none;letter-spacing:0;font-weight:600">${c.done?'completa':'parcial — falta avaliar as respostas abertas'}</span></div>
+  <div class="crit">${bars.map(([n,v,m])=>`<div class="r"><div><b>${n}</b><span>${v}/${m}</span></div><div class="meter"><i style="width:${Math.round(v/m*100)}%;--c:#6aa9ff"></i></div></div>`).join('')}
+   <div class="r"><div><b>Respostas abertas e maturidade</b><span>${c.done?c.ess:'—'}/25</span></div><div class="meter"><i style="width:${c.done?Math.round(c.ess/25*100):0}%;--c:#fff000"></i></div></div></div>
+  <div class="essay"><label for="essay" style="font-size:13px;color:var(--muted)">Sua nota (0 a 25)</label><input class="inp" id="essay" type="number" min="0" max="25" step="1" inputmode="numeric" value="${c.done?c.ess:''}"><button type="button" class="btn-g" data-essay>Salvar nota</button></div>
+  <p style="font-size:12px;color:var(--muted);margin:6px 0 0">Leia as respostas ao lado e avalie clareza, maturidade, interesse e sinceridade. A nota orienta a decisão; não substitui a entrevista.</p>
+  <div class="tot"><div><span style="font-size:12px;color:var(--muted)">Total ${c.done?'':'(parcial, de 75)'}</span><br><b>${c.total}</b><span style="color:var(--muted)"> /${c.done?100:75}</span></div>${c.done?`<div style="text-align:right"><b style="font-family:Inter;font-size:15px;color:${k[1]}">${esc(k[0])}</b><br><span style="font-size:12.5px;color:var(--muted)">${esc(k[2])}</span></div>`:''}</div>
+  <div class="sec"><span>Perfil rápido</span></div>
+  <dl class="kv"><dt>Idade</dt><dd>${r.age} anos</dd><dt>Mora em</dt><dd>${esc(r.place)}</dd><dt>Escolaridade</dt><dd>${esc(ansText('q5',a.q5))}</dd><dt>Estuda</dt><dd>${esc(ansText('q6',a.q6))}${a.q6===0?' · '+esc(ansText('q7',a.q7)):''}</dd>
+  <dt>Disponibilidade</dt><dd>${esc(ansText('q8',a.q8))}</dd><dt>Início</dt><dd>${esc(ansText('q32',a.q32))}</dd><dt>Experiência</dt><dd>${esc(ansText('q9',a.q9))}</dd><dt>Atendimento</dt><dd>${esc(ansText('q10',a.q10))}</dd>
+  <dt>Comunicação</dt><dd>${esc(ansText('q11',a.q11))}</dd><dt>Computador</dt><dd>${esc(ansText('q12',a.q12))}</dd><dt>Ferramentas</dt><dd>${esc(ansText('q13',a.q13))}</dd><dt>Pontualidade</dt><dd>${esc(ansText('q30',a.q30))}</dd><dt>Equipe</dt><dd>${esc(ansText('q31',a.q31))}</dd><dt>Importante na recepção</dt><dd>${esc(ansText('q14',a.q14))}</dd></dl>
+ </div><div>
+  <div class="sec" style="margin-top:0"><span>Etapa</span></div><div class="stages" role="group" aria-label="Etapa">${stBtns}</div>
+  <div class="sec"><span>Situações práticas</span><span style="text-transform:none;letter-spacing:0;font-weight:600">${c.pra}/25</span></div>
+  <div class="prac">${PRAC.map(id=>{const ok=c.ok[id]===true;return `<div class="p ${ok?'ok':'no'}"><i>${ok?'✔':'✘'}</i><div><small>${esc(QMAP[id].label)}</small>${esc(ansText(id,a[id]))}</div></div>`}).join('')}</div>
+  <div class="sec"><span>Respostas abertas</span></div>
+  <div class="ans">${OPEN_Q.filter(id=>a[id]).map(id=>`<div class="a"><small>${esc(QMAP[id].label)}</small><p>${esc(a[id])}</p></div>`).join('')||'<p style="color:var(--muted);font-size:13px">Sem respostas abertas.</p>'}</div>
+  <div class="sec"><span>Suas anotações</span></div>
+  <textarea class="inp" id="notes" maxlength="2000" placeholder="Impressões da entrevista, pontos a conferir…">${esc(r.notes||'')}</textarea>
+  <div class="acts"><button type="button" class="btn-g" data-notes>Salvar anotações</button><button type="button" class="btn-g danger" data-del style="margin-left:auto">Excluir candidato</button></div>
+  <p style="font-size:12px;color:var(--muted);margin:10px 0 0">Enviado em ${tm(r.created_at)}. Dados guardados até ${dmy(r.keep_until)}${r.consent_bank?' (autorizou o banco de talentos)':' (não autorizou o banco de talentos)'}.${r.reviewed_by?` Última análise: ${esc(r.reviewed_by)}.`:''}</p>
+  <details class="g"><summary>Guia do processo seletivo</summary><ul><li><b>1. Formulário online</b>: triagem inicial (esta tela).</li><li><b>2. Entrevista presencial</b>: 15 a 20 minutos para avaliar comunicação, postura, interesse e desenvoltura.</li><li><b>3. Simulação de atendimento</b>: receber um aluno, responder uma dúvida, lidar com uma reclamação e organizar prioridades.</li></ul><p>Falta de experiência não deve reduzir a nota: a vaga é para quem está começando. Antes de contratar, confirme com o RH ou a entidade formadora idade, escolaridade, jornada e frequência escolar.</p></details>
+ </div></div>`;
+}
+async function patch(p,msg){
+ if(BUSY)return;BUSY=true;
+ try{
+  const r=await CTX.client.rpc('boha_talent_update',{p_id:CUR,p_patch:p});
+  if(r.error){toast(r.error.message||'Não foi possível salvar.');return false}
+  await load(true);paintDetail();if(msg)toast(msg);return true;
+ }finally{BUSY=false}
+}
+
+/* ---------- links ---------- */
+function openLinks(){
+ const mu=myUnit(),units=mu?[mu]:['cb','te','ma'];
+ $('lbody').innerHTML=`<h2 class="display">Link do formulário</h2><p class="help">Quando a unidade receber um currículo, envie este link para a pessoa. As respostas chegam em “Banco de talentos” já com a unidade certa.</p>
+ ${units.map(u=>{const link=new URL('../processo-seletivo.html?u='+u,location.href).href,msg=`Olá! Aqui é da Boha Fitness ${UN[u]}. Para continuar seu processo seletivo (Jovem Aprendiz – Recepção), responda este formulário pelo celular. Leva cerca de 10 minutos: ${link}`;
+  return `<div class="lrow"><b>${esc(UN[u])}</b><code>${esc(link)}</code><div class="b"><button type="button" class="btn-g" data-copy="${esc(link)}">Copiar link</button><a class="btn-y" target="_blank" rel="noopener noreferrer" href="https://wa.me/?text=${encodeURIComponent(msg)}">Enviar pelo WhatsApp</a></div></div>`}).join('')}
+ <div class="acts"><button type="button" class="btn-g" data-lclose style="margin-left:auto">Fechar</button></div>`;
+ $('ldlg').showModal();
+}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{}try{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;left:-999px';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch{return false}}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',async e=>{
+ const t=e.target;let b;
+ if((b=t.closest('[data-copy]'))){toast(await copyText(b.dataset.copy)?'Link copiado.':'Não consegui copiar. Selecione o link e copie.');return}
+ if(t.closest('[data-lclose]')){$('ldlg').close();return}
+ if(t.closest('[data-links]')){openLinks();return}
+ if(t.closest('[data-close]')){$('ddlg').close();return}
+ if((b=t.closest('[data-set]'))){if(b.disabled)return;await patch({status:b.dataset.set},'Etapa atualizada.');return}
+ if(t.closest('[data-essay]')){const v=$('essay').value.trim();if(v!==''&&(!/^\d{1,2}$/.test(v)||+v>25)){toast('A nota vai de 0 a 25.');return}await patch({essay_score:v},v===''?'Nota removida.':'Nota salva.');return}
+ if(t.closest('[data-notes]')){await patch({notes:$('notes').value},'Anotações salvas.');return}
+ if(t.closest('[data-del]')){const r=ROWS.find(x=>x.id===CUR);if(!r||!confirm('Excluir "'+r.name+'" e todas as respostas? Isso não pode ser desfeito.'))return;
+  const x=await CTX.client.rpc('boha_talent_delete',{p_id:r.id});if(x.error){toast('Não foi possível excluir.');return}
+  $('ddlg').close();CUR=null;await load(true);render();toast('Candidato excluído.');return}
+ if((b=t.closest('[data-st]'))){S.status=b.dataset.st;render();return}
+ if((b=t.closest('[data-un]'))){S.unit=b.dataset.un;render();return}
+ if((b=t.closest('[data-open]'))){CUR=b.dataset.open;paintDetail();$('ddlg').showModal();return}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('.card')){e.preventDefault();CUR=e.target.dataset.open;paintDetail();$('ddlg').showModal()}});
+document.addEventListener('input',e=>{if(e.target.id==='f_q'){S.q=e.target.value;drawGrid()}});
+document.addEventListener('change',e=>{if(e.target.id==='f_sort'){S.sort=e.target.value;drawGrid()}});
+$('ddlg').addEventListener('click',e=>{if(e.target===$('ddlg'))$('ddlg').close()});
+$('ldlg').addEventListener('click',e=>{if(e.target===$('ldlg'))$('ldlg').close()});
+$('ddlg').addEventListener('close',()=>{$('dbody').innerHTML='';CUR=null;render()});
+
+/* ---------- dados ---------- */
+async function load(){
+ const r=await CTX.client.rpc('boha_talent_list');
+ if(r.error)throw r.error;
+ ROWS=(r.data||[]).map(x=>({...x,answers:x.answers||{},score:x.score||{}}));
+ if(FIRST){FIRST=false;S.status=ROWS.some(x=>x.status==='novo')?'novo':'all'}
+ if(!document.querySelector('dialog[open]'))render();
+}
+window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch(()=>{})};
+(async()=>{
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#talentos" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if((CTX.canModule&&!CTX.canModule('talentos'))||!isMgr()){$('page').innerHTML='<div class="state">Este módulo é só para gerentes e administradores.</div>';return}
+ try{await load();setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('dialog[open]'))load().catch(()=>{})},60000)}
+ catch{$('page').innerHTML='<div class="state">Não foi possível carregar os candidatos. Atualize a página.</div>'}
+})();
+</script></body></html>
