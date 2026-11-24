@@ -33,6 +33,7 @@ button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
 .kdot{width:10px;height:10px;border-radius:50%;flex:none}
 .person{display:flex;align-items:center;gap:9px;padding:5px 0}.av{width:30px;height:30px;border-radius:50%;background:#262626;border:1px solid var(--line2);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}.person b{display:block;font-size:13.5px;line-height:1.2}.person small{color:var(--muted);font-size:11.5px}
 .off{margin-top:10px;font-size:13px;color:var(--muted)}
+.chip{font-size:12px;border:1px solid var(--line2);border-radius:99px;padding:3px 11px;color:#d0d0d0;white-space:nowrap}
 /* escala */
 .gridw{overflow-x:auto;margin-top:6px}
 table.esc{border-collapse:separate;border-spacing:0;width:100%;min-width:860px;font-size:13px}
@@ -100,6 +101,7 @@ const fmtLong=d=>cap(DOWF[wd(d)])+', '+(+d.slice(8,10))+' de '+MN[+d.slice(5,7)-
 const hhmm=t=>t?String(t).slice(0,5):'';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
+const LOCK=()=>CTX?.profile?.unit||null,UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
 let EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today())},editS=null,sKind='manha';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
@@ -117,18 +119,18 @@ function head(){
  let nav='';
  if(S.tab==='escala'){const e=addDays(S.week,6);nav=`<div class="nav"><button class="arrow" data-wk="-1" aria-label="Semana anterior">‹</button><b>${+S.week.slice(8)} ${S.week.slice(5,7)!==e.slice(5,7)?MN[+S.week.slice(5,7)-1].slice(0,3)+' ':''}– ${+e.slice(8)} ${MN[+e.slice(5,7)-1].slice(0,3)} ${e.slice(0,4)}</b><button class="arrow" data-wk="1" aria-label="Próxima semana">›</button></div>`}
  return `<header class="hd"><p class="eyebrow">Equipe · dia a dia</p><h1 class="display">Escalas</h1><p class="sub">Quem trabalha em cada turno, as horas da semana e a cobertura de cada unidade.</p></header>
- <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div><div class="seg" role="group" aria-label="Unidade">${Object.entries(UN).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${v}</button>`).join('')}</div>${nav}</div>`;
+ <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${UNITS().length>1?`<div class="seg" role="group" aria-label="Unidade">${UNITS().map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[UNITS()[0]]}</span>`}${nav}</div>`;
 }
 
 /* ---------- hoje ---------- */
 function tabHoje(){
  const d=today(),u=S.unit,emps=empsOf(u),byKind=k=>emps.filter(e=>shiftOf(e.id,d)?.kind===k);
- const counts=Object.keys(UN).map(k=>({k,n:SHIFTS.filter(s=>s.work_date===d&&WORK.includes(s.kind)&&EMPS.find(e=>e.id===s.employee_id)?.unit===k).length}));
+ const counts=UNITS().map(k=>({k,n:SHIFTS.filter(s=>s.work_date===d&&WORK.includes(s.kind)&&EMPS.find(e=>e.id===s.employee_id)?.unit===k).length}));
  const sched=emps.filter(e=>shiftOf(e.id,d)).length;
  const person=e=>{const s=shiftOf(e.id,d);return `<div class="person"><span class="av">${esc(initials(e.name))}</span><div><b>${esc(e.name)}</b><small>${esc(e.title||'')}${timeLabel(s)?(e.title?' · ':'')+timeLabel(s):''}${s.note?' · '+esc(s.note):''}</small></div></div>`};
  const cols=WORK.map(k=>{const l=byKind(k);return `<div class="col"><h3><i class="kdot" style="background:${KINDS[k].c}"></i>${KINDS[k].l} · ${l.length}</h3>${l.length?l.map(person).join(''):'<small style="color:var(--muted)">ninguém</small>'}</div>`}).join('');
  const off=['folga','ferias','ausente'].map(k=>[k,byKind(k)]).filter(x=>x[1].length).map(([k,l])=>`${KINDS[k].l}: ${l.map(e=>esc(e.name.split(' ')[0])).join(', ')}`).join(' · ');
- return `<div class="units" role="group" aria-label="Quem trabalha hoje em cada unidade">${counts.map(c=>`<button data-unit="${c.k}" aria-pressed="${S.unit===c.k}">${UN[c.k]}<b>${c.n}</b> hoje</button>`).join('')}</div>
+ return `${counts.length>1?`<div class="units" role="group" aria-label="Quem trabalha hoje em cada unidade">${counts.map(c=>`<button data-unit="${c.k}" aria-pressed="${S.unit===c.k}">${UN[c.k]}<b>${c.n}</b> hoje</button>`).join('')}</div>`:''}
  <section class="panel"><div class="ph"><div><h2 class="display">Quem está hoje · ${UN[u]}</h2><p>${fmtLong(d)}</p></div></div>
  ${sched?`<div class="cols">${cols}</div>${off?`<p class="off">${off}</p>`:''}`:`<div class="empty">Ninguém escalado para hoje nesta unidade.${canManage()?' <button class="btn-g" data-tab="escala" style="margin-left:6px">Montar a escala</button>':''}</div>`}</section>`;
 }
@@ -217,6 +219,7 @@ window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch((
 (async()=>{
  if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#escalas" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
  if(CTX.canModule&&!CTX.canModule('escalas')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ S.unit=LOCK()||'cb';
  try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
 })();
 </script></body></html>

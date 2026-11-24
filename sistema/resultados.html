@@ -376,7 +376,8 @@ const WARN_ICO='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stro
 const strip=t=>`<div class="strip">${WARN_ICO}<span>${t}</span></div>`;
 const inds=()=>[...SEC[S.sec].kpis,...(SEC[S.sec].more||[])];
 function renderFilters(){
- $('segUnit').innerHTML=[['1','Casa Branca'],['2','Santa Tereza'],['3','Macedônia'],['all','Comparar unidades']].map(([k,l])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${l}</button>`).join('');
+ const LK=({cb:'1',te:'2',ma:'3'})[CTX?.profile?.unit]||null;
+ $('segUnit').innerHTML=[['1','Casa Branca'],['2','Santa Tereza'],['3','Macedônia'],['all','Comparar unidades']].filter(([k])=>!LK||k===LK).map(([k,l])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${l}</button>`).join('');
  $('segSec').innerHTML=Object.entries(SEC).map(([k,v])=>`<button data-sec="${k}" aria-pressed="${S.sec===k}">${v.l}</button>`).join('');
  const ps=[...new Set(ROWS.map(r=>r.p))].sort().reverse();
  $('selRef').innerHTML=ps.map(p=>`<option value="${p}" ${p===S.ref?'selected':''}>${pLabel(p)}${ROWS.some(r=>r.p===p&&r.q==='parcial')?' (parcial)':''}</option>`).join('');
@@ -622,7 +623,8 @@ async function load(){
 }
 (async()=>{
  if(!CTX||!CTX.client){$('view').innerHTML='<div class="state">Abra este painel pelo <a href="../equipe.html#resultados" style="color:var(--y)">sistema interno da Boha</a>.</div>';$('btnImport').hidden=$('btnQuality').hidden=true;return}
- if(CTX.profile?.role!=='admin')$('btnImport').hidden=true;
+ if(!['admin','gerente'].includes(CTX.profile?.role))$('btnImport').hidden=true;
+ {const lk=({cb:'1',te:'2',ma:'3'})[CTX.profile?.unit];if(lk)S.unit=lk}
  try{await load()}catch{$('view').innerHTML='<div class="state">Não foi possível carregar os dados. Seu perfil pode não ter acesso a esta área.</div>'}
 })();
 </script></body></html>

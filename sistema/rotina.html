@@ -52,14 +52,29 @@ dialog{width:min(560px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:40;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media (max-width:760px){.page{padding:16px 16px 70px}.nav{margin-left:0;width:100%;justify-content:space-between}.fm .row{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* painel do gerente */
+.live{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:12.5px;margin-left:auto}.live i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.kpi span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.kpi b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:34px;line-height:1.1;margin-top:4px}.kpi small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}.kpi.bad b{color:var(--bad)}.kpi.good b{color:var(--good)}.kpi.warn b{color:var(--warn)}
+.moms{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.mc{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}.mc h3{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.mc .n{font-size:22px;font-weight:800;margin:4px 0 6px}.mc .n small{font-size:13px;color:var(--muted);font-weight:600}.mc .st{font-size:12px;font-weight:700;margin-top:6px}.mc .dl{font-size:11.5px;color:var(--muted)}
+.st.ok{color:var(--good)}.st.late{color:var(--bad)}.st.run{color:var(--y)}.st.wait{color:var(--muted)}
+.prog.bad i{background:var(--bad)}.prog.warn i{background:var(--warn)}
+.item .tag{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:2px 9px;white-space:nowrap}.tag.late{background:rgba(255,90,79,.14);color:var(--bad)}.tag.ok{background:rgba(61,220,132,.12);color:var(--good)}
+.item .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line2);flex:none;display:grid;place-items:center;font-size:12px;font-weight:800}.item .dot.ok{background:var(--good);border-color:var(--good);color:#111}.item .dot.late{border-color:var(--bad)}
+.who{display:grid;gap:8px}.who .r{display:grid;grid-template-columns:130px 1fr 34px;gap:10px;align-items:center;font-size:13px}.who .r span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.who .r i{display:block;height:9px;border-radius:99px;background:var(--y)}.who .r b{text-align:right}
+.week.long{gap:5px;overflow-x:auto;padding-bottom:4px}.week.long .wk{font-size:10.5px;flex:1 0 38px}.week.long .wk .b{height:90px}
+@media (max-width:760px){.live{margin-left:0}.who .r{grid-template-columns:90px 1fr 30px}.week.long .wk{font-size:9.5px}}
 </style></head><body>
 <div class="page" id="page"><div class="state">Carregando…</div></div>
 
 <dialog id="rdlg" aria-labelledby="rTitle"><form class="fm" id="rform" novalidate>
- <h2 class="display" id="rTitle">Nova rotina</h2><p class="help">Uma tarefa que se repete e aparece no checklist "Hoje" da unidade.</p>
- <div class="row"><label class="l full">Tarefa<input class="inp" id="r_title" maxlength="160" autocomplete="off" placeholder="Ex.: Conferir a limpeza dos vestiários"></label></div>
- <div class="row"><label class="l">Função<select class="inp" id="r_role"></select></label><label class="l">Momento do dia<select class="inp" id="r_moment"></select></label></div>
- <div class="row"><label class="l">Unidade<select class="inp" id="r_unit"></select></label><label class="l">Situação<select class="inp" id="r_active"><option value="1">Ativa</option><option value="0">Pausada</option></select></label></div>
+ <h2 class="display" id="rTitle">Nova rotina</h2><p class="help">Uma tarefa da recepção que se repete e aparece no checklist do dia.</p>
+ <div class="row"><label class="l full">Tarefa<input class="inp" id="r_title" maxlength="160" autocomplete="off" placeholder="Ex.: Conferir a limpeza do salão"></label></div>
+ <div class="row"><label class="l">Momento do dia<select class="inp" id="r_moment"></select></label><label class="l">Situação<select class="inp" id="r_active"><option value="1">Ativa</option><option value="0">Pausada</option></select></label></div>
+ <div class="row" id="r_unitrow"><label class="l full">Unidade<select class="inp" id="r_unit"></select></label></div>
  <div class="row"><div class="full"><label class="l" style="margin-bottom:6px">Dias da semana <small>(todos marcados = todo dia)</small></label><div class="days" id="r_days"></div></div></div>
  <p class="err" id="r_err" role="alert"></p>
  <div class="foot"><span><button type="button" class="btn-g danger" id="r_del" hidden>Excluir</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="rdlg">Cancelar</button><button type="submit" class="btn-y">Salvar</button></span></div>
@@ -72,92 +87,142 @@ let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.boh
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},TZ='America/Sao_Paulo';
-const MOMENTS=[['abertura','Abertura'],['manha','Manhã'],['tarde','Tarde'],['noite','Noite'],['fechamento','Fechamento']];
-const ROLES=['Recepção','Musculação','Aulas coletivas','Limpeza','Gerência','Todos'];
+const ROLE='Recepção'; // por enquanto só a rotina da recepção
+const MOMENTS=[['abertura','Abertura',9],['manha','Manhã',12],['tarde','Tarde',18],['noite','Noite',21],['fechamento','Fechamento',24]]; // [chave, nome, hora-limite]
 const DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],DOWF=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],ORDER=[1,2,3,4,5,6,0];
 const MN=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const TEMPLATE=[
- ['Recepção','abertura','Ligar luzes, ar-condicionado, som e o sistema de acesso',null],['Recepção','abertura','Conferir a limpeza da recepção, salão, vestiários e banheiros',null],['Recepção','abertura','Conferir se esteiras, bikes e equipamentos estão funcionando',null],
- ['Musculação','manha','Fazer a ronda do salão e orientar alunos novos',null],['Aulas coletivas','manha','Conferir som, microfone e sala 15 minutos antes de cada aula',null],
- ['Limpeza','manha','Higienizar vestiários e banheiros e repor papel e sabonete',null],['Limpeza','tarde','Higienizar vestiários e banheiros novamente',null],
- ['Recepção','tarde','Responder o WhatsApp e agendar aulas experimentais',null],['Recepção','noite','Fazer o follow-up dos alunos que vieram na experimental',null],
- ['Recepção','fechamento','Fechar o caixa e anotar as pendências do dia',null],['Limpeza','fechamento','Limpeza geral do salão e organização dos acessórios',null],['Recepção','fechamento','Desligar ar-condicionado, som e luzes e trancar a unidade',null],
- ['Gerência','manha','Conferir o estoque de limpeza e itens da recepção',[1]],['Gerência','tarde','Revisar a escala da próxima semana',[5]]
+ ['abertura','Ligar luzes, ar-condicionado, som e o sistema de acesso',null],['abertura','Conferir a limpeza da recepção, do salão e dos banheiros',null],['abertura','Fazer uma ronda rápida no salão e avisar o gerente de qualquer problema',null],['abertura','Abrir o sistema e conferir os agendamentos do dia',null],
+ ['manha','Responder o WhatsApp e agendar aulas experimentais',null],['manha','Registrar no sistema as matrículas e renovações do período',null],
+ ['tarde','Responder o WhatsApp e agendar aulas experimentais',null],['tarde','Fazer o follow-up dos alunos que vieram na aula experimental',null],['tarde','Conferir a reposição de copos, papel e itens da recepção',null],
+ ['noite','Responder os contatos pendentes do WhatsApp',null],['noite','Anotar recados e pendências para o próximo turno',null],
+ ['fechamento','Fechar o caixa e anotar as pendências do dia',null],['fechamento','Desligar ar-condicionado, som e luzes e trancar a unidade',null],['fechamento','Enviar as pendências do dia para o gerente',[1,2,3,4,5]]
 ];
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());
+const nowHour=()=>{const p=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());return +p.find(x=>x.type==='hour').value+ +p.find(x=>x.type==='minute').value/60};
 const dt=d=>new Date(d+'T12:00:00Z');
 const addDays=(d,n)=>new Date(dt(d).getTime()+n*864e5).toISOString().slice(0,10);
 const wd=d=>dt(d).getUTCDay();
 const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 const fmtLong=d=>cap(DOWF[wd(d)])+', '+(+d.slice(8,10))+' de '+MN[+d.slice(5,7)-1];
-const hhmm=t=>t?String(t).slice(0,5):'';
+const tm=iso=>new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:TZ});
+const first=n=>String(n||'').trim().split(/\s+/)[0]||'';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
-let ROUTINES=[],CHECKS=[],S={tab:'hoje',unit:'cb',role:'all'},editR=null;
-const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
+const ROLE_NOW=()=>CTX?.profile?.role||'';
+const LOCK=()=>CTX?.profile?.unit||null;                       // unidade fixa (gerente/recepção); null = rede toda
+const UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
+const isRecep=()=>ROLE_NOW()==='recepcao';                      // quem cumpre a rotina
+const canManage=()=>['admin','dono','gerente','marketing'].includes(ROLE_NOW());
+const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK());
+let ROUTINES=[],CHECKS=[],S={tab:'hoje',unit:LOCK()||'cb'},editR=null,updated=null,timer=null;
 function applicable(d,u){return ROUTINES.filter(r=>r.active&&(!r.unit||r.unit===u)&&(!r.weekdays||r.weekdays.includes(wd(d))))}
 const checkOf=(rid,u,d)=>CHECKS.find(c=>c.routine_id===rid&&c.unit===u&&c.check_date===d);
+const lateNow=r=>{const m=MOMENTS.find(x=>x[0]===r.moment);return m&&nowHour()>=m[2]};
 
 /* ---------- cabeçalho ---------- */
 function head(){
- const tabs=[['hoje','Hoje'],['rotinas','Cadastrar rotinas']];
- return `<header class="hd"><p class="eyebrow">Operação · dia a dia</p><h1 class="display">Rotina</h1><p class="sub">O que cada função precisa fazer todo dia, da abertura ao fechamento, com checklist por unidade.</p></header>
- <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div><div class="seg" role="group" aria-label="Unidade">${Object.entries(UN).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${v}</button>`).join('')}</div></div>`;
+ const tabs=canManage()?[['hoje','Painel de hoje'],['rotinas','Rotinas da recepção']]:[];
+ const units=UNITS();
+ return `<header class="hd"><p class="eyebrow">Operação · dia a dia</p><h1 class="display">Rotina</h1><p class="sub">${isRecep()?'As tarefas do dia da recepção. Marque cada uma assim que fizer.':'Acompanhe se a recepção está cumprindo a rotina do dia, tarefa por tarefa.'}</p></header>
+ <div class="bar">${tabs.length?`<div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>`:''}${units.length>1?`<div class="seg" role="group" aria-label="Unidade">${units.map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[units[0]]}</span>`}${S.tab==='hoje'?`<span class="live" role="status"><i></i>Atualiza sozinho${updated?' · '+tm(updated):''}</span>`:''}</div>`;
 }
 
-/* ---------- hoje ---------- */
-function tabHoje(){
- const d=today(),u=S.unit;
- const sum=Object.keys(UN).map(k=>{const a=applicable(d,k);return {k,t:a.length,n:a.filter(r=>checkOf(r.id,k,d)).length}});
- const items=applicable(d,u).filter(r=>S.role==='all'||r.role_name===S.role||r.role_name==='Todos');
- const done=items.filter(r=>checkOf(r.id,u,d)).length;
- const momentsHTML=MOMENTS.map(([mk,ml])=>{const l=items.filter(r=>r.moment===mk).sort((a,b)=>a.sort-b.sort);return l.length?`<div class="mom"><h3>${ml}</h3>${l.map(r=>{const c=checkOf(r.id,u,d);return `<label class="item ${c?'done':''}"><input type="checkbox" data-chk="${r.id}" ${c?'checked':''}><span class="tt">${esc(r.title)}</span>${c?`<small>${esc((c.done_by_name||'').split(' ')[0]||'feito')} · ${new Date(c.done_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:TZ})}</small>`:`<small>${esc(r.role_name)}</small>`}</label>`}).join('')}</div>`:''}).join('');
- const days=Array.from({length:7},(_,i)=>addDays(d,i-6)).map(x=>{const a=applicable(x,u),n=a.filter(r=>checkOf(r.id,u,x)).length;return {x,t:a.length,n,p:a.length?n/a.length*100:null}});
- return `<div class="units" role="group" aria-label="Rotina de hoje em cada unidade">${sum.map(c=>`<button data-unit="${c.k}" aria-pressed="${S.unit===c.k}">${UN[c.k]}<b>${c.t?c.n+'/'+c.t:'—'}</b> hoje</button>`).join('')}</div>
- <section class="panel"><div class="ph"><div><h2 class="display">Rotina de hoje · ${UN[u]}</h2><p>${fmtLong(d)} · ${items.length?`${done} de ${items.length} feitas · marque conforme for concluindo`:'nenhuma rotina para hoje'}</p></div></div>${roleChips()}
- ${items.length?`<div class="prog"><i class="${done===items.length?'ok':''}" style="width:${done/items.length*100}%"></i></div>${momentsHTML}`:`<div class="empty">${ROUTINES.length?'Não há tarefas para esta função hoje.':'Ainda não há rotinas cadastradas.'}${canManage()&&!ROUTINES.length?' <button class="btn-g" data-tab="rotinas" style="margin-left:6px">Cadastrar rotinas</button>':''}</div>`}</section>
- <section class="panel"><div class="ph"><div><h2 class="display">Rotina cumprida nos últimos 7 dias</h2><p>${UN[u]} · % das tarefas do dia que foram marcadas</p></div></div><div class="week">${days.map(x=>`<div class="wk"><div class="b" title="${x.p==null?'sem rotina':Math.round(x.p)+'% ('+x.n+' de '+x.t+')'}">${x.p==null?'':`<i style="height:${Math.max(4,x.p)}%;background:${x.p>=90?'var(--good)':x.p>=60?'var(--warn)':'var(--bad)'}"></i>`}</div><b>${x.p==null?'—':Math.round(x.p)+'%'}</b>${DOW[wd(x.x)]} ${dm(x.x)}</div>`).join('')}</div></section>`;
+/* ---------- checklist (recepção) e painel (gerente) ---------- */
+function rowHTML(r,u,d,interactive){
+ const c=checkOf(r.id,u,d),late=!c&&lateNow(r);
+ const who=c?`${esc(first(c.done_by_name)||'feito')} · ${tm(c.done_at)}`:'';
+ if(interactive)return `<label class="item ${c?'done':''}"><input type="checkbox" data-chk="${r.id}" ${c?'checked':''}><span class="tt">${esc(r.title)}</span>${c?`<small>${who}</small>`:late?'<span class="tag late">atrasada</span>':''}</label>`;
+ return `<div class="item ${c?'done':''}"><span class="dot ${c?'ok':late?'late':''}" aria-hidden="true">${c?'✓':''}</span><span class="tt">${esc(r.title)}</span>${c?`<small>${who}</small>`:late?'<span class="tag late">atrasada</span>':'<small>pendente</small>'}</div>`;
 }
-const roleChips=()=>`<div class="chips2" role="group" aria-label="Filtrar por função"><button data-role="all" aria-pressed="${S.role==='all'}">Todas as funções</button>${ROLES.filter(x=>x!=='Todos').map(x=>`<button data-role="${esc(x)}" aria-pressed="${S.role===x}">${x}</button>`).join('')}</div>`;
+function momentsList(items,u,d,interactive){
+ return MOMENTS.map(([mk,ml,hr])=>{const l=items.filter(r=>r.moment===mk).sort((a,b)=>a.sort-b.sort);return l.length?`<div class="mom"><h3>${ml}${hr<24?` <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500">· até ${String(hr).padStart(2,'0')}h</span>`:''}</h3>${l.map(r=>rowHTML(r,u,d,interactive)).join('')}</div>`:''}).join('');
+}
+function dayStats(u,x){const a=applicable(x,u),n=a.filter(r=>checkOf(r.id,u,x)).length;return {x,t:a.length,n,p:a.length?n/a.length*100:null}}
+function bars(days,long){
+ return `<div class="week ${long?'long':''}">${days.map(x=>`<div class="wk"><div class="b" title="${x.p==null?'sem rotina':Math.round(x.p)+'% ('+x.n+' de '+x.t+')'}">${x.p==null?'':`<i style="height:${Math.max(4,x.p)}%;background:${x.p>=90?'var(--good)':x.p>=60?'var(--warn)':'var(--bad)'}"></i>`}</div><b>${x.p==null?'—':Math.round(x.p)+'%'}</b>${long?dm(x.x):DOW[wd(x.x)]+' '+dm(x.x)}</div>`).join('')}</div>`;
+}
+const unitChips=d=>UNITS().length>1?`<div class="units" role="group" aria-label="Rotina de hoje em cada unidade">${UNITS().map(k=>{const s=dayStats(k,d);return `<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}<b>${s.t?s.n+'/'+s.t:'—'}</b> hoje</button>`}).join('')}</div>`:'';
 
-/* ---------- rotinas ---------- */
+function tabRecepcao(){
+ const d=today(),u=S.unit,items=applicable(d,u),done=items.filter(r=>checkOf(r.id,u,d)).length,all=items.length&&done===items.length;
+ return `${unitChips(d)}<section class="panel"><div class="ph"><div><h2 class="display">Rotina de hoje · ${UN[u]}</h2><p>${fmtLong(d)} · ${items.length?(all?'tudo feito por hoje':`${done} de ${items.length} feitas`):'nenhuma rotina para hoje'}</p></div></div>
+ ${items.length?`<div class="prog"><i class="${all?'ok':''}" style="width:${done/items.length*100}%"></i></div>${momentsList(items,u,d,ROLE_NOW()==='recepcao')}`:'<div class="empty">Ainda não há rotina cadastrada para hoje. Fale com o seu gerente.</div>'}</section>`;
+}
+
+function tabPainel(){
+ const d=today(),u=S.unit,items=applicable(d,u),done=items.filter(r=>checkOf(r.id,u,d)),pending=items.filter(r=>!checkOf(r.id,u,d)),late=pending.filter(lateNow);
+ const pct=items.length?Math.round(done.length/items.length*100):null;
+ const last=CHECKS.filter(c=>c.unit===u&&c.check_date===d).sort((a,b)=>b.done_at.localeCompare(a.done_at))[0];
+ const d7=Array.from({length:7},(_,i)=>dayStats(u,addDays(d,i-7))).filter(x=>x.p!=null),avg7=d7.length?Math.round(d7.reduce((a,x)=>a+x.p,0)/d7.length):null;
+ const d14=Array.from({length:14},(_,i)=>dayStats(u,addDays(d,i-13)));
+ // por momento
+ const moms=MOMENTS.map(([mk,ml,hr])=>{const l=items.filter(r=>r.moment===mk);if(!l.length)return '';const n=l.filter(r=>checkOf(r.id,u,d)).length,over=nowHour()>=hr,started=n>0,st=n===l.length?['ok','Concluído']:over?['late','Atrasado']:started?['run','Em andamento']:['wait','Ainda não começou'];
+  return `<div class="mc"><h3>${ml}</h3><div class="n">${n}<small> de ${l.length}</small></div><div class="prog ${st[0]==='late'?'bad':''}" style="margin:0"><i class="${n===l.length?'ok':''}" style="width:${n/l.length*100}%"></i></div><div class="st ${st[0]}">${st[1]}</div>${hr<24?`<div class="dl">prazo até ${String(hr).padStart(2,'0')}h</div>`:''}</div>`}).join('');
+ // quem marcou (7 dias)
+ const since=addDays(d,-6),cnt={};CHECKS.filter(c=>c.unit===u&&c.check_date>=since).forEach(c=>{const n=first(c.done_by_name)||'—';cnt[n]=(cnt[n]||0)+1});
+ const ppl=Object.entries(cnt).sort((a,b)=>b[1]-a[1]),max=Math.max(1,...ppl.map(x=>x[1]));
+ const state=!items.length?'':late.length?'bad':pct===100?'good':'';
+ return `${unitChips(d)}
+ <div class="kpis">
+  <div class="kpi ${pct===100?'good':late.length?'bad':''}"><span>Hoje · ${UN[u]}</span><b>${items.length?done.length+' de '+items.length:'—'}</b><small>${items.length?pct+'% da rotina feita':'nenhuma rotina para hoje'}</small></div>
+  <div class="kpi ${late.length?'bad':items.length?'good':''}"><span>Atrasadas agora</span><b>${items.length?late.length:'—'}</b><small>${late.length?'passaram do prazo do momento':items.length?'nenhuma atrasada':' '}</small></div>
+  <div class="kpi"><span>Última marcação</span><b>${last?tm(last.done_at):'—'}</b><small>${last?esc(first(last.done_by_name)||'recepção'):'ninguém marcou ainda hoje'}</small></div>
+  <div class="kpi ${avg7==null?'':avg7>=90?'good':avg7>=60?'warn':'bad'}"><span>Média dos últimos 7 dias</span><b>${avg7==null?'—':avg7+'%'}</b><small>da rotina cumprida por dia</small></div>
+ </div>
+ ${items.length?`<section class="panel"><div class="ph"><div><h2 class="display">Como está o dia</h2><p>${fmtLong(d)} · cada momento tem um prazo para a recepção concluir</p></div></div><div class="prog ${late.length?'bad':''}"><i class="${pct===100?'ok':''}" style="width:${pct}%"></i></div><div class="moms" style="margin-top:12px">${moms}</div></section>
+ <section class="panel"><div class="ph"><div><h2 class="display">Tarefas de hoje</h2><p>${pending.length?`${pending.length} pendente${pending.length===1?'':'s'} · quem marcou aparece com o horário`:'Tudo feito por hoje.'}</p></div></div>${momentsList(items,u,d,false)}</section>`
+ :`<section class="panel"><div class="empty">${ROUTINES.some(r=>!r.unit||r.unit===u)?'Nenhuma tarefa programada para hoje.':'Esta unidade ainda não tem rotina da recepção.'}<br><button class="btn-g" data-tab="rotinas" style="margin-top:10px">${ROUTINES.some(r=>!r.unit||r.unit===u)?'Ver rotinas cadastradas':'Cadastrar a rotina'}</button></div></section>`}
+ <section class="panel"><div class="ph"><div><h2 class="display">Rotina cumprida nos últimos 14 dias</h2><p>${UN[u]} · % das tarefas do dia que a recepção marcou</p></div></div>${bars(d14,true)}</section>
+ <section class="panel"><div class="ph"><div><h2 class="display">Quem marcou nos últimos 7 dias</h2><p>${UN[u]} · quantidade de tarefas marcadas por pessoa</p></div></div>${ppl.length?`<div class="who">${ppl.map(([n,c])=>`<div class="r"><span>${esc(n)}</span><div><i style="width:${c/max*100}%"></i></div><b>${c}</b></div>`).join('')}</div>`:'<div class="empty">Ninguém marcou nada nesse período.</div>'}</section>`;
+}
+
+/* ---------- cadastro (gerente) ---------- */
 function tabRotinas(){
- const u=S.unit,list=ROUTINES.filter(r=>!r.unit||r.unit===u),mg=canManage();
+ const u=S.unit,list=ROUTINES.filter(r=>!r.unit||r.unit===u);
  const ds=r=>r.weekdays&&r.weekdays.length<7?ORDER.filter(x=>r.weekdays.includes(x)).map(x=>DOW[x]).join(', '):'';
- const group=MOMENTS.map(([mk,ml])=>{const l=list.filter(r=>r.moment===mk&&(S.role==='all'||r.role_name===S.role||r.role_name==='Todos')).sort((a,b)=>a.sort-b.sort);return l.length?`<div class="mom"><h3>${ml}</h3>${l.map(r=>`<div class="item" style="${r.active?'':'opacity:.5'}"><span class="tt">${esc(r.title)}</span><span class="chips"><span class="chip">${esc(r.role_name)}</span>${r.unit?'':'<span class="chip">todas as unidades</span>'}${ds(r)?`<span class="chip">${ds(r)}</span>`:''}${r.active?'':'<span class="chip">pausada</span>'}</span>${mg?`<button class="edit" data-redit="${r.id}">Editar</button>`:''}</div>`).join('')}</div>`:''}).join('');
-return `<section class="panel"><div class="ph"><div><h2 class="display">Rotinas · ${UN[u]}</h2><p>O que cada função faz no dia a dia. Aparece no checklist de "Hoje" nos dias marcados.</p></div>${mg?'<button class="btn-y" data-newr>+ Nova rotina</button>':''}</div>${roleChips()}
- ${list.length?group||'<div class="empty">Nenhuma rotina para esta função.</div>':`<div class="empty">Ainda não há rotinas.${mg?'<br><button class="btn-g" data-template style="margin-top:10px">Usar modelo padrão de academia</button>':''}</div>`}</section>`;
+ const group=MOMENTS.map(([mk,ml])=>{const l=list.filter(r=>r.moment===mk).sort((a,b)=>a.sort-b.sort);return l.length?`<div class="mom"><h3>${ml}</h3>${l.map(r=>`<div class="item" style="${r.active?'':'opacity:.5'}"><span class="tt">${esc(r.title)}</span><span class="chips">${r.unit?'':'<span class="chip">todas as unidades</span>'}${ds(r)?`<span class="chip">${ds(r)}</span>`:''}${r.active?'':'<span class="chip">pausada</span>'}</span>${canEditR(r)?`<button class="edit" data-redit="${r.id}">Editar</button>`:'<small>só o administrador altera</small>'}</div>`).join('')}</div>`:''}).join('');
+ const mineCount=list.filter(r=>r.unit===u).length;
+ return `<section class="panel"><div class="ph"><div><h2 class="display">Rotina da recepção · ${UN[u]}</h2><p>As tarefas que aparecem no checklist da recepção nos dias marcados.</p></div><button class="btn-y" data-newr>+ Nova tarefa</button></div>
+ ${list.length?group:`<div class="empty">Ainda não há tarefas para esta unidade.<br><button class="btn-g" data-template style="margin-top:10px">Usar modelo de rotina da recepção</button></div>`}
+ ${list.length&&!mineCount?`<p style="margin:12px 2px 0"><button class="btn-g" data-template>Adicionar o modelo de rotina da recepção a ${UN[u]}</button></p>`:''}</section>`;
 }
-function render(){$('page').innerHTML=head()+(S.tab==='hoje'?tabHoje():tabRotinas())}
+function render(){
+ if(document.querySelector('dialog[open]'))return;
+ const keep=window.scrollY;
+ $('page').innerHTML=head()+(isRecep()||!canManage()?tabRecepcao():S.tab==='hoje'?tabPainel():tabRotinas());
+ window.scrollTo(0,keep);
+}
 
-/* ---------- rotinas: diálogo ---------- */
+/* ---------- cadastro: diálogo ---------- */
 function openRoutine(r){
- editR=r||null;$('rTitle').textContent=r?'Editar rotina':'Nova rotina';
- $('r_role').innerHTML=ROLES.map(x=>`<option value="${esc(x)}">${x==='Todos'?'Todos (qualquer função)':x}</option>`).join('');$('r_moment').innerHTML=MOMENTS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
- $('r_unit').innerHTML='<option value="">Todas as unidades</option>'+Object.entries(UN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
- $('r_title').value=r?.title||'';$('r_role').value=r?.role_name||(S.role!=='all'?S.role:'Recepção');$('r_moment').value=r?.moment||'abertura';$('r_unit').value=r?(r.unit||''):S.unit;$('r_active').value=r&&!r.active?'0':'1';
+ editR=r||null;$('rTitle').textContent=r?'Editar tarefa':'Nova tarefa';
+ $('r_moment').innerHTML=MOMENTS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+ const lock=LOCK();$('r_unit').innerHTML=(lock?'':'<option value="">Todas as unidades</option>')+UNITS().map(k=>`<option value="${k}">${UN[k]}</option>`).join('');$('r_unitrow').hidden=!!lock&&UNITS().length===1;
+ $('r_title').value=r?.title||'';$('r_moment').value=r?.moment||'abertura';$('r_unit').value=r?(r.unit||''):S.unit;$('r_active').value=r&&!r.active?'0':'1';
  const set=new Set(r?.weekdays||[0,1,2,3,4,5,6]);$('r_days').innerHTML=ORDER.map(x=>`<button type="button" data-rday="${x}" aria-pressed="${set.has(x)}">${DOW[x]}</button>`).join('');
  $('r_err').textContent='';$('r_del').hidden=!r;$('rdlg').showModal();setTimeout(()=>$('r_title').focus(),30);
 }
 $('rform').addEventListener('submit',async e=>{
  e.preventDefault();const err=t=>{$('r_err').textContent=t};const title=$('r_title').value.trim();if(!title)return err('Escreva a tarefa.');
  const days=[...$('r_days').querySelectorAll('[aria-pressed="true"]')].map(b=>+b.dataset.rday);if(!days.length)return err('Marque ao menos um dia da semana.');
- const row={title,role_name:$('r_role').value,moment:$('r_moment').value,unit:$('r_unit').value||null,active:$('r_active').value==='1',weekdays:days.length===7?null:days};
+ const row={title,role_name:ROLE,moment:$('r_moment').value,unit:LOCK()||$('r_unit').value||null,active:$('r_active').value==='1',weekdays:days.length===7?null:days};
  const out=editR?await CTX.client.from('boha_routines').update(row).eq('id',editR.id).select().single():await CTX.client.from('boha_routines').insert({...row,sort:Math.max(0,...ROUTINES.filter(x=>x.moment===row.moment).map(x=>x.sort))+1}).select().single();
  if(out.error)return err('Não foi possível salvar.');
- if(editR)ROUTINES=ROUTINES.map(x=>x.id===editR.id?out.data:x);else ROUTINES.push(out.data);$('rdlg').close();render();toast('Rotina salva.');
+ if(editR)ROUTINES=ROUTINES.map(x=>x.id===editR.id?out.data:x);else ROUTINES.push(out.data);$('rdlg').close();render();toast('Tarefa salva.');
 });
 $('r_del').addEventListener('click',async()=>{
- if(!editR||!confirm('Excluir esta rotina? O histórico de quem marcou também some.'))return;const {error}=await CTX.client.from('boha_routines').delete().eq('id',editR.id);
- if(error){$('r_err').textContent='Não foi possível excluir.';return}const id=editR.id;ROUTINES=ROUTINES.filter(x=>x.id!==id);CHECKS=CHECKS.filter(c=>c.routine_id!==id);$('rdlg').close();render();toast('Rotina excluída.');
+ if(!editR||!confirm('Excluir esta tarefa? O histórico de quem marcou também some.'))return;const {error}=await CTX.client.from('boha_routines').delete().eq('id',editR.id);
+ if(error){$('r_err').textContent='Não foi possível excluir.';return}const id=editR.id;ROUTINES=ROUTINES.filter(x=>x.id!==id);CHECKS=CHECKS.filter(c=>c.routine_id!==id);$('rdlg').close();render();toast('Tarefa excluída.');
 });
 async function useTemplate(){
- const rows=TEMPLATE.map(([role,moment,title,wds],i)=>({unit:S.unit,role_name:role,moment,title,weekdays:wds,sort:i+1}));
+ const base=Math.max(0,...ROUTINES.map(x=>x.sort));
+ const rows=TEMPLATE.map(([moment,title,wds],i)=>({unit:S.unit,role_name:ROLE,moment,title,weekdays:wds,sort:base+i+1}));
  const {data,error}=await CTX.client.from('boha_routines').insert(rows).select();if(error){toast('Não foi possível criar o modelo.');return}ROUTINES.push(...(data||rows));render();toast('Modelo criado para '+UN[S.unit]+'. Ajuste o que for diferente.');
 }
 
-/* ---------- checklist do dia ---------- */
+/* ---------- marcar (recepção) ---------- */
 async function toggleCheck(rid,on){
  const u=S.unit,d=today();
  if(on){const {data,error}=await CTX.client.from('boha_routine_checks').insert({routine_id:rid,unit:u,check_date:d,done_by_name:(CTX.profile?.name||'').slice(0,80)}).select().single();if(error&&!/duplicate|23505/i.test(error.message||'')){toast('Não foi possível marcar.');render();return}if(data)CHECKS.push(data)}
@@ -170,25 +235,27 @@ document.addEventListener('click',e=>{
  const t=e.target;let b;
  if(b=t.closest('[data-close]')){$(b.dataset.close).close();return}
  if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
- if(b=t.closest('[data-unit]')){S.unit=b.dataset.unit;render();return}
- if(b=t.closest('[data-role]')){S.role=b.dataset.role;render();return}
+ if(b=t.closest('[data-unit]')){if(UNITS().includes(b.dataset.unit)){S.unit=b.dataset.unit;render()}return}
  if(b=t.closest('[data-rday]')){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');return}
  if(t.closest('[data-newr]')){openRoutine(null);return}
  if(b=t.closest('[data-redit]')){openRoutine(ROUTINES.find(x=>x.id===b.dataset.redit));return}
  if(t.closest('[data-template]')){useTemplate();return}
 });
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.chk)toggleCheck(t.dataset.chk,t.checked)});
-['rdlg'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close()}));
+$('rdlg').addEventListener('click',e=>{if(e.target===$('rdlg'))$('rdlg').close()});
 
 async function load(){
- const c=CTX.client,cfrom=addDays(today(),-8);
- const [ro,ch]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(1000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(6000)]);
- if(ro.error)throw ro.error;ROUTINES=ro.data||[];CHECKS=ch.error?[]:(ch.data||[]);render();
+ const c=CTX.client,cfrom=addDays(today(),-30);
+ const [ro,ch]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(1000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(10000)]);
+ if(ro.error)throw ro.error;ROUTINES=ro.data||[];CHECKS=ch.error?CHECKS:(ch.data||[]);updated=new Date().toISOString();render();
 }
+function startLive(){clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('dialog[open]'))load().catch(()=>{})},30000)}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CTX&&CTX.client)load().catch(()=>{})});
 window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch(()=>{})};
 (async()=>{
  if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#rotina" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
  if(CTX.canModule&&!CTX.canModule('rotina')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
- try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
+ S.unit=LOCK()||'cb';
+ try{await load();startLive()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
 })();
 </script></body></html>

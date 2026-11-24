@@ -211,7 +211,8 @@ const metLabel=k=>(MET.find(x=>x[0]===k)||[,''])[1];
 function metChips(){return `<div class="chips" role="group" aria-label="Métrica do gráfico">${MET.map(([k,l])=>`<button class="chip" data-metric="${k}" aria-pressed="${S.metric===k}">${l}</button>`).join('')}</div>`}
 function yFmtFor(k){return (v,full)=>k==='engagement'?dec1(v)+'%':(Math.abs(v)>=10000&&!full?(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':num(Math.round(v*100)/100))}
 function head(){
- const tabs=[...Object.entries(UN).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}"><i class="dot" style="background:${v.c}"></i>${v.name}</button>`),`<button data-unit="all" aria-pressed="${S.unit==='all'}">Comparar unidades</button>`].join('');
+ const LOCKU=(CTX&&CTX.profile&&CTX.profile.unit)||null;
+ const tabs=[...Object.entries(UN).filter(([k])=>!LOCKU||k===LOCKU).map(([k,v])=>`<button data-unit="${k}" aria-pressed="${S.unit===k}"><i class="dot" style="background:${v.c}"></i>${v.name}</button>`),...(LOCKU?[]:[`<button data-unit="all" aria-pressed="${S.unit==='all'}">Comparar unidades</button>`])].join('');
  const nav=S.view==='month'&&S.unit!=='all'?`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Mês anterior">‹</button><b>${cap(MNAME[+S.month.slice(5,7)-1])} ${S.month.slice(0,4)}</b><button class="arrow" data-nav="1" aria-label="Próximo mês">›</button></div>`:`<div class="nav"><button class="arrow" data-nav="-1" aria-label="Ano anterior">‹</button><b>${S.year}</b><button class="arrow" data-nav="1" aria-label="Próximo ano">›</button></div>`;
  return `<header class="hd"><div><p class="eyebrow">Conteúdo · Instagram</p><h1 class="display">Crescimento do Instagram</h1><p class="sub">Registre os números uma vez por semana e veja se cada conta está crescendo, parada ou caindo.</p></div><button class="btn-y" data-new>+ Registrar semana</button></header>
  <div class="bar"><div class="seg" role="group" aria-label="Unidade">${tabs}</div>${S.unit!=='all'?`<div class="seg" role="group" aria-label="Período"><button data-view="month" aria-pressed="${S.view==='month'}">Mês</button><button data-view="year" aria-pressed="${S.view==='year'}">Ano</button></div>`:''}${nav}</div>`;
@@ -289,7 +290,7 @@ let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(pain
 
 /* ---------- registro ---------- */
 function fillForm(row,unit){
- $('f_unit').innerHTML=Object.entries(UN).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+ $('f_unit').innerHTML=Object.entries(UN).filter(([k])=>!(CTX.profile&&CTX.profile.unit)||k===CTX.profile.unit).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
  $('f_unit').value=row?row.unit:unit;$('f_date').value=row?row.ref_date:today();
  FIELDS.forEach(k=>$('f_'+k).value=row&&row[k]!=null?row[k]:'');$('f_note').value=row?row.note||'':'';
  $('f_err').textContent='';$('f_del').hidden=!row;$('dlgTitle').textContent=row?'Corrigir registro':'Registrar semana';hint();
@@ -347,6 +348,7 @@ window.bohaReload=()=>{if(!$('dlg').open)load().catch(()=>{})};
 (async()=>{
  if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#instagram" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
  if(CTX.canModule&&!CTX.canModule('instagram')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ if(CTX.profile&&CTX.profile.unit)S.unit=CTX.profile.unit;
  try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
 })();
 </script></body></html>

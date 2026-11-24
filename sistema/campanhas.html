@@ -150,6 +150,7 @@ const parseInt0=s=>{s=String(s).replace(/[.\s]/g,'').trim();if(s==='')return 0;r
 const parseMoney=s=>{s=String(s).replace(/[R$\s]/g,'').trim();if(s==='')return null;s=s.replace(/\./g,'').replace(',','.');const n=Number(s);return Number.isFinite(n)&&n>=0&&n<1e8?Math.round(n*100)/100:NaN};
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
+const LOCKU=()=>(CTX&&CTX.profile&&CTX.profile.unit)||null;
 let CAMPS=[],TASKS=[],FUN=[],IDEAS=[],PEOPLE=[],S={tab:'mes',month:curMonth(),unit:'all',metric:'sales',ifilter:'open'},editC=null,editF=null,editI=null,ideaForC=null;
 const personName=id=>PEOPLE.find(p=>p.id===id)?.name||'';
 const campOf=m=>CAMPS.find(c=>c.month.slice(0,7)===m);
@@ -230,7 +231,7 @@ function tabMes(){
 
 function tabFunil(){
  const m=S.month,u=S.unit,isCur=m===curMonth(),upto=+today().slice(8,10);DLT_SFX=isCur?' vs mesmo período do mês anterior':' vs mês anterior';const a=fagg(funOf(m,u)),p=fagg(funOf(addM(m,-1),u).filter(r=>!isCur||+r.ref_date.slice(8,10)<=upto)),hasPrev=p.n>0,rows=funOf(m,u).sort((x,y)=>x.ref_date.localeCompare(y.ref_date));
- const seg=`<div class="seg" role="group" aria-label="Unidade" style="margin-top:14px"><button data-funit="all" aria-pressed="${u==='all'}">Todas as unidades</button>${Object.entries(UN).map(([k,v])=>`<button data-funit="${k}" aria-pressed="${u===k}">${v}</button>`).join('')}</div>`;
+ const seg=`<div class="seg" role="group" aria-label="Unidade" style="margin-top:14px">${LOCKU()?'':`<button data-funit="all" aria-pressed="${u==='all'}">Todas as unidades</button>`}${Object.entries(UN).filter(([k])=>!LOCKU()||k===LOCKU()).map(([k,v])=>`<button data-funit="${k}" aria-pressed="${u===k}">${v}</button>`).join('')}</div>`;
  const top=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">${seg}<button class="btn-y" data-newf style="margin-top:14px">+ Registrar semana</button></div>`;
  if(!a.n)return top+`<section class="panel"><div class="empty">Nenhum registro em ${MNAME[+m.slice(5,7)-1]}${u==='all'?'':' em '+UN[u]}. Use <b>+ Registrar semana</b> para começar.</div></section>`;
  const kpi=(l,v,sub)=>`<div class="kpi"><span class="l">${l}</span><b>${v}</b><small>${sub}</small></div>`;
@@ -323,7 +324,7 @@ $('c_del').addEventListener('click',async()=>{
 /* ---------- funil: formulário ---------- */
 function openFun(r){
  editF=r||null;$('fTitle').textContent=r?'Corrigir registro do funil':'Registrar semana do funil';
- $('f_unit').innerHTML=Object.entries(UN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('f_unit').value=r?r.unit:(S.unit==='all'?'cb':S.unit);
+ $('f_unit').innerHTML=Object.entries(UN).filter(([k])=>!LOCKU()||k===LOCKU()).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('f_unit').value=r?r.unit:(S.unit==='all'?'cb':S.unit);
  $('f_date').value=r?r.ref_date:today();fillF(r);$('f_err').textContent='';$('f_del').hidden=!r;$('fdlg').showModal();$('fdlg').scrollTop=0;setTimeout(()=>$('f_leads').focus(),30);
 }
 function fillF(r){$('f_leads').value=r?r.leads:'';$('f_booked').value=r?r.trials_booked:'';$('f_done').value=r?r.trials_done:'';$('f_sales').value=r?r.sales:'';$('f_spend').value=r&&r.spend!=null?String(r.spend).replace('.',','):'';$('f_note').value=r?r.note:''}
@@ -424,6 +425,7 @@ window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch((
 (async()=>{
  if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#campanhas" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
  if(CTX.canModule&&!CTX.canModule('campanhas')){$('page').innerHTML='<div class="state">Este módulo não está liberado para o seu perfil.</div>';return}
+ if(LOCKU())S.unit=LOCKU();
  try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
 })();
 </script></body></html>

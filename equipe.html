@@ -233,7 +233,7 @@ button.np-item:hover .np-go{color:var(--y)}
 .acc-card.req{border-color:rgba(255,159,46,.4);background:linear-gradient(120deg,#1d160c,#141414 55%)}
 .acc-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:16px}
 .acc-top span{font-size:13px;color:var(--muted)}
-.acc-fields{display:grid;grid-template-columns:1fr 1.4fr 1fr auto;gap:12px;align-items:end}
+.acc-fields{display:grid;grid-template-columns:1fr 1.4fr 1fr 1fr auto;gap:12px;align-items:end}.acc-fields label[hidden]{display:none}
 .acc-fields label{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .acc-fields input,.acc-fields select,.acc-row select{background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:11px 12px;color:var(--text);font:inherit;font-size:14px;letter-spacing:0;text-transform:none;outline:none;width:100%}
 .acc-fields input:focus,.acc-fields select:focus,.acc-row select:focus{border-color:var(--y)}
@@ -245,9 +245,10 @@ button.np-item:hover .np-go{color:var(--y)}
 .invite b{color:var(--y)}
 .invite pre{white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.55;color:#ddd;margin:10px 0 12px;background:#0f0f0f;border:1px solid var(--line);border-radius:10px;padding:12px}
 .invite .row{display:flex;gap:8px;flex-wrap:wrap}
-.acc-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto 180px auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.acc-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto 340px auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .acc-row:first-child{border-top:0;padding-top:0}
 .acc-row .avatar{width:40px;height:40px}
+.acc-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px}.acc-sel select.nounit{border-color:var(--bad)}.acc-sel .nu{display:block}
 .acc-who{min-width:0}
 .acc-who b{display:block;font-size:15px}
 .acc-who span{display:block;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
@@ -310,7 +311,7 @@ html.mtile .pv-empty h3{font-size:20px}
  .acc-fields{grid-template-columns:1fr}
  .acc-row{grid-template-columns:auto minmax(0,1fr)}
  .acc-row>.chip{justify-self:start}
- .acc-row>.chip,.acc-row>select,.acc-row>.acc-actions,.acc-row>.you{grid-column:1/-1}
+ .acc-row>.chip,.acc-row>select,.acc-row>.acc-sel,.acc-row>.acc-actions,.acc-row>.you{grid-column:1/-1}
  .acc-actions{justify-content:flex-start}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -354,6 +355,7 @@ html.mtile .pv-empty h3{font-size:20px}
     <label>Nome<input id="accName" maxlength="60" required placeholder="Ex.: Vitória"></label>
     <label>E-mail<input id="accEmail" type="email" required placeholder="email@exemplo.com"></label>
     <label>Perfil<select id="accRole"></select></label>
+    <label id="accUnitWrap" hidden>Unidade<select id="accUnit"></select></label>
     <button type="submit" class="btn-y" id="accSubmit">Liberar acesso</button>
    </div>
    <p class="acc-hint" id="accRoleHint"></p>
@@ -446,8 +448,8 @@ const MODULES=[
   desc:'Quem trabalha em cada turno, a escala da semana por unidade, as horas e a cobertura.',
   features:['Escala semanal por unidade, com horas por pessoa','Quem está hoje em cada turno','Cobertura de manhã, tarde e noite','Copiar a semana anterior e imprimir']},
  {key:'rotina',status:'live',src:'sistema/rotina.html',icon:'rot',tag:'Operação',title:'Rotina',visual:'rot',
-  desc:'O que cada função faz todo dia, da abertura ao fechamento, com checklist por unidade.',
-  features:['Tarefas por função: recepção, musculação, limpeza e mais','Checklist do dia com quem marcou e a que horas','% da rotina cumprida nos últimos 7 dias','Modelo pronto de rotina de academia']},
+  desc:'O checklist do dia da recepção, da abertura ao fechamento, e o painel do gerente acompanhando em tempo real.',
+  features:['A recepção marca cada tarefa conforme faz','Painel do gerente: o que foi feito, quem fez e o que atrasou','% cumprido nos últimos 7 e 30 dias','Cada unidade vê só a própria rotina']},
  {key:'campanhas',status:'live',src:'sistema/campanhas.html',icon:'camp',tag:'Marketing',title:'Campanhas',visual:'camp',
   desc:'Planeje a campanha do mês, acompanhe o funil de vendas e aprenda com o que deu resultado.',
   features:['Campanha do mês com oferta, metas e plano de ação','Funil: lead, experimental, comparecimento e matrícula','Banco de ideias e datas para inspirar','Balanço mês a mês: o que mais trouxe matrículas']},
@@ -477,8 +479,12 @@ const MODULES=[
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
-let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina'],recepcao:['hierarquia','checklist','manuais'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina'],recepcao:['hierarquia','checklist','manuais','rotina'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
+const UNIT_NAMES={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},SCOPED_ROLES=['gerente','recepcao'];
+const myUnit=()=>previewRole?null:(profile?.unit||null);
+const allowedUnits=()=>myUnit()?[myUnit()]:Object.keys(UNIT_NAMES);
+const unitOptions=(sel,blank)=>(blank?`<option value="">${blank}</option>`:'')+Object.entries(UNIT_NAMES).map(([k,v])=>`<option value="${k}" ${k===sel?'selected':''}>${v}</option>`).join('');
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visibleModules=()=>MODULES.filter(m=>canModule(m.key));
@@ -687,7 +693,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261125a';
+const VERSION='20261126a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -709,7 +715,7 @@ async function loadEscStats(){
   const [sh,em]=await Promise.all([client.from('boha_shifts').select('employee_id,kind').eq('work_date',today),client.rpc('boha_employee_options')]);
   if(sh.error||em.error||!Array.isArray(sh.data)||!Array.isArray(em.data))return;
   const unitOf={};em.data.forEach(e=>{unitOf[e.id]=e.unit});
-  const units=[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>({name,working:sh.data.filter(x=>['manha','tarde','noite','integral'].includes(x.kind)&&unitOf[x.employee_id]===k).length}));
+  const units=allowedUnits().map(k=>[k,UNIT_NAMES[k]]).map(([k,name])=>({name,working:sh.data.filter(x=>['manha','tarde','noite','integral'].includes(x.kind)&&unitOf[x.employee_id]===k).length}));
   stats.esc={units,working:units.reduce((a,u)=>a+u.working,0)};refreshMeta('escalas');
  }catch{}
 }
@@ -719,7 +725,7 @@ async function loadRotStats(){
   const today=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date()),dow=new Date(today+'T12:00:00Z').getUTCDay();
   const [ro,ch]=await Promise.all([client.from('boha_routines').select('id,unit,weekdays,active').limit(1000),client.from('boha_routine_checks').select('routine_id,unit').eq('check_date',today)]);
   if(ro.error||ch.error||!Array.isArray(ro.data)||!Array.isArray(ch.data))return;
-  const units=[['cb','Casa Branca'],['te','Santa Tereza'],['ma','Macedônia']].map(([k,name])=>{const ap=ro.data.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow)));return {name,tot:ap.length,done:ap.filter(r=>ch.data.some(c=>c.routine_id===r.id&&c.unit===k)).length}});
+  const units=allowedUnits().map(k=>[k,UNIT_NAMES[k]]).map(([k,name])=>{const ap=ro.data.filter(r=>r.active&&(!r.unit||r.unit===k)&&(!r.weekdays||r.weekdays.includes(dow)));return {name,tot:ap.length,done:ap.filter(r=>ch.data.some(c=>c.routine_id===r.id&&c.unit===k)).length}});
   stats.rot={units,tot:units.reduce((a,u)=>a+u.tot,0),done:units.reduce((a,u)=>a+u.done,0)};refreshMeta('rotina');
  }catch{}
 }
@@ -944,7 +950,7 @@ async function route(){
 }
 function enterHub(me,session){
  const name=(me.name||session.user.email.split('@')[0]).trim();
- profile={uid:session.user.id,email:session.user.email,name,role:me.role};
+ profile={uid:session.user.id,email:session.user.email,name,role:me.role,unit:me.unit||null};
  el('userName').textContent=name;
  el('userRole').textContent=ROLE_LABEL[me.role]||'Equipe';
  el('avatar').textContent=name.charAt(0).toUpperCase();
@@ -1026,7 +1032,7 @@ function renderAccess(){
  el('accList').innerHTML=people.length?people.map(r=>{
   const isMe=r.email===me,nm=label(r);
   const sub=r.confirmed?(r.last_sign_in?`Último acesso em ${dateBR(r.last_sign_in)}`:'Conta ativa'):r.has_account?'Criou a conta, falta confirmar pelo link do e-mail':'Ainda não criou a conta';
-  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
+  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<div class="acc-sel"><select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${SCOPED_ROLES.includes(r.role)?`<select data-unit-of="${esc(r.email)}" class="${r.unit?'':'nounit'}" aria-label="Unidade de ${esc(nm)}" title="${r.unit?'Só vê e edita dados desta unidade':'Sem unidade: não enxerga dados de nenhuma unidade'}">${unitOptions(r.unit,'Escolha a unidade')}</select>`:`<span class="nu" style="font-size:13px;color:var(--muted);align-self:center">${r.role==='admin'?'Todas as unidades':'Rede toda'}</span>`}</div>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
  }).join(''):'<p class="acc-empty">Ninguém com acesso ainda.</p>';
  el('accRequests').innerHTML=reqs.length?`<div class="acc-card req"><div class="acc-top"><h2 class="display">Pediram acesso</h2><span>Criaram conta, mas ainda não foram liberados</span></div>${reqs.map(r=>{const nm=label(r);return `<div class="acc-row req-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}</b><span>${esc(r.email)}</span><small>Conta criada em ${dateBR(r.created_at)}</small></div><div class="acc-actions"><button type="button" class="btn-y" data-act="prefill" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Liberar</button></div></div>`}).join('')}</div>`:'';
 }
@@ -1036,16 +1042,19 @@ async function loadAccess(){
  catch{el('accList').innerHTML='<p class="acc-empty">Não foi possível carregar os acessos. Atualize a página.</p>'}
 }
 function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=r?`${r[1]}: ${r[2]}.`:''}
-el('accRole').innerHTML=roleOptions('gerente');el('accRole').onchange=roleHint;roleHint();
+el('accRole').innerHTML=roleOptions('gerente');el('accUnit').innerHTML=unitOptions('','Escolha…');
+function syncAccUnit(){const sc=SCOPED_ROLES.includes(el('accRole').value);el('accUnitWrap').hidden=!sc;el('accUnit').required=sc;if(!sc)el('accUnit').value=''}
+el('accRole').onchange=()=>{roleHint();syncAccUnit()};roleHint();syncAccUnit();
 el('accForm').onsubmit=async e=>{
  e.preventDefault();
- const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value;
+ const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unit=SCOPED_ROLES.includes(role)?el('accUnit').value:'';
+ if(SCOPED_ROLES.includes(role)&&!unit){toast('Escolha a unidade desta pessoa.');el('accUnit').focus();return}
  if(accData.some(r=>r.role&&r.email===email)&&!confirm(`${email} já tem acesso. Atualizar nome e perfil?`))return;
  el('accSubmit').disabled=true;
  try{
-  const {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role});
+  const {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role,p_unit:unit||null});
   if(error){toast(error.message||'Não foi possível liberar o acesso.');return}
-  el('accForm').reset();roleHint();
+  el('accForm').reset();roleHint();syncAccUnit();
   await loadAccess();
   const r=accData.find(x=>x.email===email);
   if(r&&r.confirmed){el('accInvite').innerHTML='';toast(`${name} já tinha conta — acesso liberado, já pode entrar.`)}else showInvite(name,email);
@@ -1066,13 +1075,18 @@ el('accessView').addEventListener('click',async e=>{
  }
 });
 el('accessView').addEventListener('change',async e=>{
+ const u=e.target.closest('select[data-unit-of]');
+ if(u){const r=accData.find(x=>x.email===u.dataset.unitOf);if(!r)return;const prev=r.unit||'';u.disabled=true;
+  const {error}=await client.rpc('boha_access_set_unit',{p_email:r.email,p_unit:u.value||null});u.disabled=false;
+  if(error){toast(error.message||'Não foi possível alterar a unidade.');u.value=prev;return}
+  r.unit=u.value||null;u.classList.toggle('nounit',!r.unit);toast(r.unit?`${r.name||r.email} agora só vê dados de ${UNIT_NAMES[r.unit]}.`:`${r.name||r.email} está sem unidade e não vê dados de nenhuma.`);return}
  const s=e.target.closest('select[data-role]');if(!s)return;
  const r=accData.find(x=>x.email===s.dataset.role);if(!r)return;
  const prev=r.role;s.disabled=true;
- const {error}=await client.rpc('boha_access_save',{p_email:r.email,p_name:'',p_role:s.value});
+ const {error}=await client.rpc('boha_access_save',{p_email:r.email,p_name:'',p_role:s.value,p_unit:r.unit||null});
  s.disabled=false;
  if(error){toast(error.message||'Não foi possível alterar o perfil.');s.value=prev;return}
- r.role=s.value;toast(`Perfil de ${r.name||r.email} agora é ${ROLE_LABEL[s.value]}.`);
+ r.role=s.value;if(!SCOPED_ROLES.includes(s.value))r.unit=null;renderAccess();toast(`Perfil de ${r.name||r.email} agora é ${ROLE_LABEL[s.value]}.`+(SCOPED_ROLES.includes(s.value)&&!r.unit?' Escolha a unidade dela.':''));
 });
 el('back2').onclick=goHome;
 el('logout3').onclick=logout;

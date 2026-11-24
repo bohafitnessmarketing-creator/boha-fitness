@@ -188,6 +188,7 @@ const KIND={compra:'Compra',manutencao:'Manutenção'};
 const IMG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>';
 const LINK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>';
 let ROWS=[],AREAS=[],URLS={},S={unit:'cb',status:'open',kind:'all',area:'all',q:'',view:'prio'},EDIT=null,PH={blob:null,remove:false,url:null},lastFocus=null,ROLE='viewer';
+const LOCK=()=>(CTX&&CTX.profile&&CTX.profile.unit)||null,VIS=()=>Object.entries(UNITS).filter(([k])=>!LOCK()||k===LOCK());
 const canEdit=()=>['admin','dono','gerente','editor','marketing'].includes(ROLE),canDelete=()=>ROLE==='admin';
 const brl=v=>v==null?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const isOpen=r=>r.status!=='concluido',total=r=>r.price==null?null:Number(r.price)*r.qty;
@@ -244,7 +245,7 @@ function render(){
  const list=visible(),groups=groupBy(list),cnt=u=>ROWS.filter(r=>isOpen(r)&&r.unit===u).length;
  const keepQ=S.q,hadFocus=document.activeElement&&document.activeElement.id==='q';
  let h=`<header class="hd"><div><p class="eyebrow">Compras &amp; manutenção</p><h1 class="display">Acompanhe por unidade</h1><p>Escolha uma unidade e abra a checklist de cada área.</p></div><div class="hd-tools"><button class="btn-g" id="btnCsv">Exportar lista</button>${canEdit()?'<button class="btn-y" id="btnNew">+ Nova solicitação</button>':''}</div></header>
- <nav class="units" aria-label="Escolha a unidade">${Object.entries(UNITS).map(([k,v])=>{const rows=ROWS.filter(r=>r.unit===k),done=rows.filter(r=>!isOpen(r)).length,pct=rows.length?Math.round(done/rows.length*100):0;return `<button class="unit" data-unit="${k}" aria-current="${S.unit===k?'page':'false'}"><img src="${v.photo}" alt="" loading="lazy"><span class="u-b"><h3 class="display">${v.name}</h3><span class="u-stats"><span><b>${cnt(k)}</b> em aberto</span><span><b>${done}</b> concluídas</span></span><span class="pbar" aria-hidden="true"><i style="width:${pct}%;background:var(--y)"></i></span><span class="u-go">${S.unit===k?'Unidade selecionada':'Acompanhar unidade'} →</span></span></button>`}).join('')}</nav>
+ <nav class="units" aria-label="Escolha a unidade">${VIS().map(([k,v])=>{const rows=ROWS.filter(r=>r.unit===k),done=rows.filter(r=>!isOpen(r)).length,pct=rows.length?Math.round(done/rows.length*100):0;return `<button class="unit" data-unit="${k}" aria-current="${S.unit===k?'page':'false'}"><img src="${v.photo}" alt="" loading="lazy"><span class="u-b"><h3 class="display">${v.name}</h3><span class="u-stats"><span><b>${cnt(k)}</b> em aberto</span><span><b>${done}</b> concluídas</span></span><span class="pbar" aria-hidden="true"><i style="width:${pct}%;background:var(--y)"></i></span><span class="u-go">${S.unit===k?'Unidade selecionada':'Acompanhar unidade'} →</span></span></button>`}).join('')}</nav>
  <div class="unit-head"><div><p class="eyebrow">Unidade selecionada</p><h2 class="display">${UNITS[S.unit].name}</h2></div><span>${scope.length} solicitaç${scope.length===1?'ão':'ões'} no total</span></div>`;
  if(S.area==='all'){
   h+=`<div class="kpis"><div class="kpi"><span class="l">Em aberto</span><span class="v">${open.length}</span><span class="s">Etapas pendentes</span></div><div class="kpi ${urg.length?'bad':''}"><span class="l">Urgentes</span><span class="v">${urg.length}</span><span class="s">Precisam de atenção</span></div><div class="kpi"><span class="l">Valor conhecido</span><span class="v">${brl(sum)}</span><span class="s">${nop} compra${nop===1?'':'s'} sem valor</span></div><div class="kpi"><span class="l">Concluídas</span><span class="v">${scope.length-open.length}</span><span class="s">${m30} nos últimos 30 dias</span></div></div><div class="areas-title"><div><h2 class="display">Checklist por área</h2><p>Cada caixa mostra o andamento de uma área desta unidade.</p></div><p>${new Set(scope.map(r=>r.area||'__none')).size} áreas com etapas</p></div>`;
@@ -264,7 +265,7 @@ function openForm(r){
  const ro=!canEdit();$('drTitle').textContent=edit?(ro?'Detalhes do pedido':'Editar pedido'):'Nova solicitação';
  $('drBody').innerHTML=`<form class="f ${ro?'ro':''}" id="form" autocomplete="off">
  <div><span class="lb">O que é?</span><div class="pick" id="pKind">${Object.entries(KIND).map(([k,v])=>`<button type="button" data-k="${k}" aria-pressed="${EDIT.kind===k}">${v}</button>`).join('')}</div></div>
- <div class="two"><div><label for="fUnit">Unidade</label><select class="inp" id="fUnit" required><option value="" disabled ${EDIT.unit?'':'selected'}>Escolha…</option>${Object.entries(UNITS).map(([k,v])=>`<option value="${k}" ${EDIT.unit===k?'selected':''}>${v.name}</option>`).join('')}</select></div><div><label for="fArea">Área</label><select class="inp" id="fArea"></select></div></div>
+ <div class="two"><div><label for="fUnit">Unidade</label><select class="inp" id="fUnit" required><option value="" disabled ${EDIT.unit?'':'selected'}>Escolha…</option>${VIS().map(([k,v])=>`<option value="${k}" ${EDIT.unit===k?'selected':''}>${v.name}</option>`).join('')}</select></div><div><label for="fArea">Área</label><select class="inp" id="fArea"></select></div></div>
  <div id="newAreaBox" class="newarea" hidden><input class="inp" id="fNewArea" maxlength="60" placeholder="Nome da nova área"></div>
  <div><label for="fTitle">${EDIT.kind==='compra'?'O que precisa comprar?':'O que precisa consertar?'}</label><input class="inp" id="fTitle" maxlength="160" required placeholder="${EDIT.kind==='compra'?'Ex.: Anilha de 10 kg (par)':'Ex.: Esteira 3 parando durante o uso'}" value="${esc(EDIT.title)}"></div>
  <div><span class="lb">Prioridade</span><div class="pick prio" id="pPrio">${Object.entries(PRIO).map(([k,v])=>`<button type="button" data-p="${k}" style="--c:${v.c}" aria-pressed="${EDIT.priority===k}">${v.l}<small>${v.d}</small></button>`).join('')}</div></div>
@@ -386,7 +387,7 @@ window.bohaReload=()=>{if(!EDIT)load().catch(()=>{})};
 setInterval(()=>{if(!document.hidden&&!EDIT)load().catch(()=>{})},120000);
 (async()=>{
  if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#compras" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
- ROLE=(CTX.profile&&CTX.profile.role)||'viewer';
+ ROLE=(CTX.profile&&CTX.profile.role)||'viewer';S.unit=LOCK()||'cb';
  try{await load()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os pedidos. Atualize a página.</div>'}
 })();
 </script></body></html>
