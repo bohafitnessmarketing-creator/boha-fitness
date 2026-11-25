@@ -145,12 +145,13 @@ Deno.serve(async (req) => {
   const email = u?.user?.email?.toLowerCase();
   if (ue || !email) return json({ error: 'Sessão inválida. Entre novamente.' }, 401);
 
-  // Permissão real, a mesma regra do banco (perfil Gerente ou Administrador com o módulo liberado).
+  // Permissão real, a mesma regra do banco (perfil Gerente, Recepção ou Administrador com o módulo liberado).
   const asUser = createClient(url, anon, { global: { headers: { Authorization: auth } }, auth: { persistSession: false } });
   const { data: can } = await asUser.rpc('boha_can', { p_module: 'artes' });
   if (!can) return json({ error: 'Seu perfil não tem acesso a este módulo.' }, 403);
   const { data: acc } = await admin.from('boha_access').select('role,unit,name').eq('email', email).maybeSingle();
-  if (!acc || !['gerente', 'admin'].includes(acc.role)) return json({ error: 'Seu perfil não tem acesso a este módulo.' }, 403);
+  if (!acc || !['gerente', 'recepcao', 'admin'].includes(acc.role)) return json({ error: 'Seu perfil não tem acesso a este módulo.' }, 403);
+  if (acc.role !== 'admin' && !acc.unit) return json({ error: 'Sua unidade ainda não foi definida. Peça ao administrador para definir a sua unidade em Gestão de acessos.' }, 403);
 
   // Entrada
   let b: Record<string, unknown> = {};
@@ -162,7 +163,7 @@ Deno.serve(async (req) => {
   if (text.length < 3) return json({ error: 'Escreva o texto do post.' }, 400);
   if (!objective) return json({ error: 'Escolha o objetivo do post.' }, 400);
   if (!FORMATS[format]) return json({ error: 'Formato inválido.' }, 400);
-  // Gerente só gera para a própria unidade; administrador escolhe (ou rede toda).
+  // Gerente e recepção só geram para a própria unidade; administrador escolhe (ou rede toda).
   let unit: string | null = acc.unit || (UNITS[String(b.unit ?? '')] ? String(b.unit) : null);
   if (acc.unit) unit = acc.unit;
 
@@ -182,7 +183,7 @@ Deno.serve(async (req) => {
     }
   } catch { /* ignora */ }
 
-  // Reserva a cota do dia (5 para gerente). Se algo falhar adiante, devolve.
+  // Reserva a cota do dia (5 por pessoa; 30 para administrador). Se algo falhar adiante, devolve.
   const limit = acc.role === 'admin' ? 30 : 5;
   const { data: used, error: re } = await admin.rpc('boha_art_reserve', { p_email: email, p_limit: limit });
   if (re) return json({ error: 'Não foi possível verificar o limite diário.' }, 500);
