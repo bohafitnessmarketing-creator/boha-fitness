@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>BOHA · Mapas mentais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--blue:#6aa9ff;--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{background:var(--bg);margin:0;height:100%}
+body{color:var(--text);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;white-space:nowrap;text-align:center;display:inline-block}.btn-y:disabled{opacity:.55;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:6px 13px;font-size:13px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s;display:inline-block}.btn-g:hover{border-color:var(--y);color:var(--y)}.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}.btn-g:disabled{opacity:.45;cursor:not-allowed}
+.inp{background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:8px 11px;font-size:14px;outline:none;width:100%}.inp:focus{border-color:var(--y)}select.inp{width:auto}textarea.inp{min-height:84px;resize:vertical;line-height:1.45}
+.state{padding:60px 20px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#1b1b1b;border:1px solid rgba(255,240,0,.45);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s var(--ease);z-index:90;max-width:calc(100vw - 32px)}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ===== lista ===== */
+.page{max-width:1400px;margin:0 auto;padding:22px 28px 80px}
+.hd{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}.hd h1{font-size:clamp(34px,5vw,58px);line-height:1;margin:12px 0 6px}.hd p.sub{margin:0;color:var(--muted);max-width:620px}
+.hd .act{display:flex;gap:8px;flex-wrap:wrap}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-width:100%;overflow-x:auto;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+.seg button{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;text-align:center}.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.search{flex:1;min-width:180px;max-width:320px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:16px}
+.mcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:border-color .15s,transform .2s var(--ease)}.mcard:hover{border-color:#666;transform:translateY(-2px)}
+.mcard .th{aspect-ratio:16/10;background:#0d0d0d;border-bottom:1px solid var(--line);display:grid;place-items:center;overflow:hidden}.mcard .th img{width:100%;height:100%;object-fit:contain;display:block}
+.mcard .cb{padding:12px 14px 13px;display:grid;gap:3px}.mcard b.tt{font-size:15px;line-height:1.25;overflow-wrap:anywhere}.mcard .mt{font-size:12px;color:var(--muted)}
+.mcard .row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.mcard .row button{font-size:12px;border:1px solid var(--line2);border-radius:99px;padding:4px 11px;color:#d0d0d0}.mcard .row button:hover{border-color:var(--y);color:var(--y)}.mcard .row button.danger:hover{border-color:var(--bad);color:var(--bad)}
+.empty{padding:50px 16px;text-align:center;color:var(--muted);grid-column:1/-1}.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:4px}
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-top:8px}
+.tpl{border:1px solid var(--line2);border-radius:12px;padding:11px 12px;display:grid;gap:3px;transition:border-color .15s}.tpl:hover{border-color:#777}.tpl[aria-pressed=true]{border-color:var(--y);background:rgba(255,240,0,.07)}.tpl span.i{font-size:22px}.tpl b{font-size:13.5px}.tpl small{color:var(--muted);font-size:11.5px;line-height:1.35}
+
+/* ===== janelas ===== */
+dialog{border:1px solid #444;border-radius:18px;background:#121212;color:#f4f4f4;padding:0;overflow:auto;max-height:calc(100dvh - 20px);width:min(640px,calc(100% - 20px))}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+dialog.big{width:min(880px,calc(100% - 20px))}
+.dlg{padding:20px 22px 22px}.dlg h2{font-size:26px;margin:0 0 4px}.dlg .help{margin:0 0 8px;color:var(--muted);font-size:13px}
+.dlg label.l{display:grid;gap:5px;margin-top:12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dlg .foot{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.err{color:var(--bad);font-size:13px;min-height:18px;margin-top:8px}
+.vlist{display:grid;gap:8px;margin-top:10px;max-height:46vh;overflow:auto}
+.vrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:10px 12px}.vrow b{font-size:13.5px}.vrow small{display:block;color:var(--muted);font-size:12px}.vrow .b{display:flex;gap:6px;flex-wrap:wrap}
+.vprev{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#0d0d0d;max-height:300px;overflow:hidden;display:grid;place-items:center}.vprev svg{width:100%;height:300px}
+.kbd{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px}.kbd kbd{background:#222;border:1px solid #444;border-bottom-width:2px;border-radius:6px;padding:1px 7px;font:600 12px Inter,sans-serif;white-space:nowrap}.kbd h3{grid-column:1/-1;margin:12px 0 0;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--y)}
+
+/* ===== editor ===== */
+#ed{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr;background:var(--bg);z-index:5}
+.tb{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line);background:#0e0e0e;overflow-x:auto;scrollbar-width:none;white-space:nowrap}.tb::-webkit-scrollbar{display:none}
+.tb .sep{width:1px;height:24px;background:var(--line2);margin:0 4px;flex:none}
+.tb .ib{min-width:34px;height:34px;border-radius:9px;display:inline-grid;place-items:center;font-size:15px;color:#ddd;border:1px solid transparent;padding:0 8px;text-align:center;flex:none;white-space:nowrap}.tb .ib:hover:not(:disabled){background:#1d1d1d;border-color:var(--line2);color:var(--y)}.tb .ib:disabled{opacity:.35;cursor:default}.tb .ib[aria-pressed=true]{background:rgba(255,240,0,.14);border-color:var(--y);color:var(--y)}.tb .ib small{font-size:12px;margin-left:5px;font-weight:600}
+.tb #title{width:min(260px,34vw);font-weight:700;background:transparent;border:1px solid transparent;border-radius:9px;padding:6px 9px;flex:none}.tb #title:hover{border-color:var(--line2)}.tb #title:focus{border-color:var(--y);background:#1c1c1c}
+.tb select{flex:none;max-width:150px;padding:6px 8px;font-size:13px}
+.tb #q{width:150px;flex:none;padding:6px 10px;font-size:13px}
+#status{font-size:12px;color:var(--muted);flex:none;min-width:84px}#status.bad{color:var(--bad)}#status.ok{color:var(--good)}#status.wait{color:var(--warn)}
+.menu{position:relative;flex:none}.menu .pop{position:fixed;z-index:70;background:#171717;border:1px solid var(--line2);border-radius:12px;padding:6px;min-width:210px;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.menu .pop button{display:flex;gap:9px;width:100%;padding:8px 11px;border-radius:8px;font-size:13px;align-items:center}.menu .pop button:hover{background:#242424;color:var(--y)}.menu .pop hr{border:0;border-top:1px solid var(--line);margin:5px 0}
+.body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;min-height:0}
+#tools{display:flex;flex-direction:column;gap:4px;padding:8px;border-right:1px solid var(--line);background:#0e0e0e;overflow-y:auto}
+#tools button{width:44px;min-height:44px;border-radius:11px;display:grid;place-items:center;font-size:17px;color:#ddd;border:1px solid transparent;position:relative;text-align:center}#tools button small{display:block;font-size:9.5px;font-weight:700;margin-top:-4px;color:var(--muted)}#tools button:hover:not(:disabled){background:#1d1d1d;border-color:var(--line2);color:var(--y)}#tools button:disabled{opacity:.3;cursor:default}#tools button[aria-pressed=true]{background:rgba(255,240,0,.14);border-color:var(--y);color:var(--y)}
+#tools hr{width:100%;border:0;border-top:1px solid var(--line);margin:4px 0}
+#stage{position:relative;overflow:hidden;min-width:0;touch-action:none;cursor:grab;background:#0f0f0f}#stage.panning{cursor:grabbing}#stage.linking{cursor:crosshair}
+#cv{width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#cv .node{cursor:pointer}#cv .node.dragging{opacity:.3}#cv .selbox{stroke:#fff000;stroke-width:2.2;stroke-dasharray:none}#cv .hitbox{stroke:#ff8a4c;stroke-width:3}#cv .node.drop > :first-child{filter:drop-shadow(0 0 8px #fff000)}
+#cv .tg{opacity:0;transition:opacity .12s;cursor:pointer}#cv .tg.on,#cv .node:hover .tg{opacity:1}
+#cv .mk{cursor:pointer}
+#cv [data-link],#cv [data-group] text{cursor:pointer}
+#cv .ghost{opacity:.82;pointer-events:none}
+#cv .ind{stroke:#fff000;stroke-width:4;stroke-linecap:round;pointer-events:none}
+#cv .marq{fill:rgba(255,240,0,.08);stroke:#fff000;stroke-width:1.2;stroke-dasharray:5 4;pointer-events:none}
+#ta{position:absolute;z-index:20;resize:none;border:2px solid var(--y);border-radius:10px;outline:none;padding:4px 8px;line-height:1.3;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:#111;box-shadow:0 8px 30px rgba(0,0,0,.5);text-align:center}
+#mini{position:absolute;left:12px;bottom:12px;width:190px;height:124px;background:rgba(14,14,14,.88);border:1px solid var(--line2);border-radius:12px;overflow:hidden;backdrop-filter:blur(4px);cursor:pointer}#mini svg{width:100%;height:100%;display:block}
+#zoomui{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:2px;background:rgba(14,14,14,.9);border:1px solid var(--line2);border-radius:12px;padding:3px}#zoomui button{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:17px;text-align:center}#zoomui button:hover{background:#222;color:var(--y)}#zoomui span{min-width:46px;text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+#banner{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:#1b1b1b;border:1px solid var(--y);border-radius:999px;padding:7px 8px 7px 16px;font-size:13px;font-weight:600;display:flex;gap:10px;align-items:center;z-index:15;max-width:calc(100% - 24px)}
+#hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);color:var(--muted);font-size:12px;pointer-events:none;opacity:.85;text-align:center;max-width:60%}
+#panel{width:290px;border-left:1px solid var(--line);background:#0e0e0e;overflow-y:auto;padding:12px 14px 40px}
+#panel h3{margin:16px 0 7px;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}#panel h3:first-child{margin-top:2px}
+#panel .sub{font-size:12px;color:var(--muted);margin:0 0 8px}
+.sw{display:flex;gap:5px;flex-wrap:wrap}.sw button{width:24px;height:24px;border-radius:7px;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);text-align:center}.sw button[aria-pressed=true]{border-color:var(--y)}.sw button.none{background:repeating-linear-gradient(45deg,#2a2a2a 0 4px,#171717 4px 8px)}.sw input[type=color]{width:28px;height:24px;padding:0;border:1px solid var(--line2);border-radius:7px;background:none}
+.chips{display:flex;gap:5px;flex-wrap:wrap}.chips button{border:1px solid var(--line2);border-radius:9px;padding:5px 10px;font-size:12.5px;font-weight:700;color:#ddd;min-width:34px;text-align:center}.chips button:hover{border-color:#777}.chips button[aria-pressed=true]{background:var(--y);color:#111;border-color:var(--y)}
+.emo{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}.emo button{height:30px;border-radius:8px;font-size:17px;display:grid;place-items:center;border:1px solid transparent;text-align:center}.emo button:hover{background:#222}.emo button[aria-pressed=true]{border-color:var(--y);background:rgba(255,240,0,.12)}
+.tagl{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.tagl span{background:#222;border:1px solid var(--line2);border-radius:99px;padding:2px 4px 2px 10px;font-size:12px;display:inline-flex;gap:4px;align-items:center}.tagl span button{width:18px;height:18px;border-radius:50%;color:var(--muted);text-align:center;font-size:13px;line-height:1}.tagl span button:hover{color:var(--bad)}
+.pa{display:grid;gap:6px;margin-top:6px}.pa button{border:1px solid var(--line2);border-radius:10px;padding:7px 11px;font-size:13px;font-weight:600;color:#ddd}.pa button:hover{border-color:var(--y);color:var(--y)}.pa button.danger:hover{border-color:var(--bad);color:var(--bad)}
+.row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row2 label{font-size:13px;display:flex;gap:7px;align-items:center;cursor:pointer}.row2 input[type=checkbox]{accent-color:var(--y);width:16px;height:16px}
+.thm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.thm button{border:2px solid transparent;border-radius:10px;padding:8px 4px;font-size:11.5px;font-weight:700;text-align:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}.thm button[aria-pressed=true]{border-color:var(--y)}.thm i{display:flex;gap:2px;justify-content:center;margin-bottom:5px}.thm i b{width:9px;height:9px;border-radius:50%}
+.fab{display:none}
+@media (max-width:900px){
+ #panel{position:fixed;left:0;right:0;bottom:0;width:auto;max-height:55dvh;border-left:0;border-top:1px solid var(--line2);border-radius:18px 18px 0 0;z-index:40;box-shadow:0 -12px 40px rgba(0,0,0,.6)}
+ .body{grid-template-columns:auto minmax(0,1fr)}
+ #mini{display:none}
+ .page{padding:16px 16px 70px}
+}
+@media (max-width:640px){
+ #tools{flex-direction:row;position:absolute;left:8px;right:8px;top:8px;z-index:30;border:1px solid var(--line2);border-radius:14px;overflow-x:auto;overflow-y:hidden;background:rgba(14,14,14,.95)}#tools button{flex:none}#tools hr{width:1px;height:28px;margin:8px 3px;border-top:0;border-left:1px solid var(--line)}
+ .body{grid-template-columns:minmax(0,1fr);position:relative}
+ #zoomui{bottom:12px}#hint{display:none}#banner{top:68px}
+ .tb #q{width:110px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head><body>
+
+<!-- ===== lista de mapas ===== -->
+<div class="page" id="home"><div class="state">Carregando…</div></div>
+
+<!-- ===== editor ===== -->
+<div id="ed" hidden>
+ <div class="tb" role="toolbar" aria-label="Barra do mapa">
+  <button class="ib" id="bBack" title="Voltar para a lista (salva antes)">← <small>Mapas</small></button>
+  <input class="inp" id="title" maxlength="120" aria-label="Título do mapa" placeholder="Título do mapa">
+  <span id="status" role="status" aria-live="polite"></span>
+  <span class="sep"></span>
+  <button class="ib" id="bUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶</button>
+  <button class="ib" id="bRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer">↷</button>
+  <span class="sep"></span>
+  <select class="inp" id="selLayout" aria-label="Organização do mapa" title="Organização"></select>
+  <select class="inp" id="selTheme" aria-label="Tema de cores" title="Tema"></select>
+  <span class="sep"></span>
+  <input class="inp" id="q" type="search" placeholder="Buscar no mapa" aria-label="Buscar no mapa">
+  <button class="ib" id="bFocus" title="Focar no ramo selecionado" aria-pressed="false">◎<small>Foco</small></button>
+  <div class="menu"><button class="ib" id="bLevels" title="Expandir/recolher por nível">☰<small>Níveis</small></button></div>
+  <button class="ib" id="bText" title="Ver e editar como texto (lista com recuo)">¶<small>Texto</small></button>
+  <span class="sep"></span>
+  <div class="menu"><button class="ib" id="bExport" title="Exportar">⤓<small>Exportar</small></button></div>
+  <button class="ib" id="bHist" title="Histórico de versões">🕘<small>Histórico</small></button>
+  <button class="ib" id="bHelp" title="Atalhos do teclado (?)" aria-label="Atalhos">?</button>
+ </div>
+ <div class="body">
+  <aside id="tools" aria-label="Ferramentas">
+   <button id="tChild" title="Novo tópico filho (Tab)">➕<small>Filho</small></button>
+   <button id="tSib" title="Novo tópico irmão (Enter)">⏎<small>Irmão</small></button>
+   <button id="tFloat" title="Tópico solto (duplo clique no espaço vazio)">◌<small>Solto</small></button>
+   <hr>
+   <button id="tLink" title="Relação entre dois tópicos (Alt+R)" aria-pressed="false">⤳<small>Relação</small></button>
+   <button id="tGroup" title="Fronteira em volta dos selecionados (Alt+G)">▭<small>Grupo</small></button>
+   <hr>
+   <button id="tDup" title="Duplicar (Ctrl+D)">⧉<small>Duplicar</small></button>
+   <button id="tDel" title="Excluir (Delete)">🗑<small>Excluir</small></button>
+   <hr>
+   <button id="tPanel" title="Estilo e detalhes">🎨<small>Estilo</small></button>
+  </aside>
+  <div id="stage">
+   <svg id="cv" xmlns="http://www.w3.org/2000/svg" tabindex="0" aria-label="Mapa mental"><defs id="defs"></defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.1" id="gridDot"/></pattern><rect id="gridRect" x="-100000" y="-100000" width="200000" height="200000" fill="url(#grid)"/><g id="world"><g id="gGroups"></g><g id="gEdges"></g><g id="gLinks"></g><g id="gNodes"></g><g id="gOver"></g></g></svg>
+   <textarea id="ta" hidden aria-label="Texto do tópico" rows="1"></textarea>
+   <div id="banner" hidden></div>
+   <div id="hint">Duplo clique para editar · Tab cria filho · Enter cria irmão · arraste para reorganizar</div>
+   <div id="mini" title="Visão geral: clique para ir"></div>
+   <div id="zoomui"><button id="zOut" title="Menos zoom (-)" aria-label="Menos zoom">−</button><span id="zPct">100%</span><button id="zIn" title="Mais zoom (+)" aria-label="Mais zoom">+</button><button id="zFit" title="Ajustar à tela (Home)" aria-label="Ajustar à tela">⤢</button></div>
+  </div>
+  <aside id="panel" aria-label="Estilo e detalhes"></aside>
+ </div>
+</div>
+
+<!-- ===== janelas ===== -->
+<dialog id="dNew"><div class="dlg">
+ <h2 class="display">Novo mapa</h2><p class="help">Comece em branco ou de um modelo pronto. Dá para mudar tudo depois.</p>
+ <label class="l">Título<input class="inp" id="nTitle" maxlength="120" autocomplete="off" placeholder="Ex.: Campanha de dezembro"></label>
+ <label class="l" style="margin-bottom:0">Modelo</label><div class="tpls" id="nTpls"></div>
+ <p class="err" id="nErr" role="alert"></p>
+ <div class="foot"><button class="btn-g" data-close>Cancelar</button><button class="btn-y" id="nGo">Criar mapa</button></div>
+</div></dialog>
+
+<dialog id="dText" class="big"><div class="dlg">
+ <h2 class="display">Mapa como texto</h2><p class="help">Cada linha é um tópico; o recuo (2 espaços ou Tab) define o nível. Use <code>[ ]</code> e <code>[x]</code> para tarefas. Dá para colar uma lista de qualquer lugar.</p>
+ <textarea class="inp" id="txBody" style="min-height:300px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px" spellcheck="false"></textarea>
+ <div class="row2" style="margin-top:10px"><label><input type="radio" name="txMode" value="replace" checked> Substituir todo o mapa</label><label><input type="radio" name="txMode" value="add"> Adicionar abaixo do tópico selecionado</label></div>
+ <p class="err" id="txErr" role="alert"></p>
+ <div class="foot"><button class="btn-g" id="txCopy">Copiar texto</button><button class="btn-g" data-close>Fechar</button><button class="btn-y" id="txApply">Aplicar ao mapa</button></div>
+</div></dialog>
+
+<dialog id="dHist" class="big"><div class="dlg">
+ <h2 class="display">Histórico de versões</h2><p class="help">O sistema guarda versões sozinho enquanto você edita. Você também pode salvar uma versão com nome antes de uma grande mudança. Restaurar não apaga nada: a versão atual também fica guardada.</p>
+ <div class="row2"><input class="inp" id="hName" maxlength="120" placeholder="Nome da versão (opcional). Ex.: Antes de reorganizar" style="flex:1;min-width:220px"><button class="btn-y" id="hSave">Salvar versão agora</button></div>
+ <div class="vlist" id="hList"></div><div class="vprev" id="hPrev" hidden></div>
+ <p class="err" id="hErr" role="alert"></p>
+ <div class="foot"><button class="btn-g" data-close>Fechar</button></div>
+</div></dialog>
+
+<dialog id="dHelp" class="big"><div class="dlg">
+ <h2 class="display">Atalhos do teclado</h2>
+ <div class="kbd">
+  <h3>Tópicos</h3><kbd>Tab</kbd><span>Novo tópico filho</span><kbd>Enter</kbd><span>Novo tópico irmão (com um tópico selecionado)</span><kbd>Shift + Tab</kbd><span>Novo tópico pai (sobe um nível)</span><kbd>F2</kbd><span>Editar o texto (ou simplesmente comece a digitar)</span><kbd>Shift + Enter</kbd><span>Quebra de linha ao editar</span><kbd>Delete</kbd><span>Excluir o selecionado</span><kbd>Espaço</kbd><span>Recolher / expandir</span><kbd>Alt + ↑ ↓</kbd><span>Mover entre os irmãos</span><kbd>Ctrl + D</kbd><span>Duplicar</span>
+  <h3>Seleção e navegação</h3><kbd>← ↑ → ↓</kbd><span>Ir para o tópico vizinho</span><kbd>Ctrl + A</kbd><span>Selecionar tudo</span><kbd>Shift + clique</kbd><span>Somar à seleção</span><kbd>Shift + arrastar</kbd><span>Selecionar vários com a caixa</span><kbd>Arrastar o fundo</kbd><span>Mover a tela</span><kbd>Roda do mouse</kbd><span>Zoom no ponteiro</span><kbd>Home</kbd><span>Ajustar à tela</span><kbd>+ / −</kbd><span>Zoom</span><kbd>Ctrl + F</kbd><span>Buscar no mapa</span>
+  <h3>Editar</h3><kbd>Ctrl + Z / Y</kbd><span>Desfazer / refazer</span><kbd>Ctrl + C / X / V</kbd><span>Copiar, recortar e colar (também colar uma lista de texto)</span><kbd>Alt + R</kbd><span>Criar relação entre dois tópicos</span><kbd>Alt + G</kbd><span>Agrupar selecionados com uma fronteira</span><kbd>Esc</kbd><span>Cancelar / sair do foco / limpar seleção</span>
+ </div>
+ <div class="foot"><button class="btn-y" data-close>Entendi</button></div>
+</div></dialog>
+
+<dialog id="dConf"><div class="dlg">
+ <h2 class="display">Mapa alterado por outra pessoa</h2><p class="help" id="cMsg"></p>
+ <div class="foot" style="justify-content:stretch;display:grid;gap:8px"><button class="btn-g" id="cTheirs">Carregar a versão dela (descarta as minhas mudanças)</button><button class="btn-g" id="cMine">Manter a minha e sobrescrever</button><button class="btn-y" id="cCopy">Salvar as minhas mudanças como cópia</button></div>
+</div></dialog>
+
+<input type="file" id="fImp" accept=".json,.txt,.md,application/json,text/plain,text/markdown" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="mapas-core.js?v=20261209a"></script>
+<script src="mapas-app.js?v=20261209a"></script>
+</body></html>
