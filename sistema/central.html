@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOHA · Central Recepção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a19;--line:#242424;--line2:#333;--text:#f2f2f2;--muted:#9b9b9b;--y:#fff000;--good:#3ddc84;--bad:#ff5a4f;--warn:#ff9f2e;--blue:#6aa9ff}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+[hidden]{display:none!important}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.3px}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;color:var(--y);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--y)}
+.btn-y{background:var(--y);color:#111;font-weight:800;border-radius:10px;padding:10px 18px;font-size:14px;white-space:nowrap;text-align:center}.btn-y:disabled{opacity:.5;cursor:wait}
+.btn-g{border:1px solid var(--line2);border-radius:999px;padding:6px 13px;font-size:12.5px;white-space:nowrap;text-align:center;transition:border-color .2s,color .2s}
+.btn-g:hover{border-color:var(--y);color:var(--y)}.btn-g.danger:hover{border-color:var(--bad);color:var(--bad)}
+.page{max-width:980px;margin:0 auto;padding:22px 24px 80px}
+.hd h1{font-size:clamp(34px,5vw,60px);line-height:1;margin:12px 0 6px}.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:620px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}.seg::-webkit-scrollbar{display:none}
+.seg button{padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap}.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.seg button b{margin-left:5px;font-weight:800}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+.panel h2{font-size:22px;margin:0 0 4px;line-height:1}.panel p.help{margin:0 0 12px;color:var(--muted);font-size:13px}
+.fm{display:grid;gap:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label.l{display:grid;gap:5px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}label.l small{text-transform:none;letter-spacing:0;font-weight:500}
+.inp{width:100%;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px;outline:none;color:var(--text);text-transform:none;letter-spacing:0;font-weight:500}.inp:focus{border-color:var(--y)}
+textarea.inp{resize:vertical;min-height:92px}
+.foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.foot small{color:var(--muted)}
+.err{margin:0;color:var(--bad);font-size:13px;min-height:1em}
+.hist{margin:0;font-size:12.5px;color:var(--warn)}.hist button{color:var(--y);text-decoration:underline}
+.search{flex:1;min-width:200px}
+.feed{display:grid;gap:12px;margin-top:14px}
+.empty{padding:34px 16px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line2);border-radius:16px}.state{padding:60px 20px;text-align:center;color:var(--muted)}
+.post{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--y);border-radius:14px;padding:14px 16px}.post.done{border-left-color:var(--good);opacity:.88}
+.ph2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sid{font-weight:800;font-size:16px;background:#222;border:1px solid var(--line2);border-radius:9px;padding:3px 11px}
+.tag{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.tag.plan{background:rgba(106,169,255,.13);color:var(--blue)}.tag.open{background:rgba(255,159,46,.14);color:var(--warn)}.tag.ok{background:rgba(61,220,132,.12);color:var(--good)}
+.when{margin-left:auto;color:var(--muted);font-size:12.5px}
+.act{margin:10px 0 2px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}
+.by{color:var(--muted);font-size:12.5px;margin:4px 0 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.replies{margin-top:10px;display:grid;gap:6px}
+.reply{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:10px;padding:7px 11px;font-size:14px}
+.reply .rh{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px}.reply .rh b{color:var(--text)}.reply .rh .x{margin-left:auto;color:var(--muted);padding:0 6px;border-radius:6px}.reply .rh .x:hover{color:var(--bad)}
+.reply p{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.rform{margin-top:10px;display:grid;gap:8px}.rform textarea{min-height:64px}
+.rform .r2{display:flex;gap:8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#1d1d1d;border:1px solid var(--line2);border-radius:12px;padding:10px 16px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:90vw}.toast.show{opacity:1;transform:translateX(-50%)}
+.live{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}.live::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--good)}
+@media (max-width:640px){.page{padding:18px 14px 70px}.row{grid-template-columns:1fr}.when{margin-left:0;width:100%}}
+</style></head><body>
+<div class="page" id="page"><div class="state">Carregando…</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+let CTX=null;try{CTX=(window.parent!==window&&window.parent.bohaCtx)||window.bohaCtx||null}catch{CTX=null}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},TZ='America/Sao_Paulo';
+// Os três planos do site (planos.html)
+const PLANS={boha_fit:'Boha Fit',vip_anual:'Boha VIP Anual',basico:'Boha Básico'};
+const LOCK=()=>CTX?.profile?.unit||null;
+const MU=()=>{const l=CTX?.profile?.units||[];return l.length>1?l:[]};
+const UNITS=()=>MU().length?MU():LOCK()?[LOCK()]:Object.keys(UN);
+const ME=()=>String(CTX?.profile?.email||'').toLowerCase();
+const isMgr=()=>['gerente','admin'].includes(CTX?.profile?.role);
+let POSTS=[],REPLIES=[],S={unit:LOCK()||'cb',tab:'aberto',q:''},DRAFT={id:'',plan:'',action:''},RDRAFT={},ROPEN=null,timer=null;
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2800)}
+const ymd=d=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(d);
+function when(iso){const d=new Date(iso),t=ymd(new Date()),y=ymd(new Date(Date.now()-864e5)),k=ymd(d),h=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:TZ});return (k===t?'hoje':k===y?'ontem':k.slice(8)+'/'+k.slice(5,7))+' às '+h}
+const first=n=>String(n||'').trim().split(/\s+/)[0]||'';
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const mine=()=>POSTS.filter(p=>p.unit===S.unit);
+const repsOf=id=>REPLIES.filter(r=>r.post_id===id).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+function visible(){
+ const q=norm(S.q).trim();
+ return mine().filter(p=>(S.tab==='todos'||p.status===S.tab)&&(!q||norm(p.student_id+' '+p.action+' '+(p.created_by_name||'')+' '+PLANS[p.plan]+' '+repsOf(p.id).map(r=>r.body).join(' ')).includes(q)))
+  .sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+}
+function head(){
+ const units=UNITS(),m=mine(),nOpen=m.filter(p=>p.status==='aberto').length,nDone=m.length-nOpen;
+ return `<header class="hd"><p class="eyebrow">Recepção · comunicação</p><h1 class="display">Central Recepção</h1><p class="sub">Recado entre a recepção da unidade. Registre o aluno, o plano e o que foi feito, para o próximo turno continuar de onde você parou.</p></header>
+ <div class="bar">${units.length>1?`<div class="seg" role="group" aria-label="Unidade">${units.map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="seg" style="padding:9px 16px;font-weight:700">${UN[units[0]]}</span>`}<span class="live" id="liveTxt">Atualiza sozinho</span></div>
+ <section class="panel"><h2 class="display">Novo registro</h2><p class="help">Preencha os três campos. Quem entrar no próximo turno vê na hora.</p>
+ <form class="fm" id="nform" novalidate>
+  <div class="row"><label class="l">ID do aluno<input class="inp" id="n_id" maxlength="40" autocomplete="off" placeholder="Número do aluno no Evo" value="${esc(DRAFT.id)}"></label>
+  <label class="l">Plano do aluno<select class="inp" id="n_plan"><option value="">Escolha o plano…</option>${Object.entries(PLANS).map(([k,v])=>`<option value="${k}" ${DRAFT.plan===k?'selected':''}>${v}</option>`).join('')}</select></label></div>
+  <p class="hist" id="n_hist" hidden></p>
+  <label class="l">Qual foi a tratativa<textarea class="inp" id="n_act" maxlength="1500" placeholder="O que o aluno pediu, o que você fez, o que ficou combinado e o que o próximo turno precisa fazer…">${esc(DRAFT.action)}</textarea></label>
+  <p class="err" id="n_err" role="alert"></p>
+  <div class="foot"><button type="submit" class="btn-y" id="n_save">Registrar</button><small>Só a recepção e o gerente de ${UN[S.unit]} veem.</small></div>
+ </form></section>
+ <div class="bar"><div class="seg" role="tablist" aria-label="Situação">${[['aberto','Abertos',nOpen],['resolvido','Resolvidos',nDone],['todos','Todos',m.length]].map(([k,l,n])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}<b>${n}</b></button>`).join('')}</div><input class="inp search" id="q" type="search" placeholder="Buscar por ID do aluno, tratativa ou quem registrou" value="${esc(S.q)}" aria-label="Buscar"></div>
+ <div class="feed" id="feed"></div>`;
+}
+function postHTML(p){
+ const reps=repsOf(p.id),done=p.status==='resolvido',canDel=isMgr()||p.created_by===ME();
+ return `<article class="post ${done?'done':''}" data-post="${p.id}"><div class="ph2"><span class="sid">ID ${esc(p.student_id)}</span><span class="tag plan">${esc(PLANS[p.plan]||p.plan)}</span><span class="tag ${done?'ok':'open'}">${done?'Resolvido':'Em aberto'}</span><span class="when">${when(p.created_at)}</span></div>
+ <p class="act">${esc(p.action)}</p><p class="by">Registrado por ${esc(first(p.created_by_name)||'recepção')}${done&&p.resolved_by_name?` · resolvido por ${esc(first(p.resolved_by_name))} ${p.resolved_at?when(p.resolved_at):''}`:''}</p>
+ ${reps.length?`<div class="replies">${reps.map(r=>`<div class="reply"><div class="rh"><b>${esc(first(r.created_by_name)||'recepção')}</b><span>${when(r.created_at)}</span>${(isMgr()||r.created_by===ME())?`<button class="x" data-rdel="${r.id}" aria-label="Apagar resposta" title="Apagar resposta">✕</button>`:''}</div><p>${esc(r.body)}</p></div>`).join('')}</div>`:''}
+ ${ROPEN===p.id?`<div class="rform"><textarea class="inp" data-rin="${p.id}" maxlength="800" placeholder="Escreva a resposta ou o andamento…" aria-label="Resposta">${esc(RDRAFT[p.id]||'')}</textarea><div class="r2"><button class="btn-y" data-rsave="${p.id}">Enviar resposta</button><button class="btn-g" data-rcancel>Cancelar</button></div></div>`:''}
+ <div class="btns">${ROPEN===p.id?'':`<button class="btn-g" data-reply="${p.id}">Responder</button>`}<button class="btn-g" data-status="${p.id}" data-to="${done?'aberto':'resolvido'}">${done?'Reabrir':'Marcar como resolvido'}</button>${canDel?`<button class="btn-g danger" data-del="${p.id}">Excluir</button>`:''}</div></article>`;
+}
+function renderFeed(){
+ const f=$('feed');if(!f)return;const list=visible();
+ f.innerHTML=list.length?list.map(postHTML).join(''):`<div class="empty">${S.q?'Nada encontrado para essa busca.':S.tab==='aberto'?'Nenhum registro em aberto. Tudo em dia por aqui.':S.tab==='resolvido'?'Nenhum registro resolvido ainda.':'Ainda não há registros nesta unidade.'}</div>`;
+}
+function render(){
+ $('page').innerHTML=head();renderFeed();
+}
+const typing=()=>{const a=document.activeElement;return a&&a.matches&&a.matches('textarea,input')};
+function refresh(){ // atualização automática sem atrapalhar quem está escrevendo
+ if(typing()){const bar=$('liveTxt');if(bar)bar.textContent='Atualiza sozinho';return}
+ const keep=window.scrollY;render();window.scrollTo(0,keep);
+}
+async function load(force){
+ const c=CTX.client;
+ const [p,r]=await Promise.all([c.from('boha_central_posts').select('*').order('created_at',{ascending:false}).limit(400),c.from('boha_central_replies').select('*').order('created_at').limit(3000)]);
+ if(p.error)throw p.error;POSTS=p.data||[];if(!r.error)REPLIES=r.data||[];
+ if(force)render();else refresh();
+}
+const msg=e=>{const m=String(e?.message||'');return /Informe|Escolha|Escreva|Limite|Você só|não encontrado/.test(m)?m:'Não foi possível salvar. Tente de novo.'};
+function histHint(){
+ const id=($('n_id')?.value||'').trim(),h=$('n_hist');if(!h)return;
+ const n=id?mine().filter(p=>norm(p.student_id)===norm(id)).length:0;
+ if(!n){h.hidden=true;return}
+ h.hidden=false;h.innerHTML=`Este aluno já tem ${n} registro${n===1?'':'s'} nesta unidade. <button type="button" data-seeid="${esc(id)}">Ver</button>`;
+}
+document.addEventListener('input',e=>{
+ const t=e.target;
+ if(t.id==='n_id'){DRAFT.id=t.value;histHint()}
+ else if(t.id==='n_act')DRAFT.action=t.value;
+ else if(t.id==='q'){S.q=t.value;renderFeed()}
+ else if(t.dataset&&t.dataset.rin!==undefined)RDRAFT[t.dataset.rin]=t.value;
+});
+document.addEventListener('change',e=>{if(e.target.id==='n_plan')DRAFT.plan=e.target.value});
+document.addEventListener('submit',async e=>{
+ if(e.target.id!=='nform')return;e.preventDefault();
+ const err=t=>{$('n_err').textContent=t},id=$('n_id').value.trim(),plan=$('n_plan').value,act=$('n_act').value.trim();
+ if(!id)return err('Informe o ID do aluno.');if(!plan)return err('Escolha o plano do aluno.');if(!act)return err('Escreva qual foi a tratativa.');
+ err('');const b=$('n_save');b.disabled=true;
+ const {error}=await CTX.client.rpc('boha_central_post',{p_unit:S.unit,p_student:id,p_plan:plan,p_action:act});
+ b.disabled=false;if(error){err(msg(error));return}
+ DRAFT={id:'',plan:'',action:''};S.tab='aberto';S.q='';await load(true);toast('Registro salvo. O próximo turno já vê.');
+});
+async function rpc(fn,args,ok){const {error}=await CTX.client.rpc(fn,args);if(error){toast(msg(error));return false}await load(true);if(ok)toast(ok);return true}
+document.addEventListener('click',async e=>{
+ const t=e.target;let b;
+ if(b=t.closest('[data-unit]')){if(UNITS().includes(b.dataset.unit)){S.unit=b.dataset.unit;ROPEN=null;render()}return}
+ if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
+ if(b=t.closest('[data-seeid]')){S.q=b.dataset.seeid;S.tab='todos';render();return}
+ if(b=t.closest('[data-reply]')){ROPEN=b.dataset.reply;renderFeed();const ta=document.querySelector('[data-rin]');if(ta)ta.focus();return}
+ if(t.closest('[data-rcancel]')){ROPEN=null;renderFeed();return}
+ if(b=t.closest('[data-rsave]')){const id=b.dataset.rsave,ta=document.querySelector('[data-rin="'+CSS.escape(id)+'"]'),body=(ta?ta.value:RDRAFT[id]||'').trim();
+  if(!body){toast('Escreva a resposta antes de enviar.');return}
+  b.disabled=true;const ok=await rpc('boha_central_reply',{p_post:id,p_body:body},'Resposta enviada.');b.disabled=false;if(ok){RDRAFT[id]='';ROPEN=null;renderFeed()}return}
+ if(b=t.closest('[data-status]')){rpc('boha_central_status',{p_post:b.dataset.status,p_status:b.dataset.to},b.dataset.to==='resolvido'?'Marcado como resolvido.':'Registro reaberto.');return}
+ if(b=t.closest('[data-rdel]')){if(confirm('Apagar esta resposta?'))rpc('boha_central_reply_delete',{p_reply:b.dataset.rdel},'Resposta apagada.');return}
+ if(b=t.closest('[data-del]')){if(confirm('Excluir este registro e as respostas dele?'))rpc('boha_central_delete',{p_post:b.dataset.del},'Registro excluído.');return}
+});
+function startLive(){clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible')load().catch(()=>{})},20000)}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CTX&&CTX.client)load().catch(()=>{})});
+window.bohaReload=()=>load().catch(()=>{});
+(async()=>{
+ if(!CTX||!CTX.client){$('page').innerHTML='<div class="state">Abra este módulo pelo <a href="../equipe.html#central" style="color:var(--y)">sistema interno da Boha</a>.</div>';return}
+ if(CTX.canModule&&!CTX.canModule('central')){$('page').innerHTML='<div class="state">Este módulo é só da recepção e do gerente da unidade.</div>';return}
+ S.unit=LOCK()||UNITS()[0]||'cb';
+ try{await load(true);startLive()}catch{$('page').innerHTML='<div class="state">Não foi possível carregar os dados. Atualize a página.</div>'}
+})();
+</script></body></html>
