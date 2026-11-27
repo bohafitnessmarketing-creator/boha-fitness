@@ -891,7 +891,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261214a';
+const VERSION='20261215a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1377,11 +1377,11 @@ async function loadAccess(){
 }
 function roleHint(){const r=ROLES.find(x=>x[0]===el('accRole').value);el('accRoleHint').textContent=r?`${r[1]}: ${r[2]}.`:''}
 el('accRole').innerHTML=roleOptions('gerente');el('accUnit').innerHTML=unitOptions('','Escolha…');
-function syncAccUnit(){const role=el('accRole').value,sc=SCOPED_ROLES.includes(role),cur=el('accUnit').value;el('accUnitWrap').hidden=role==='admin';el('accUnit').innerHTML=unitOptions(cur,sc?'Escolha…':'Rede toda (sem restrição)');if(role==='admin')el('accUnit').value=''}
+function syncAccUnit(){const role=el('accRole').value,sc=SCOPED_ROLES.includes(role),cur=el('accUnit').value;el('accUnitWrap').hidden=role==='admin';el('accUnit').innerHTML=unitOptions(cur,sc?'Escolha…':'Rede toda (sem restrição)')+(role==='gerente'?`<option value="__all" ${cur==='__all'?'selected':''}>Todas as unidades</option>`:'');if(role==='admin')el('accUnit').value=''}
 el('accForm').noValidate=true;el('accRole').onchange=()=>{roleHint();syncAccUnit();el('accErr').hidden=true;el('accUnit').classList.remove('bad')};roleHint();syncAccUnit();
 el('accForm').onsubmit=async e=>{
  e.preventDefault();
- const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unit=role==='admin'?'':el('accUnit').value;
+ const name=el('accName').value.trim(),email=el('accEmail').value.trim().toLowerCase(),role=el('accRole').value,unitSel=role==='admin'?'':el('accUnit').value,allU=role==='gerente'&&unitSel==='__all',unit=allU?'cb':unitSel;
  const fail=(msg,field)=>{const b=el('accErr');b.textContent=msg;b.hidden=false;['accName','accEmail','accUnit'].forEach(id=>el(id).classList.toggle('bad',id===field));el(field).focus();toast(msg)};
  if(!name)return fail('Escreva o nome da pessoa.','accName');
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))return fail('Escreva um e-mail válido.','accEmail');
@@ -1390,7 +1390,8 @@ el('accForm').onsubmit=async e=>{
  if(accData.some(r=>r.role&&r.email===email)&&!confirm(`${email} já tem acesso. Atualizar nome e perfil?`))return;
  el('accSubmit').disabled=true;
  try{
-  const {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role,p_unit:unit||null});
+  let {error}=await client.rpc('boha_access_save',{p_email:email,p_name:name,p_role:role,p_unit:unit||null});
+  if(!error&&allU)({error}=await client.rpc('boha_access_set_units',{p_email:email,p_units:Object.keys(UNIT_NAMES)}));
   if(error){const b=el('accErr');b.textContent=(error.message||'Não foi possível liberar o acesso.');b.hidden=false;toast(error.message||'Não foi possível liberar o acesso.');return}
   el('accForm').reset();roleHint();syncAccUnit();
   await loadAccess();
