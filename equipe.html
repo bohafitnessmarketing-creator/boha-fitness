@@ -424,6 +424,12 @@ window.bohaAPI=async function(path,options={}){
  value.photo=body.data.photo?body.id+'.jpg':'';
  const {error}=await client.from('boha_members').upsert({id:body.id,data:value,updated_at:new Date().toISOString()});if(error)throw error;return reply({ok:true});
  }
+ if(path.startsWith('/api/employee-photo/')&&method==='GET'){
+ const id=decodeURIComponent(path.split('/').pop());if(!/^[0-9a-f-]{36}$/i.test(id))return reply({},400);
+ const {data:o,error:oe}=await client.rpc('boha_employee_options');if(oe)throw oe;const emp=(o||[]).find(x=>x.id===id);if(!emp||!emp.photo_path)return reply({},404);
+ const {data,error}=await client.storage.from('boha-employees').download(emp.photo_path);if(error)throw error;
+ return new Response(data,{status:200,headers:{'Content-Type':data.type||'image/jpeg'}});
+ }
  if(path.startsWith('/api/photos/')){
  const id=decodeURIComponent(path.split('/').pop());if(!/^[a-z0-9-]{1,80}$/i.test(id))return reply({},400);
  if(method==='PUT'){const {error}=await client.storage.from('boha-photos').upload(id+'.jpg',options.body,{contentType:'image/jpeg',upsert:true});if(error)throw error;return reply({photo:await dataURL(options.body)})}
@@ -902,7 +908,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261220a';
+const VERSION='20261221a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1225,7 +1231,7 @@ let EMP=null,LOADING=null;
 const load=()=>LOADING||(LOADING=fetch('/api/employees').then(r=>r.json()).then(d=>{EMP=Array.isArray(d)?d:[]}).catch(()=>{EMP=[]}));
 const kindOf=t=>{t=norm(t);return /estagi/.test(t)?'estagiaria':/professor|zumba|pilates|jump|luta|boxe|fit ?dance|sertanej|danca|spinning/.test(t)?'professor':/recep/.test(t)?'recepcao':/limpez/.test(t)?'limpeza':''};
 const css=document.createElement('style');
-css.textContent='.empsrch{position:relative}.emp-sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:60;max-height:230px;overflow:auto;background:#161616;border:1px solid #3a3a3a;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.55);padding:4px}.emp-sugg[hidden]{display:none}.emp-sugg button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:8px 10px;color:#f4f4f4;cursor:pointer;font:inherit}.emp-sugg button:hover,.emp-sugg button.on{background:#262626}.emp-sugg b{font-size:14px;font-weight:700}.emp-sugg small{font-size:12px;color:#a1a1a1}.emp-sugg small i{font-style:normal;color:#fff000}.emp-sugg p{margin:0;padding:10px;font-size:12.5px;color:#a1a1a1}.pcw:has(.pc-edit){position:relative;z-index:25}';
+css.textContent='.empsrch{position:relative}.emp-sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:60;max-height:230px;overflow:auto;background:#161616;border:1px solid #3a3a3a;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.55);padding:4px}.emp-sugg[hidden]{display:none}.emp-sugg button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:8px 10px;color:#f4f4f4;cursor:pointer;font:inherit}.emp-sugg button:hover,.emp-sugg button.on{background:#262626}.emp-sugg b{font-size:14px;font-weight:700}.emp-sugg small{font-size:12px;color:#a1a1a1}.emp-sugg small i{font-style:normal;color:#fff000}.emp-sugg p{margin:0;padding:10px;font-size:12.5px;color:#a1a1a1}.pcw:has(.pc-edit){position:relative;z-index:25}.fields{position:relative}.emp-sugg small i{font-style:normal}';
 document.head.appendChild(css);
 function box(inp){let b=inp.nextElementSibling;if(!b||!b.classList.contains('emp-sugg')){b=document.createElement('div');b.className='emp-sugg';b.hidden=true;b.setAttribute('role','listbox');inp.insertAdjacentElement('afterend',b)}return b}
 function used(){try{return new Set(nodes.filter(n=>!isOpen(n)).map(n=>norm(name(n))))}catch(e){return new Set()}}
@@ -1238,17 +1244,56 @@ async function show(inp){
  list.sort((a,c)=>score(a)-score(c)||a.name.localeCompare(c.name,'pt-BR'));list=list.slice(0,8);
  const u=used();
  if(!list.length){b.hidden=true;return}
- b.innerHTML=list.map(e=>{const nm=tidy(e.name);return '<button type="button" role="option" data-nm="'+esc(nm)+'" data-k="'+kindOf(e.title)+'"><b>'+esc(nm)+'</b><small>'+esc(tidyTitle(e.title)||'Função não definida')+' · '+esc(UN[e.unit]||'')+(u.has(norm(nm))?' · <i>já está no organograma</i>':'')+'</small></button>'}).join('');
+ b.innerHTML=list.map(e=>{const nm=tidy(e.name);return '<button type="button" role="option" data-eid="'+esc(e.id)+'" data-nm="'+esc(nm)+'" data-k="'+kindOf(e.title)+'"><b>'+esc(nm)+'</b><small>'+esc(tidyTitle(e.title)||'Função não definida')+' · '+esc(UN[e.unit]||'')+(u.has(norm(nm))?' · <i>já está no organograma</i>':'')+'</small></button>'}).join('');
  b.hidden=false;
+}
+let pendingAdd=null;
+async function photoFrom(id,emp){
+ const r=await fetch('/api/employee-photo/'+encodeURIComponent(emp.id));if(!r.ok)throw new Error('sem foto');
+ const blob=await r.blob();await putPhoto(id,new File([blob],'foto.jpg',{type:blob.type||'image/jpeg'}));
+}
+async function commit(id,emp){
+ const nm=tidy(emp.name);
+ try{
+  state[id]={...(state[id]||{}),name:nm};
+  if(!(await save(id)))return;
+  if(emp.photo_path){await photoFrom(id,emp)}
+  else{render();if(selected===id&&$('overlay').classList.contains('open'))showDetail();notify(nm+' definido(a) para esta posição.')}
+ }catch(e){notify('Não foi possível aplicar o colaborador. Tente de novo.')}
 }
 function pick(btn){
  const b=btn.closest('.emp-sugg'),inp=b.previousElementSibling;if(!inp)return;
+ const emp=(EMP||[]).find(x=>x.id===btn.dataset.eid);
  inp.value=btn.dataset.nm;b.hidden=true;
  const r=document.getElementById('addRole');
- if(r&&r.tagName==='SELECT'&&btn.dataset.k&&[...r.options].some(o=>o.value===btn.dataset.k))r.value=btn.dataset.k;
+ if(inp.id==='addName'){
+  pendingAdd=emp||null;
+  if(r&&r.tagName==='SELECT'&&btn.dataset.k&&[...r.options].some(o=>o.value===btn.dataset.k))r.value=btn.dataset.k;
+  inp.focus();return;
+ }
+ const form=inp.closest('form.pc-edit');
+ if(emp&&form&&form.dataset.rf){commit(form.dataset.rf,emp);return}
+ if(emp&&inp.id==='personName'&&typeof selected==='string'&&selected){commit(selected,emp);return}
  inp.focus();
 }
-const isTarget=t=>!!t&&t.tagName==='INPUT'&&(t.id==='addName'||!!t.closest('.pc-edit'));
+async function bulkPhotos(){
+ await load();const list=(EMP||[]).filter(e=>e.photo_path);
+ if(!list.length){notify('Nenhum funcionário do Banco tem foto cadastrada.');return}
+ const key=e=>norm(tidy(e.name)),byName=new Map();list.forEach(e=>{if(!byName.has(key(e)))byName.set(key(e),e)});
+ const targets=nodes.filter(n=>!isOpen(n)&&!info(n).photo&&(typeof ROLE==='undefined'||ROLE!=='gerente'||typeof MYU==='undefined'||n.scope===MYU));
+ let ok=0,sem=0;notify('Cruzando nomes com o Banco de funcionários…');
+ for(const n of targets){
+  const k=norm(name(n));let e=byName.get(k);
+  if(!e){const tk=k.split(' ').filter(Boolean);if(tk.length>=2){const c=list.filter(x=>{const t=norm(tidy(x.name)).split(' ');return tk.every(w=>t.includes(w))});if(c.length===1)e=c[0]}}
+  if(!e){sem++;continue}
+  try{await photoFrom(n.id,e);ok++}catch(x){}
+ }
+ render();notify(ok?ok+' foto'+(ok===1?'':'s')+' trazida'+(ok===1?'':'s')+' do Banco de funcionários.'+(sem?' '+sem+' sem correspondência.':''):'Nenhuma foto nova encontrada: '+sem+' pessoa'+(sem===1?'':'s')+' sem correspondência ou já com foto.');
+}
+const eb=document.getElementById('editBar');
+if(eb){eb.insertAdjacentHTML('beforeend','<button type="button" class="linkbtn" id="xfotos" title="Procura cada pessoa do organograma no Banco de funcionários e traz a foto">Trazer fotos do Banco de funcionários</button>');document.getElementById('xfotos').onclick=bulkPhotos}
+if(typeof doAdd==='function'){const orig=doAdd;doAdd=async function(g,roleKey,nm){const before=new Set(nodes.map(n=>n.id)),emp=pendingAdd;pendingAdd=null;await orig(g,roleKey,nm);if(emp&&nm&&norm(nm)===norm(tidy(emp.name))&&emp.photo_path){const nn=nodes.find(n=>!before.has(n.id));if(nn)try{await photoFrom(nn.id,emp)}catch(e){}}}}
+const isTarget=t=>!!t&&t.tagName==='INPUT'&&(t.id==='addName'||t.id==='personName'||!!t.closest('.pc-edit'));
 document.addEventListener('input',e=>{if(isTarget(e.target))show(e.target)});
 document.addEventListener('focusin',e=>{if(isTarget(e.target))show(e.target)});
 document.addEventListener('mousedown',e=>{const b=e.target.closest('.emp-sugg button');if(b){e.preventDefault();pick(b);return}document.querySelectorAll('.emp-sugg').forEach(x=>{if(!x.contains(e.target)&&x.previousElementSibling!==e.target)x.hidden=true})});
