@@ -891,7 +891,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261212a';
+const VERSION='20261213a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1193,10 +1193,58 @@ function setActiveUnit(u){
 document.addEventListener('click',e=>{const au=e.target.closest('[data-active-unit]');if(au){setActiveUnit(au.dataset.activeUnit);return}const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]'),pu=e.target.closest('[data-preview-unit]');if(pu&&previewRole){setPreview(previewRole,pu.dataset.previewUnit);return}if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 // Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
+// Roda DENTRO da Hierarquia (iframe): busca no Banco de funcionários ao adicionar ou renomear alguém no organograma.
+function hierSearchRuntime(){
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const tidy=n=>{n=String(n||'').replace(/\s*\((cb|te|ma)\)\s*$/i,'').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
+const tidyTitle=t=>{t=String(t||'').trim();return t&&t===t.toUpperCase()?t.charAt(0)+t.slice(1).toLowerCase():t};
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'};
+let EMP=null,LOADING=null;
+const load=()=>LOADING||(LOADING=fetch('/api/employees').then(r=>r.json()).then(d=>{EMP=Array.isArray(d)?d:[]}).catch(()=>{EMP=[]}));
+const kindOf=t=>{t=norm(t);return /estagi/.test(t)?'estagiaria':/professor|zumba|pilates|jump|luta|boxe|fit ?dance|sertanej|danca|spinning/.test(t)?'professor':/recep/.test(t)?'recepcao':/limpez/.test(t)?'limpeza':''};
+const css=document.createElement('style');
+css.textContent='.empsrch{position:relative}.emp-sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:60;max-height:230px;overflow:auto;background:#161616;border:1px solid #3a3a3a;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.55);padding:4px}.emp-sugg[hidden]{display:none}.emp-sugg button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:8px 10px;color:#f4f4f4;cursor:pointer;font:inherit}.emp-sugg button:hover,.emp-sugg button.on{background:#262626}.emp-sugg b{font-size:14px;font-weight:700}.emp-sugg small{font-size:12px;color:#a1a1a1}.emp-sugg small i{font-style:normal;color:#fff000}.emp-sugg p{margin:0;padding:10px;font-size:12.5px;color:#a1a1a1}.pcw:has(.pc-edit){position:relative;z-index:25}';
+document.head.appendChild(css);
+function box(inp){let b=inp.nextElementSibling;if(!b||!b.classList.contains('emp-sugg')){b=document.createElement('div');b.className='emp-sugg';b.hidden=true;b.setAttribute('role','listbox');inp.insertAdjacentElement('afterend',b)}return b}
+function used(){try{return new Set(nodes.filter(n=>!isOpen(n)).map(n=>norm(name(n))))}catch(e){return new Set()}}
+async function show(inp){
+ const b=box(inp);await load();if(!EMP||!EMP.length){b.hidden=true;return}
+ const q=norm(inp.value).split(/\s+/).filter(Boolean),form=inp.closest('#addForm'),g=form&&form.dataset.g,want=g==='recep'?'recepcao':g==='clean'?'limpeza':g==='muscle'?'muscle':'';
+ const v=(typeof view==='string'?view:'rede');
+ let list=EMP.filter(e=>(v==='rede'||e.unit===v)&&q.every(t=>norm(e.name).includes(t)));
+ const score=e=>{const k=kindOf(e.title);return want?(want==='muscle'?(k==='professor'||k==='estagiaria'?0:1):(k===want?0:1)):0};
+ list.sort((a,c)=>score(a)-score(c)||a.name.localeCompare(c.name,'pt-BR'));list=list.slice(0,8);
+ const u=used();
+ if(!list.length){b.hidden=true;return}
+ b.innerHTML=list.map(e=>{const nm=tidy(e.name);return '<button type="button" role="option" data-nm="'+esc(nm)+'" data-k="'+kindOf(e.title)+'"><b>'+esc(nm)+'</b><small>'+esc(tidyTitle(e.title)||'Função não definida')+' · '+esc(UN[e.unit]||'')+(u.has(norm(nm))?' · <i>já está no organograma</i>':'')+'</small></button>'}).join('');
+ b.hidden=false;
+}
+function pick(btn){
+ const b=btn.closest('.emp-sugg'),inp=b.previousElementSibling;if(!inp)return;
+ inp.value=btn.dataset.nm;b.hidden=true;
+ const r=document.getElementById('addRole');
+ if(r&&r.tagName==='SELECT'&&btn.dataset.k&&[...r.options].some(o=>o.value===btn.dataset.k))r.value=btn.dataset.k;
+ inp.focus();
+}
+const isTarget=t=>!!t&&t.tagName==='INPUT'&&(t.id==='addName'||!!t.closest('.pc-edit'));
+document.addEventListener('input',e=>{if(isTarget(e.target))show(e.target)});
+document.addEventListener('focusin',e=>{if(isTarget(e.target))show(e.target)});
+document.addEventListener('mousedown',e=>{const b=e.target.closest('.emp-sugg button');if(b){e.preventDefault();pick(b);return}document.querySelectorAll('.emp-sugg').forEach(x=>{if(!x.contains(e.target)&&x.previousElementSibling!==e.target)x.hidden=true})});
+document.addEventListener('keydown',e=>{
+ if(!isTarget(e.target))return;const b=e.target.nextElementSibling;if(!b||!b.classList.contains('emp-sugg')||b.hidden)return;
+ const items=[...b.querySelectorAll('button')];if(!items.length)return;let i=items.findIndex(x=>x.classList.contains('on'));
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();items.forEach(x=>x.classList.remove('on'));i=e.key==='ArrowDown'?(i+1)%items.length:(i<=0?items.length-1:i-1);items[i].classList.add('on');items[i].scrollIntoView({block:'nearest'})}
+ else if(e.key==='Enter'&&i>=0){e.preventDefault();e.stopPropagation();pick(items[i])}
+ else if(e.key==='Escape'){b.hidden=true;e.stopPropagation()}
+},true);
+}
 function lockHierarchy(html){
  // Gerente com unidade edita a Hierarquia da própria unidade (o banco também só aceita a unidade dele); marketing edita a rede toda.
  let out=html.replace("canEdit=ROLE==='admin'||ROLE==='editor'","MYU=(()=>{try{return window.parent.bohaCtx.profile.unit||null}catch{return null}})(),canEdit=ROLE==='admin'||ROLE==='editor'||ROLE==='marketing'||(ROLE==='gerente'&&!!MYU)")
   .replace("const tools=editing&&canEdit?","const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?");
+ out=out.replace('<label for="addName">Nome (opcional)</label><input id="addName" maxlength="60" placeholder="Ex.: Mariana">','<label for="addName">Nome — busque no Banco de funcionários (ou digite)</label><div class="empsrch"><input id="addName" maxlength="60" placeholder="Digite para buscar…" autocomplete="off"></div>')
+  .replace('<'+'/script></body></html>','('+hierSearchRuntime.toString()+')();<'+'/script></body></html>');
  const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return out;
  out=out.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
   .replace("view='rede',selected=null","view='"+u+"',selected=null")
