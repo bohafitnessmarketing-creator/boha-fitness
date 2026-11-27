@@ -21,7 +21,8 @@ button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
 .hd h1{font-size:clamp(34px,5vw,60px);line-height:1;margin:12px 0 6px}.hd p.sub{margin:0;color:var(--muted);font-size:14px;max-width:580px}
 .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
 .seg{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;scrollbar-width:none;max-width:100%}.seg::-webkit-scrollbar{display:none}
-.seg button{padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
+.seg button{padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}.funcbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:14px 0 0}.funcbar .fl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}.funcbar button{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:13px;font-weight:600;color:var(--muted)}.funcbar button b{margin-left:4px;font-weight:700;opacity:.7}.funcbar button:hover{color:var(--text)}.funcbar button[aria-pressed="true"]{background:var(--y);color:#111;border-color:var(--y)}@media print{.funcbar{display:none}}
+.seg button:hover{color:var(--text)}.seg button[aria-pressed="true"]{background:var(--y);color:#111}
 .nav{display:flex;align-items:center;gap:8px;margin-left:auto}.nav b{min-width:170px;text-align:center;font-weight:700}
 .arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:17px}.arrow:hover{border-color:var(--y);color:var(--y)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
@@ -102,9 +103,17 @@ const hhmm=t=>t?String(t).slice(0,5):'';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
 const LOCK=()=>CTX?.profile?.unit||null,UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
-let EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today())},editS=null,sKind='manha';
+let EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),func:''},editS=null,sKind='manha';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+const fnKey=e=>((e.title||'').trim().toLowerCase())||'__sem';
+const fnLabel=e=>(e.title||'').trim()||'Sem função';
+function funcsOf(u){const m=new Map();empsOf(u).forEach(e=>{const k=fnKey(e);if(!m.has(k))m.set(k,{k,l:fnLabel(e),n:0});m.get(k).n++});return [...m.values()].sort((a,b)=>(a.k==='__sem')-(b.k==='__sem')||a.l.localeCompare(b.l,'pt-BR'))}
+const curFunc=u=>funcsOf(u).some(f=>f.k===S.func)?S.func:'';
+const viewEmps=u=>{const f=curFunc(u);return f?empsOf(u).filter(e=>fnKey(e)===f):empsOf(u)};
+const funcName=u=>{const f=funcsOf(u).find(x=>x.k===curFunc(u));return f?' · '+esc(f.l):''};
+function funcBar(){const fs=funcsOf(S.unit);if(fs.length<2)return '';const f=curFunc(S.unit);
+ return `<div class="funcbar" role="group" aria-label="Filtrar por função"><span class="fl">Função</span><button data-func="" aria-pressed="${!f}">Todas <b>${empsOf(S.unit).length}</b></button>${fs.map(x=>`<button data-func="${esc(x.k)}" aria-pressed="${f===x.k}">${esc(x.l)} <b>${x.n}</b></button>`).join('')}</div>`}
 const shiftOf=(eid,d)=>SHIFTS.find(s=>s.employee_id===eid&&s.work_date===d);
 const initials=n=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
 function hours(s){
@@ -119,25 +128,25 @@ function head(){
  let nav='';
  if(S.tab==='escala'){const e=addDays(S.week,6);nav=`<div class="nav"><button class="arrow" data-wk="-1" aria-label="Semana anterior">‹</button><b>${+S.week.slice(8)} ${S.week.slice(5,7)!==e.slice(5,7)?MN[+S.week.slice(5,7)-1].slice(0,3)+' ':''}– ${+e.slice(8)} ${MN[+e.slice(5,7)-1].slice(0,3)} ${e.slice(0,4)}</b><button class="arrow" data-wk="1" aria-label="Próxima semana">›</button></div>`}
  return `<header class="hd"><p class="eyebrow">Equipe · dia a dia</p><h1 class="display">Escalas</h1><p class="sub">Quem trabalha em cada turno, as horas da semana e a cobertura de cada unidade.</p></header>
- <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${UNITS().length>1?`<div class="seg" role="group" aria-label="Unidade">${UNITS().map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[UNITS()[0]]}</span>`}${nav}</div>`;
+ <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${UNITS().length>1?`<div class="seg" role="group" aria-label="Unidade">${UNITS().map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[UNITS()[0]]}</span>`}${nav}</div>${funcBar()}`;
 }
 
 /* ---------- hoje ---------- */
 function tabHoje(){
- const d=today(),u=S.unit,emps=empsOf(u),byKind=k=>emps.filter(e=>shiftOf(e.id,d)?.kind===k);
+ const d=today(),u=S.unit,emps=viewEmps(u),byKind=k=>emps.filter(e=>shiftOf(e.id,d)?.kind===k);
  const counts=UNITS().map(k=>({k,n:SHIFTS.filter(s=>s.work_date===d&&WORK.includes(s.kind)&&EMPS.find(e=>e.id===s.employee_id)?.unit===k).length}));
  const sched=emps.filter(e=>shiftOf(e.id,d)).length;
  const person=e=>{const s=shiftOf(e.id,d);return `<div class="person"><span class="av">${esc(initials(e.name))}</span><div><b>${esc(e.name)}</b><small>${esc(e.title||'')}${timeLabel(s)?(e.title?' · ':'')+timeLabel(s):''}${s.note?' · '+esc(s.note):''}</small></div></div>`};
  const cols=WORK.map(k=>{const l=byKind(k);return `<div class="col"><h3><i class="kdot" style="background:${KINDS[k].c}"></i>${KINDS[k].l} · ${l.length}</h3>${l.length?l.map(person).join(''):'<small style="color:var(--muted)">ninguém</small>'}</div>`}).join('');
  const off=['folga','ferias','ausente'].map(k=>[k,byKind(k)]).filter(x=>x[1].length).map(([k,l])=>`${KINDS[k].l}: ${l.map(e=>esc(e.name.split(' ')[0])).join(', ')}`).join(' · ');
  return `${counts.length>1?`<div class="units" role="group" aria-label="Quem trabalha hoje em cada unidade">${counts.map(c=>`<button data-unit="${c.k}" aria-pressed="${S.unit===c.k}">${UN[c.k]}<b>${c.n}</b> hoje</button>`).join('')}</div>`:''}
- <section class="panel"><div class="ph"><div><h2 class="display">Quem está hoje · ${UN[u]}</h2><p>${fmtLong(d)}</p></div></div>
- ${sched?`<div class="cols">${cols}</div>${off?`<p class="off">${off}</p>`:''}`:`<div class="empty">Ninguém escalado para hoje nesta unidade.${canManage()?' <button class="btn-g" data-tab="escala" style="margin-left:6px">Montar a escala</button>':''}</div>`}</section>`;
+ <section class="panel"><div class="ph"><div><h2 class="display">Quem está hoje · ${UN[u]}${funcName(u)}</h2><p>${fmtLong(d)}</p></div></div>
+ ${sched?`<div class="cols">${cols}</div>${off?`<p class="off">${off}</p>`:''}`:`<div class="empty">Ninguém escalado para hoje ${curFunc(u)?'nesta função':'nesta unidade'}.${canManage()?' <button class="btn-g" data-tab="escala" style="margin-left:6px">Montar a escala</button>':''}</div>`}</section>`;
 }
 
 /* ---------- escala ---------- */
 function tabEscala(){
- const u=S.unit,emps=empsOf(u),days=Array.from({length:7},(_,i)=>addDays(S.week,i)),t=today();
+ const u=S.unit,emps=viewEmps(u),days=Array.from({length:7},(_,i)=>addDays(S.week,i)),t=today();
  if(!emps.length)return `<section class="panel"><div class="empty">Nenhum funcionário ativo em ${UN[u]}. Cadastre a equipe no Banco de funcionários.</div></section>`;
  const mg=canManage();
  const rows=emps.map(e=>{
@@ -146,8 +155,8 @@ function tabEscala(){
    return `<td><button class="cell ${mg?'ed':''} ${K?'k '+(K.work?'':'off '+s.kind):''}" ${mg?`data-cell="${e.id}|${d}"`:'disabled'} ${K&&K.work?`style="background:${K.c}"`:''} aria-label="${esc(e.name)}, ${DOW[wd(d)]} ${dm(d)}: ${K?K.l:'sem escala'}">${K?`${K.l}${timeLabel(s)?`<small>${timeLabel(s)}</small>`:''}${s.note?'<small>✎ '+esc(s.note.slice(0,18))+'</small>':''}`:(mg?'+':'')}</button></td>`}).join('')}<td class="tot"><b>${tot?tot.toLocaleString('pt-BR',{maximumFractionDigits:1})+'h':'—'}</b>${tot>44?'<span class="warn">⚠ acima de 44h</span>':allWork?'<span class="warn">⚠ sem folga</span>':''}</td></tr>`}).join('');
  const cov=days.map(d=>{const sh=emps.map(e=>shiftOf(e.id,d)?.kind),any=sh.some(k=>WORK.includes(k)),c=k=>sh.filter(x=>x===k||x==='integral').length,wk=wd(d)>=1&&wd(d)<=5;
   return `<td>${any?['manha','tarde','noite'].map(k=>{const n=c(k);return `<span class="${n===0&&wk?'z':''}" title="${KINDS[k].l}">${KINDS[k].l[0]}${n}</span>`}).join(''):'—'}</td>`}).join('');
- return `<section class="panel"><p class="pr-title">Escala · ${UN[u]} · ${dm(S.week)} a ${dm(addDays(S.week,6))}/${addDays(S.week,6).slice(0,4)}</p><div class="ph"><div><h2 class="display">Escala · ${UN[u]}</h2><p>${mg?'Toque numa célula para escalar. ':''}Sai o total de horas da semana por pessoa e a cobertura de cada dia.</p></div><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">${mg?'<button class="btn-g" data-copyprev>Copiar semana anterior</button>':''}<button class="btn-g" data-print>Imprimir</button></div></div>
- <div class="gridw"><table class="esc"><thead><tr><th style="text-align:left">Funcionário</th>${days.map(d=>`<th class="${d===t?'today':''}">${DOW[wd(d)]}<small>${+d.slice(8)}</small></th>`).join('')}<th>Semana</th></tr></thead><tbody>${rows}<tr class="cov"><td>Cobertura<br><small style="font-weight:400">M manhã · T tarde · N noite</small></td>${cov}<td></td></tr></tbody></table></div>
+ return `<section class="panel"><p class="pr-title">Escala · ${UN[u]}${funcName(u)} · ${dm(S.week)} a ${dm(addDays(S.week,6))}/${addDays(S.week,6).slice(0,4)}</p><div class="ph"><div><h2 class="display">Escala · ${UN[u]}${funcName(u)}</h2><p>${mg?'Toque numa célula para escalar. ':''}Sai o total de horas da semana por pessoa e a cobertura de cada dia.</p></div><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">${mg?'<button class="btn-g" data-copyprev>Copiar semana anterior</button>':''}<button class="btn-g" data-print>Imprimir</button></div></div>
+ <div class="gridw"><table class="esc"><thead><tr><th style="text-align:left">Funcionário</th>${days.map(d=>`<th class="${d===t?'today':''}">${DOW[wd(d)]}<small>${+d.slice(8)}</small></th>`).join('')}<th>Semana</th></tr></thead><tbody>${rows}<tr class="cov"><td>Cobertura${curFunc(u)?' da função':''}<br><small style="font-weight:400">M manhã · T tarde · N noite</small></td>${cov}<td></td></tr></tbody></table></div>
  <div class="legend">${Object.entries(KINDS).map(([k,v])=>`<span><i class="kdot" style="background:${v.c}"></i>${v.l}${v.t?' ('+v.t[0].slice(0,2)+'–'+v.t[1].slice(0,2)+'h)':''}</span>`).join('')}</div>
  <p class="note-print-hide" style="margin:10px 2px 0;color:var(--muted);font-size:12.5px">Os horários entre parênteses são o padrão do turno e só servem para somar as horas. Mude entrada e saída em cada célula quando for diferente. O aviso de 44h é um lembrete do limite semanal comum na CLT, não substitui a conferência do contador.</p></section>`;
 }
@@ -201,6 +210,7 @@ document.addEventListener('click',e=>{
  if(b=t.closest('[data-close]')){$(b.dataset.close).close();return}
  if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
  if(b=t.closest('[data-unit]')){S.unit=b.dataset.unit;render();return}
+ if(b=t.closest('[data-func]')){S.func=b.dataset.func;render();return}
  if(b=t.closest('[data-wk]')){S.week=addDays(S.week,7*+b.dataset.wk);render();return}
  if(b=t.closest('[data-cell]')){const [eid,d]=b.dataset.cell.split('|');openShift(eid,d);return}
  if(b=t.closest('[data-skind]')){sKind=b.dataset.skind;drawKinds();return}
