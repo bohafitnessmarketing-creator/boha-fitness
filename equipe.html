@@ -408,6 +408,7 @@ function message(text){el('message').textContent=text}
 function busy(value){el('enter').disabled=value;el('register').disabled=value}
 function reply(body,status=200){return new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json'}})}
 function dataURL(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)})}
+const PHOTO_CACHE=new Map();
 window.bohaAPI=async function(path,options={}){
  try{
  const method=(options.method||'GET').toUpperCase();
@@ -423,6 +424,13 @@ window.bohaAPI=async function(path,options={}){
  const value={};for(const k of ['name','shift','notes']){if(body.data[k]!==undefined){if(typeof body.data[k]!=='string'||body.data[k].length>12000)return reply({},400);value[k]=body.data[k]}}
  value.photo=body.data.photo?body.id+'.jpg':'';
  const {error}=await client.from('boha_members').upsert({id:body.id,data:value,updated_at:new Date().toISOString()});if(error)throw error;return reply({ok:true});
+ }
+ if(path==='/api/employee-photos'&&method==='GET'){
+ const {data:o,error:oe}=await client.rpc('boha_employee_options');if(oe)throw oe;
+ const out={},list=(o||[]).filter(e=>e.photo_path);
+ const work=async e=>{try{let u=PHOTO_CACHE.get(e.photo_path);if(!u){const {data,error}=await client.storage.from('boha-employees').download(e.photo_path);if(error||!data)return;const bmp=await createImageBitmap(data),sd=Math.min(bmp.width,bmp.height),c=document.createElement('canvas');c.width=c.height=200;c.getContext('2d').drawImage(bmp,(bmp.width-sd)/2,(bmp.height-sd)/2,sd,sd,0,0,200,200);bmp.close();u=c.toDataURL('image/jpeg',.8);PHOTO_CACHE.set(e.photo_path,u)}out[e.id]=u}catch(x){}};
+ for(let i=0;i<list.length;i+=6)await Promise.all(list.slice(i,i+6).map(work));
+ return reply(out);
  }
  if(path.startsWith('/api/employee-photo/')&&method==='GET'){
  const id=decodeURIComponent(path.split('/').pop());if(!/^[0-9a-f-]{36}$/i.test(id))return reply({},400);
@@ -908,7 +916,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261222a';
+const VERSION='20261223a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1220,6 +1228,58 @@ function setActiveUnit(u){
 document.addEventListener('click',e=>{const au=e.target.closest('[data-active-unit]');if(au){setActiveUnit(au.dataset.activeUnit);return}const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]'),pu=e.target.closest('[data-preview-unit]');if(pu&&previewRole){setPreview(previewRole,pu.dataset.previewUnit);return}if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 // Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
+// Roda DENTRO da Hierarquia: a equipe de cada unidade vem do Banco de funcionários (nome, função, unidade e foto).
+function hierEmployeesRuntime(){
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const tidy=n=>{n=String(n||'').replace(/\s*\((cb|te|ma)\)\s*$/i,'').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
+const cls=e=>{const t=norm(e.title);if(!t)return null;
+ if(/gerente/.test(t))return 'gerente';if(/recep/.test(t))return 'recepcao';if(/estagi/.test(t))return 'estagiaria';if(/limpez/.test(t))return 'limpeza';
+ if(/manuten/.test(t))return 'manutencao';if(/market/.test(t))return 'conteudo';if(/financ/.test(t))return 'financeiro';if(/administr|\brh\b/.test(t))return 'rh';
+ if(/professor|zumba|pilates|jump|luta|boxe|fit ?dance|sertanej|danca|spinning|aula/.test(t))return 'professor';return null};
+const LABEL={professor:'Professor',estagiaria:'Estagiário',recepcao:'Recepcionista',limpeza:'Auxiliar de limpeza'};
+const UNN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'};
+const BOSS=u=>({professor:u+'-tecnico',estagiaria:u+'-tecnico',recepcao:u+'-liderrecepcao',limpeza:u+'-gerente'});
+let EMPS=null,PH={};
+const GROUP=['professor','estagiaria','recepcao','limpeza'];
+function overlay(){
+ if(!EMPS)return;
+ for(let i=nodes.length-1;i>=0;i--)if(GROUP.includes(nodes[i].role))nodes.splice(i,1);
+ AREAS.forEach(a=>{if(!a.__base)a.__base=a.ids.slice();a.ids=a.__base.slice()});
+ const setSeed=(id,e)=>{if(!node(id))return;const cur=state[id]||{};state[id]={...cur,name:tidy(e.name)};if(PH[e.id])state[id].photo=PH[e.id]};
+ const seen={};const place=(id,e)=>{if(seen[id])return false;seen[id]=1;setSeed(id,e);return true};
+ const list=EMPS.filter(e=>e.status===undefined||e.status==='active').map(e=>({e,k:cls(e)})).filter(x=>x.k).sort((a,b)=>tidy(a.e.name).localeCompare(tidy(b.e.name),'pt-BR'));
+ const order={professor:0,estagiaria:1,recepcao:2,limpeza:3};
+ list.sort((a,b)=>(order[a.k]??9)-(order[b.k]??9));
+ for(const {e,k} of list){
+  const u=e.unit,nm=tidy(e.name);
+  if(k==='gerente'){if(u==='rede'){place('geral',e)}else if(!place(u+'-gerente',e)){/* segundo gerente na mesma unidade: fica de fora */}continue}
+  if(GROUP.includes(k)){
+   if(!UNN[u])continue;
+   const id=u+'-e-'+e.id,lab=k==='professor'?(/coletiv|zumba|pilates|jump|luta|boxe|dance|sertanej|danca|spinning|aula/.test(norm(e.title))?'Professor de aulas coletivas':'Professor de sala'):LABEL[k];
+   const st=state[id]||{};state[id]={...st,name:nm};if(PH[e.id])state[id].photo=PH[e.id];
+   nodes.push({id,role:k,scope:u,boss:BOSS(u)[k],label:lab,name:nm,emp:true});continue;
+  }
+  // áreas da rede (manutenção, marketing, financeiro, RH): o primeiro ocupa a posição fixa, os demais viram cartões novos na mesma área
+  const seedId=k;if(!node(seedId))continue;
+  if(place(seedId,e)||(k==='conteudo'&&place('campanhas',e)))continue;
+  const id='e-'+e.id,st=state[id]||{};state[id]={...st,name:nm};if(PH[e.id])state[id].photo=PH[e.id];
+  nodes.push({id,role:k,scope:'rede',boss:'geral',label:(e.unit&&UNN[e.unit]?(k==='manutencao'?'Manutenção':k==='conteudo'?'Marketing':'Equipe')+' · '+UNN[e.unit]:(k==='manutencao'?'Manutenção':k==='conteudo'?'Marketing':k==='financeiro'?'Financeiro':'Administrativo e RH')),name:nm,emp:true});
+  const area=AREAS.find(a=>a.__base.includes(seedId));if(area)area.ids.push(id);
+ }
+}
+const origRebuild=rebuildNodes;
+rebuildNodes=function(){origRebuild();overlay()};
+const origShow=showDetail;
+showDetail=function(){origShow();const n=node(selected);if(n&&n.emp){const i=document.getElementById('personName');if(i){i.readOnly=true;i.title='O nome vem do Banco de funcionários'}}};
+const bar=document.getElementById('editBar');
+if(bar){const sp=bar.querySelector('span');if(sp)sp.innerHTML='<b>Modo edição ligado.</b> A equipe de cada unidade vem do <b>Banco de funcionários</b>: para incluir, trocar de função ou tirar alguém, edite lá. Aqui você muda quem lidera (lápis), turno e notas.'}
+async function boot(){
+ try{const r=await fetch('/api/employees');const d=await r.json();EMPS=Array.isArray(d)?d:[]}catch(e){EMPS=[]}
+ rebuildNodes();render();
+ try{const r=await fetch('/api/employee-photos');if(r.ok){PH=await r.json();rebuildNodes();render();if(selected&&document.getElementById('overlay').classList.contains('open'))showDetail()}}catch(e){}
+}
+boot();
+}
 // Roda DENTRO da Hierarquia (iframe): busca no Banco de funcionários ao adicionar ou renomear alguém no organograma.
 function hierSearchRuntime(){
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1310,7 +1370,13 @@ function lockHierarchy(html){
  let out=html.replace("canEdit=ROLE==='admin'||ROLE==='editor'","MYU=(()=>{try{return window.parent.bohaCtx.profile.unit||null}catch{return null}})(),canEdit=ROLE==='admin'||ROLE==='editor'||ROLE==='marketing'||(ROLE==='gerente'&&!!MYU)")
   .replace("const tools=editing&&canEdit?","const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?");
  out=out.replace('<label for="addName">Nome (opcional)</label><input id="addName" maxlength="60" placeholder="Ex.: Mariana">','<label for="addName">Nome — busque no Banco de funcionários (ou digite)</label><div class="empsrch"><input id="addName" maxlength="60" placeholder="Digite para buscar…" autocomplete="off"></div>')
-  .replace('<'+'/script></body></html>','('+hierSearchRuntime.toString()+')();<'+'/script></body></html>');
+  .replace('<'+'/script></body></html>','('+hierSearchRuntime.toString()+')();('+hierEmployeesRuntime.toString()+')();<'+'/script></body></html>')
+  .replace("const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?","const tools=editing&&canEdit&&!n.emp&&(ROLE!=='gerente'||n.scope===MYU)?")
+  .replace("const addTile=g=>editing&&canEdit?","const addTile=g=>false?")
+  .replace("add('direcao','direcao','rede',null,'Direção e proprietários');","")
+  .replace("add('geral','geral','rede','direcao',","add('geral','geral','rede',null,")
+  .replace("<div class=\"chain\">${card('direcao','lg')}<span class=\"link\"></span>${card('geral','lg')}</div>","<div class=\"chain\">${card('geral','lg')}</div>")
+  .replace("<p>Direção acompanha decisões estratégicas.</p>","<p>Responde pela rede inteira.</p>").replace("<p>Alinhamento com os proprietários.</p>","<p>Responde pela rede inteira.</p>");
  const u=myUnit();if(!u||!/^[a-z]{2}$/.test(u))return out;
  out=out.replace("const AREAS=[","{const lk='"+u+"';for(const k of Object.keys(units))if(k!==lk)delete units[k]}\nconst AREAS=[")
   .replace("view='rede',selected=null","view='"+u+"',selected=null")

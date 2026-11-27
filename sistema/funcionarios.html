@@ -15,7 +15,7 @@ const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,
 const UNITS={all:'Todos',cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia',rede:'Todas as unidades'};let dupFrom=null,ROWS=[],URLS={},FILTER={unit:'all',status:'active',q:'',role:'all'},editing=null,photoFile=null;
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,2800)}
 const unitLabel=u=>UNITS[u]||'Unidade';
-const ROLES=['GERENTE','RECEPCIONISTA','ESTAGIÁRIO','PROFESSOR DE AULAS COLETIVAS','PROFESSOR DE SALA','AUXILIAR DE LIMPEZA','MANUTENÇÃO'];
+const ROLES=['GERENTE','RECEPCIONISTA','ESTAGIÁRIO','PROFESSOR DE AULAS COLETIVAS','PROFESSOR DE SALA','AUXILIAR DE LIMPEZA','MANUTENÇÃO','MARKETING'];
 const norm=t=>String(t||'').trim().toLocaleLowerCase('pt-BR');
 const isStd=t=>ROLES.some(x=>norm(x)===norm(t));
 function fillRoles(cur){const c=String(cur||'').trim();$('fTitle').innerHTML='<option value="">ESCOLHA A FUNÇÃO…</option>'+ROLES.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')+(c&&!isStd(c)?`<option value="${esc(c)}">${esc(c.toLocaleUpperCase('pt-BR'))} (CADASTRO ANTIGO — ESCOLHA UMA FUNÇÃO)</option>`:'');const m=ROLES.find(x=>norm(x)===norm(c));$('fTitle').value=m||c||''}
