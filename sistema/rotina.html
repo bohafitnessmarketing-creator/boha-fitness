@@ -117,7 +117,13 @@ table.hist{border-collapse:collapse;width:100%;font-size:13px}
 .notes textarea{width:100%;min-height:60px;resize:vertical;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-size:14px;outline:none;margin-top:8px}.notes textarea:focus{border-color:var(--y)}
 .notes .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}.notes .row2 small{color:var(--muted)}
 .pfoot{display:flex;justify-content:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
-@media (max-width:760px){.daynav .hint2{width:100%}}
+.item.ask{flex-wrap:wrap}.item .q{display:block;color:var(--y);font-size:13px;font-weight:600;margin-top:3px;text-decoration:none}.item.done .q{color:var(--muted)}
+.yn{display:flex;gap:6px;flex:none}.yn button{padding:8px 20px;border-radius:9px;border:1px solid var(--line2);background:#1c1c1c;font-weight:800;font-size:14px}.yn button:hover{border-color:var(--y);color:var(--y)}.yn button:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+.ans{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 11px;white-space:nowrap}.ans.sim{background:rgba(255,240,0,.14);color:var(--y)}.ans.nao{background:rgba(61,220,132,.12);color:var(--good)}
+.lnk{font-size:12px;color:var(--muted);text-decoration:underline;padding:2px 4px}.lnk:hover{color:var(--y)}
+.recs{flex-basis:100%;margin:2px 0 0 30px;display:grid;gap:6px}.rec{background:#1a1a1a;border:1px solid var(--line);border-left:3px solid var(--y);border-radius:9px;padding:7px 10px;font-size:13.5px;display:flex;gap:8px;align-items:flex-start}.rec b{white-space:nowrap}.rec span{flex:1;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}.rec .x{color:var(--muted);padding:0 6px;border-radius:6px}.rec .x:hover{color:var(--bad)}
+.recs .more{justify-self:start}
+@media (max-width:760px){.daynav .hint2{width:100%}.recs{margin-left:0}.yn button{padding:9px 22px}}
 </style></head><body>
 <div class="page" id="page"><div class="state">Carregando…</div></div>
 
@@ -125,11 +131,19 @@ table.hist{border-collapse:collapse;width:100%;font-size:13px}
  <h2 class="display" id="rTitle">Nova tarefa</h2><p class="help">Uma tarefa que toda recepcionista da unidade passa a ter no checklist do dia.</p>
  <div class="row"><label class="l full">Tarefa<input class="inp" id="r_title" maxlength="160" autocomplete="off" placeholder="Ex.: Conferir a limpeza do salão"></label></div>
  <div class="row"><label class="l full">Critério ou orientação <small>Opcional. Aparece em letra pequena abaixo da tarefa</small><input class="inp" id="r_hint" maxlength="300" autocomplete="off"></label></div>
+ <div class="row"><label class="l full">Pergunta Sim ou Não <small>Opcional. Se preencher, a recepção responde Sim ou Não: Não já conclui a tarefa; Sim pede o ID do aluno e uma anotação</small><input class="inp" id="r_ask" maxlength="160" autocomplete="off" placeholder="Ex.: Houve solicitação de cancelamento ou transferência?"></label></div>
  <div class="row"><label class="l">Bloco<select class="inp" id="r_block"></select></label><label class="l">Situação<select class="inp" id="r_active"><option value="1">Ativa</option><option value="0">Pausada</option></select></label></div>
  <div class="row" id="r_unitrow"><label class="l full">Unidade<select class="inp" id="r_unit"></select></label></div>
  <div class="row"><div class="full"><label class="l" style="margin-bottom:6px">Dias da semana <small>(todos marcados = todo dia)</small></label><div class="days" id="r_days"></div></div></div>
  <p class="err" id="r_err" role="alert"></p>
  <div class="foot"><span><button type="button" class="btn-g danger" id="r_del" hidden>Excluir</button></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="rdlg">Cancelar</button><button type="submit" class="btn-y">Salvar</button></span></div>
+</form></dialog>
+<dialog id="adlg" aria-labelledby="aTitle"><form class="fm" id="aform" novalidate>
+ <h2 class="display" id="aTitle">Registrar</h2><p class="help" id="aHelp"></p>
+ <div class="row"><label class="l full">ID do aluno<input class="inp" id="a_id" maxlength="40" autocomplete="off" inputmode="text" placeholder="Número do aluno no Evo"></label></div>
+ <div class="row"><label class="l full">Anotação<textarea class="inp" id="a_note" maxlength="1000" rows="4" placeholder="O que o aluno pediu, o que foi combinado, próximo passo…" style="resize:vertical"></textarea></label></div>
+ <p class="err" id="a_err" role="alert"></p>
+ <div class="foot"><span></span><span style="display:flex;gap:8px"><button type="button" class="btn-g" data-close="adlg">Cancelar</button><button type="submit" class="btn-y" id="a_save">Salvar registro</button></span></div>
 </form></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -172,7 +186,7 @@ const canRemove=()=>['gerente','admin'].includes(ROLE_NOW());
 const MINDAY=()=>addDays(today(),-60);
 const notesOf=(email,d)=>NOTES.filter(n=>n.person_email===email&&n.note_date===d).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
 const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK()||MU().includes(r.unit));
-let NOTES=[],DRAFT={},ROUTINES=[],CHECKS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb',day:null,hist:14},OPEN=new Set(),editR=null,updated=null,timer=null;
+let RECS=[],NOTES=[],DRAFT={},ROUTINES=[],CHECKS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb',day:null,hist:14},OPEN=new Set(),editR=null,updated=null,timer=null;
 const rebuild=()=>{CK=new Map(CHECKS.map(c=>[c.routine_id+'|'+c.check_date+'|'+c.done_by,c]))};
 const checkOf=(rid,d,who)=>CK.get(rid+'|'+d+'|'+who);
 const bk=r=>BLOCKS.some(b=>b.k===r.block)?r.block:'atendimento';
@@ -200,7 +214,17 @@ function noteHTML(b){
  if(!b.note)return '';const n=b.note;
  return `<details class="orient"><summary>${esc(n.label)}</summary><div class="ob"><p>${esc(n.text)}</p>${n.list?`<p>${esc(n.listLabel)}</p><ul>${n.list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div></details>`;
 }
+const recsOf=(rid,d,who)=>RECS.filter(x=>x.routine_id===rid&&x.check_date===d&&x.done_by===who);
+function askRow(r,d,who,interactive){
+ const c=checkOf(r.id,d,who),hint=r.hint?`<small class="hint">${esc(r.hint)}</small>`:'',q=`<span class="q">${esc(r.ask)}</span>`,recs=recsOf(r.id,d,who);
+ const ans=c?(c.answer==='sim'?`<span class="ans sim">Sim · ${recs.length} registro${recs.length===1?'':'s'}</span>`:c.answer==='nao'?'<span class="ans nao">Não</span>':'<span class="ans nao">Feito</span>'):'';
+ const list=recs.length?`<div class="recs">${recs.map(x=>`<div class="rec"><b>ID ${esc(x.student_id)}</b><span>${esc(x.note)}</span>${interactive&&d===today()?`<button type="button" class="x" data-rec-del="${x.id}" aria-label="Apagar este registro" title="Apagar este registro">✕</button>`:''}</div>`).join('')}${interactive&&d===today()?`<button type="button" class="lnk more" data-ask="sim" data-rid="${r.id}">+ Registrar outro aluno</button>`:''}</div>`:'';
+ if(!interactive)return `<div class="item ask ${c?'done':''}"><span class="dot ${c?'ok':''}" aria-hidden="true">${c?'✓':''}</span><span class="tt">${esc(r.title)}${hint}${q}</span>${ans}${c?`<small>${tm(c.done_at)}</small>`:'<small>pendente</small>'}${list}</div>`;
+ if(!c)return `<div class="item ask"><span class="tt">${esc(r.title)}${hint}${q}</span><span class="yn" role="group" aria-label="${esc(r.ask)}"><button type="button" data-ask="sim" data-rid="${r.id}">Sim</button><button type="button" data-ask="nao" data-rid="${r.id}">Não</button></span></div>`;
+ return `<div class="item ask done"><span class="tt">${esc(r.title)}${hint}${q}</span>${ans}<small>${tm(c.done_at)}</small><button type="button" class="lnk" data-ask-undo="${r.id}">Alterar</button>${list}</div>`;
+}
 function rowHTML(r,d,who,interactive){
+ if(r.ask)return askRow(r,d,who,interactive);
  const c=checkOf(r.id,d,who),hint=r.hint?`<small class="hint">${esc(r.hint)}</small>`:'';
  if(interactive)return `<label class="item ${c?'done':''}"><input type="checkbox" data-chk="${r.id}" ${c?'checked':''}><span class="tt">${esc(r.title)}${hint}</span>${c?`<small>${tm(c.done_at)}</small>`:''}</label>`;
  return `<div class="item ${c?'done':''}"><span class="dot ${c?'ok':''}" aria-hidden="true">${c?'✓':''}</span><span class="tt">${esc(r.title)}${hint}</span>${c?`<small>${tm(c.done_at)}</small>`:'<small>pendente</small>'}</div>`;
@@ -298,7 +322,7 @@ function tabRotinas(){
  const u=S.unit,list=ROUTINES.filter(r=>!r.unit||r.unit===u),mg=canManage();
  const ds=r=>r.weekdays&&r.weekdays.length<7?ORDER.filter(x=>r.weekdays.includes(x)).map(x=>DOW[x]).join(', '):'';
  const hasModel=list.some(r=>r.block);
- const group=[...BLOCKS,{k:'__none',n:0,t:'Sem bloco'}].map(b=>{const l=list.filter(r=>b.k==='__none'?!BLOCKS.some(x=>x.k===r.block):r.block===b.k).sort((a,c)=>a.sort-c.sort);return l.length?`<div class="mom"><h3>${b.n?'Bloco '+String(b.n).padStart(2,'0')+' · ':''}${esc(b.t)}</h3>${l.map(r=>`<div class="item" style="${r.active?'':'opacity:.5'}"><span class="tt">${esc(r.title)}${r.hint?`<small class="hint">${esc(r.hint)}</small>`:''}</span><span class="chips">${r.unit?'':'<span class="chip">todas as unidades</span>'}${ds(r)?`<span class="chip">${ds(r)}</span>`:''}${r.active?'':'<span class="chip">pausada</span>'}</span>${canEditR(r)?`<button class="edit" data-redit="${r.id}">Editar</button>`:'<small>só o administrador altera</small>'}</div>`).join('')}</div>`:''}).join('');
+ const group=[...BLOCKS,{k:'__none',n:0,t:'Sem bloco'}].map(b=>{const l=list.filter(r=>b.k==='__none'?!BLOCKS.some(x=>x.k===r.block):r.block===b.k).sort((a,c)=>a.sort-c.sort);return l.length?`<div class="mom"><h3>${b.n?'Bloco '+String(b.n).padStart(2,'0')+' · ':''}${esc(b.t)}</h3>${l.map(r=>`<div class="item" style="${r.active?'':'opacity:.5'}"><span class="tt">${esc(r.title)}${r.hint?`<small class="hint">${esc(r.hint)}</small>`:''}</span><span class="chips">${r.ask?'<span class="chip" title="'+esc(r.ask)+'">Sim ou Não</span>':''}${r.unit?'':'<span class="chip">todas as unidades</span>'}${ds(r)?`<span class="chip">${ds(r)}</span>`:''}${r.active?'':'<span class="chip">pausada</span>'}</span>${canEditR(r)?`<button class="edit" data-redit="${r.id}">Editar</button>`:'<small>só o administrador altera</small>'}</div>`).join('')}</div>`:''}).join('');
  return `<section class="panel"><div class="ph"><div><h2 class="display">Checklist da recepção · ${UN[u]}</h2><p>Toda recepcionista com acesso nesta unidade recebe estas tarefas todo dia, automaticamente.</p></div><button class="btn-y" data-newr>+ Nova tarefa</button></div>
  ${list.length?group:`<div class="empty">Esta unidade ainda não tem checklist.<br><button class="btn-g" data-template style="margin-top:10px">Aplicar o modelo completo da recepção</button></div>`}
  ${list.length&&!hasModel?`<p style="margin:12px 2px 0"><button class="btn-g" data-template>Aplicar o modelo completo da recepção</button></p>`:''}</section>`;
@@ -316,14 +340,15 @@ function openRoutine(r){
  editR=r||null;$('rTitle').textContent=r?'Editar tarefa':'Nova tarefa';
  $('r_block').innerHTML=BLOCKS.map(b=>`<option value="${b.k}">${b.n}. ${esc(b.t)}</option>`).join('');
  const lock=LOCK();$('r_unit').innerHTML=(lock?'':'<option value="">Todas as unidades</option>')+UNITS().map(k=>`<option value="${k}">${UN[k]}</option>`).join('');$('r_unitrow').hidden=!!lock&&UNITS().length===1;if(MU().length)$('r_unit').value=S.unit;
- $('r_title').value=r?.title||'';$('r_hint').value=r?.hint||'';$('r_block').value=r?.block||'atendimento';$('r_unit').value=r?(r.unit||''):S.unit;$('r_active').value=r&&!r.active?'0':'1';
+ $('r_title').value=r?.title||'';$('r_hint').value=r?.hint||'';$('r_ask').value=r?.ask||'';$('r_block').value=r?.block||'atendimento';$('r_unit').value=r?(r.unit||''):S.unit;$('r_active').value=r&&!r.active?'0':'1';
  const set=new Set(r?.weekdays||[0,1,2,3,4,5,6]);$('r_days').innerHTML=ORDER.map(x=>`<button type="button" data-rday="${x}" aria-pressed="${set.has(x)}">${DOW[x]}</button>`).join('');
  $('r_err').textContent='';$('r_del').hidden=!r;$('rdlg').showModal();setTimeout(()=>$('r_title').focus(),30);
 }
 $('rform').addEventListener('submit',async e=>{
  e.preventDefault();const err=t=>{$('r_err').textContent=t};const title=$('r_title').value.trim();if(!title)return err('Escreva a tarefa.');
  const days=[...$('r_days').querySelectorAll('[aria-pressed="true"]')].map(b=>+b.dataset.rday);if(!days.length)return err('Marque ao menos um dia da semana.');
- const row={title,hint:$('r_hint').value.trim()||null,role_name:ROLE,block:$('r_block').value,moment:null,unit:MU().length?$('r_unit').value:(LOCK()||$('r_unit').value||null),active:$('r_active').value==='1',weekdays:days.length===7?null:days};
+ const ask=$('r_ask').value.trim();if(ask&&ask.length<3)return err('A pergunta precisa ter ao menos 3 letras.');
+ const row={title,hint:$('r_hint').value.trim()||null,ask:ask||null,role_name:ROLE,block:$('r_block').value,moment:null,unit:MU().length?$('r_unit').value:(LOCK()||$('r_unit').value||null),active:$('r_active').value==='1',weekdays:days.length===7?null:days};
  const out=editR?await CTX.client.from('boha_routines').update(row).eq('id',editR.id).select().single():await CTX.client.from('boha_routines').insert({...row,sort:Math.max(0,...ROUTINES.map(x=>x.sort))+1}).select().single();
  if(out.error)return err('Não foi possível salvar.');
  if(editR)ROUTINES=ROUTINES.map(x=>x.id===editR.id?out.data:x);else ROUTINES.push(out.data);$('rdlg').close();render();toast('Tarefa salva.');
@@ -346,6 +371,41 @@ async function toggleCheck(rid,on){
  else{const {error}=await CTX.client.from('boha_routine_checks').delete().eq('routine_id',rid).eq('check_date',d).eq('done_by',me);if(error){toast('Não foi possível desmarcar.');render();return}CHECKS=CHECKS.filter(c=>!(c.routine_id===rid&&c.check_date===d&&c.done_by===me))}
  rebuild();render();
 }
+/* ---------- pergunta Sim/Não ---------- */
+let askR=null;
+const rpcMsg=e=>{const m=String(e?.message||'');return /Informe|Escreva|Limite|Apague|outra pessoa|Responda/.test(m)?m:'Não foi possível salvar. Tente de novo.'};
+async function askAnswer(rid,ans){
+ const {error}=await CTX.client.rpc('boha_routine_answer',{p_routine:rid,p_unit:S.unit,p_answer:ans,p_student:null,p_note:null});
+ if(error){toast(rpcMsg(error));return}
+ await load(true);toast('Resposta registrada.');
+}
+function askOpen(rid){
+ const r=ROUTINES.find(x=>x.id===rid);if(!r)return;askR=r;
+ $('aTitle').textContent=r.title;$('aHelp').textContent=r.ask+' Sim: preencha o ID do aluno e a anotação.';
+ $('a_id').value='';$('a_note').value='';$('a_err').textContent='';$('adlg').showModal();setTimeout(()=>$('a_id').focus(),30);
+}
+$('aform').addEventListener('submit',async e=>{
+ e.preventDefault();if(!askR)return;const err=t=>{$('a_err').textContent=t};
+ const id=$('a_id').value.trim(),note=$('a_note').value.trim();
+ if(!id)return err('Informe o ID do aluno.');if(!note)return err('Escreva a anotação.');
+ const b=$('a_save');b.disabled=true;
+ const {error}=await CTX.client.rpc('boha_routine_answer',{p_routine:askR.id,p_unit:S.unit,p_answer:'sim',p_student:id,p_note:note});
+ b.disabled=false;if(error){err(rpcMsg(error));return}
+ $('adlg').close();askR=null;await load(true);toast('Registro salvo.');
+});
+async function askUndo(rid){
+ const d=today(),me=ME(),n=recsOf(rid,d,me).length;
+ if(n&&!confirm('Alterar a resposta apaga os '+n+' registro'+(n===1?'':'s')+' de hoje desta tarefa. Continuar?'))return;
+ const {error}=await CTX.client.from('boha_routine_checks').delete().eq('routine_id',rid).eq('check_date',d).eq('done_by',me);
+ if(error){toast('Não foi possível alterar.');return}
+ await load(true);
+}
+async function recDel(id){
+ if(!confirm('Apagar este registro?'))return;
+ const {error}=await CTX.client.rpc('boha_routine_record_delete',{p_id:id});
+ if(error){toast('Não foi possível apagar.');return}
+ await load(true);toast('Registro apagado.');
+}
 /* ---------- eventos ---------- */
 document.addEventListener('click',e=>{
  const t=e.target;let b;
@@ -357,6 +417,9 @@ document.addEventListener('click',e=>{
  if(t.closest('[data-day-today]')){setDay(today());return}
  if(b=t.closest('[data-day]')){setDay(b.dataset.day);window.scrollTo({top:0,behavior:'smooth'});return}
  if(b=t.closest('[data-hist]')){S.hist=+b.dataset.hist;render(true);return}
+ if(b=t.closest('[data-ask]')){b.dataset.ask==='nao'?askAnswer(b.dataset.rid,'nao'):askOpen(b.dataset.rid);return}
+ if(b=t.closest('[data-ask-undo]')){askUndo(b.dataset.askUndo);return}
+ if(b=t.closest('[data-rec-del]')){recDel(b.dataset.recDel);return}
  if(b=t.closest('[data-note-add]')){noteAdd(b);return}
  if(b=t.closest('[data-note-del]')){noteDel(b.dataset.noteDel);return}
  if(b=t.closest('[data-rm]')){removePerson(b.dataset.rm,b.dataset.rmName);return}
@@ -394,9 +457,10 @@ $('rdlg').addEventListener('click',e=>{if(e.target===$('rdlg'))$('rdlg').close()
 
 async function load(force){
  const c=CTX.client,cfrom=addDays(today(),-60),mg=canManage();
- const [ro,ch,tm2,nt]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(2000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(20000),mg?c.rpc('boha_reception_team'):Promise.resolve({data:[]}),c.from('boha_routine_notes').select('*').gte('note_date',cfrom).order('created_at').limit(5000)]);
+ const [ro,ch,tm2,nt,rc]=await Promise.all([c.from('boha_routines').select('*').order('sort').limit(2000),c.from('boha_routine_checks').select('*').gte('check_date',cfrom).limit(20000),mg?c.rpc('boha_reception_team'):Promise.resolve({data:[]}),c.from('boha_routine_notes').select('*').gte('note_date',cfrom).order('created_at').limit(5000),c.from('boha_routine_records').select('*').gte('check_date',cfrom).order('created_at').limit(5000)]);
  if(ro.error)throw ro.error;ROUTINES=ro.data||[];if(!ch.error){CHECKS=ch.data||[]}if(!tm2.error)TEAM=(tm2.data||[]).map(p=>({...p,email:String(p.email).toLowerCase()}));
  if(!nt.error)NOTES=nt.data||[];
+ if(!rc.error)RECS=rc.data||[];
  rebuild();updated=new Date().toISOString();render(force);
 }
 function startLive(){clearInterval(timer);timer=setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('dialog[open]'))load().catch(()=>{})},30000)}
