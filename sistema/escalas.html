@@ -107,7 +107,7 @@ let EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),func:''},ed
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
 const fnKey=e=>((e.title||'').trim().toLowerCase())||'__sem';
-const fnLabel=e=>(e.title||'').trim()||'Sem função';
+const fnLabel=e=>((e.title||'').trim()||'Sem função').toLocaleUpperCase('pt-BR');
 function funcsOf(u){const m=new Map();empsOf(u).forEach(e=>{const k=fnKey(e);if(!m.has(k))m.set(k,{k,l:fnLabel(e),n:0});m.get(k).n++});return [...m.values()].sort((a,b)=>(a.k==='__sem')-(b.k==='__sem')||a.l.localeCompare(b.l,'pt-BR'))}
 const curFunc=u=>funcsOf(u).some(f=>f.k===S.func)?S.func:'';
 const viewEmps=u=>{const f=curFunc(u);return f?empsOf(u).filter(e=>fnKey(e)===f):empsOf(u)};
