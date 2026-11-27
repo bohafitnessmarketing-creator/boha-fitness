@@ -916,7 +916,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261223a';
+const VERSION='20261224a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1257,7 +1257,7 @@ function overlay(){
    if(!UNN[u])continue;
    const id=u+'-e-'+e.id,lab=k==='professor'?(/coletiv|zumba|pilates|jump|luta|boxe|dance|sertanej|danca|spinning|aula/.test(norm(e.title))?'Professor de aulas coletivas':'Professor de sala'):LABEL[k];
    const st=state[id]||{};state[id]={...st,name:nm};if(PH[e.id])state[id].photo=PH[e.id];
-   nodes.push({id,role:k,scope:u,boss:BOSS(u)[k],label:lab,name:nm,emp:true});continue;
+   nodes.push({id,role:k,scope:u,boss:BOSS(u)[k],label:lab,name:nm,emp:true,col:lab==='Professor de aulas coletivas'});continue;
   }
   // áreas da rede (manutenção, marketing, financeiro, RH): o primeiro ocupa a posição fixa, os demais viram cartões novos na mesma área
   const seedId=k;if(!node(seedId))continue;
@@ -1267,6 +1267,8 @@ function overlay(){
   const area=AREAS.find(a=>a.__base.includes(seedId));if(area)area.ids.push(id);
  }
 }
+ICON.group=ic('<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.2c2.6.3 4.5 2.4 4.5 5.8"/>');
+{const st=document.createElement('style');st.textContent='.branches{grid-template-columns:1.25fr 1fr 1fr .8fr}.branches::before{left:12%;right:12%}@media (max-width:1100px){.branches{grid-template-columns:1fr 1fr}}';document.head.appendChild(st)}
 const origRebuild=rebuildNodes;
 rebuildNodes=function(){origRebuild();overlay()};
 const origShow=showDetail;
@@ -1373,6 +1375,9 @@ function lockHierarchy(html){
   .replace('<'+'/script></body></html>','('+hierSearchRuntime.toString()+')();('+hierEmployeesRuntime.toString()+')();<'+'/script></body></html>')
   .replace("const tools=editing&&canEdit&&(ROLE!=='gerente'||n.scope===MYU)?","const tools=editing&&canEdit&&!n.emp&&(ROLE!=='gerente'||n.scope===MYU)?")
   .replace("const addTile=g=>editing&&canEdit?","const addTile=g=>false?")
+  .replace("muscle=list.filter(n=>['professor','estagiaria'].includes(n.role)),","muscle=list.filter(n=>['professor','estagiaria'].includes(n.role)&&!n.col),colet=list.filter(n=>n.col),")
+  .replace("${branch('02','desk','Recepção'","${branch('02','group','Aulas coletivas',pl(colet.length),null,colet,'Professores das modalidades de aulas coletivas (zumba, jump, pilates, lutas e outras). Respondem ao líder técnico.',true,'colet')}${branch('03','desk','Recepção'")
+  .replace("${branch('03','broom','Limpeza'","${branch('04','broom','Limpeza'")
   .replace("add('direcao','direcao','rede',null,'Direção e proprietários');","")
   .replace("add('geral','geral','rede','direcao',","add('geral','geral','rede',null,")
   .replace("<div class=\"chain\">${card('direcao','lg')}<span class=\"link\"></span>${card('geral','lg')}</div>","<div class=\"chain\">${card('geral','lg')}</div>")
