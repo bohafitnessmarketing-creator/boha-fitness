@@ -123,7 +123,9 @@ table.hist{border-collapse:collapse;width:100%;font-size:13px}
 .lnk{font-size:12px;color:var(--muted);text-decoration:underline;padding:2px 4px}.lnk:hover{color:var(--y)}
 .recs{flex-basis:100%;margin:2px 0 0 30px;display:grid;gap:6px}.rec{background:#1a1a1a;border:1px solid var(--line);border-left:3px solid var(--y);border-radius:9px;padding:7px 10px;font-size:13.5px;display:flex;gap:8px;align-items:flex-start}.rec b{white-space:nowrap}.rec span{flex:1;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}.rec .x{color:var(--muted);padding:0 6px;border-radius:6px}.rec .x:hover{color:var(--bad)}
 .recs .more{justify-self:start}
-@media (max-width:760px){.daynav .hint2{width:100%}.recs{margin-left:0}.yn button{padding:9px 22px}}
+.tnotes{margin:4px 0 0 30px;display:grid;gap:5px}.tnote{background:#1a1a1a;border:1px solid var(--line);border-left:3px solid #6aa9ff;border-radius:9px;padding:6px 10px;font-size:13px;display:flex;gap:8px;align-items:flex-start}.tnote .tx{flex:1;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}.tnote small{color:var(--muted);white-space:nowrap}.tnote .x{color:var(--muted);padding:0 6px;border-radius:6px}.tnote .x:hover{color:var(--bad)}
+.tnotes>.lnk{justify-self:start;margin-bottom:2px}.tform textarea{width:100%;background:#1c1c1c;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;font-size:14px;outline:none;resize:vertical}.tform textarea:focus{border-color:var(--y)}.tform .row2{display:flex;gap:8px;margin-top:6px}.sm{padding:7px 14px;font-size:13px}
+@media (max-width:760px){.tnotes{margin-left:0}.daynav .hint2{width:100%}.recs{margin-left:0}.yn button{padding:9px 22px}}
 </style></head><body>
 <div class="page" id="page"><div class="state">Carregando…</div></div>
 
@@ -184,7 +186,10 @@ const canManage=()=>['admin','dono','gerente','marketing'].includes(ROLE_NOW());
 const canNote=()=>['gerente','admin'].includes(ROLE_NOW());
 const canRemove=()=>['gerente','admin'].includes(ROLE_NOW());
 const MINDAY=()=>addDays(today(),-60);
-const notesOf=(email,d)=>NOTES.filter(n=>n.person_email===email&&n.note_date===d).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+const notesOf=(email,d)=>NOTES.filter(n=>n.person_email===email&&n.note_date===d&&!n.routine_id).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+const taskNotes=(rid,d,who)=>NOTES.filter(n=>n.routine_id===rid&&n.note_date===d&&n.person_email===who).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+const allNotesOf=(email,d)=>NOTES.filter(n=>n.person_email===email&&n.note_date===d);
+let TN_OPEN=null;
 const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK()||MU().includes(r.unit));
 let RECS=[],NOTES=[],DRAFT={},ROUTINES=[],CHECKS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb',day:null,hist:14},OPEN=new Set(),editR=null,updated=null,timer=null;
 const rebuild=()=>{CK=new Map(CHECKS.map(c=>[c.routine_id+'|'+c.check_date+'|'+c.done_by,c]))};
@@ -223,7 +228,15 @@ function askRow(r,d,who,interactive){
  if(!c)return `<div class="item ask"><span class="tt">${esc(r.title)}${hint}${q}</span><span class="yn" role="group" aria-label="${esc(r.ask)}"><button type="button" data-ask="sim" data-rid="${r.id}">Sim</button><button type="button" data-ask="nao" data-rid="${r.id}">Não</button></span></div>`;
  return `<div class="item ask done"><span class="tt">${esc(r.title)}${hint}${q}</span>${ans}<small>${tm(c.done_at)}</small><button type="button" class="lnk" data-ask-undo="${r.id}">Alterar</button>${list}</div>`;
 }
-function rowHTML(r,d,who,interactive){
+function taskNotesHTML(r,d,who,interactive){
+ const list=taskNotes(r.id,d,who),can=interactive&&d===today(),key='t:'+r.id;
+ const items=list.map(n=>`<div class="tnote"><span class="tx">${esc(n.body)}</span><small>${tm(n.created_at)}</small>${can&&(n.author_email===ME()||ROLE_NOW()==='admin')?`<button type="button" class="x" data-note-del="${n.id}" aria-label="Excluir anotação" title="Excluir anotação">✕</button>`:''}</div>`).join('');
+ if(!can&&!items)return '';
+ const form=TN_OPEN===r.id?`<div class="tform"><textarea data-tn-in="${r.id}" maxlength="1000" rows="2" placeholder="Anotação sobre esta tarefa (o gerente é avisado)" aria-label="Anotação da tarefa ${esc(r.title)}">${esc(DRAFT[key]||'')}</textarea><div class="row2"><button type="button" class="btn-y sm" data-tn-save="${r.id}">Salvar anotação</button><button type="button" class="btn-g sm" data-tn-cancel>Cancelar</button></div></div>`:(can?`<button type="button" class="lnk" data-tn-open="${r.id}">+ Anotação</button>`:'');
+ return `<div class="tnotes">${items}${form}</div>`;
+}
+function rowHTML(r,d,who,interactive){return rowCore(r,d,who,interactive)+taskNotesHTML(r,d,who,interactive)}
+function rowCore(r,d,who,interactive){
  if(r.ask)return askRow(r,d,who,interactive);
  const c=checkOf(r.id,d,who),hint=r.hint?`<small class="hint">${esc(r.hint)}</small>`:'';
  if(interactive)return `<label class="item ${c?'done':''}"><input type="checkbox" data-chk="${r.id}" ${c?'checked':''}><span class="tt">${esc(r.title)}${hint}</span>${c?`<small>${tm(c.done_at)}</small>`:''}</label>`;
@@ -280,7 +293,7 @@ function histTable(u,sel){
   const x=addDays(today(),-i),t=applicable(x,u).length;let sum=0,cnt=0;
   const cells=ps.map(p=>{
    if(!t||!st[p.email]||x<st[p.email])return '<td class="na" title="sem dado neste dia">—</td>';
-   const s2=personDay(p.email,u,x),pc=pctOf(s2.n,t),nn=notesOf(p.email,x).length;sum+=pc;cnt++;
+   const s2=personDay(p.email,u,x),pc=pctOf(s2.n,t),nn=allNotesOf(p.email,x).length;sum+=pc;cnt++;
    return `<td class="${pc>=90?'g':pc>=50?'w':'b'}">${s2.n}/${t}<small>${pc}%</small>${nn?`<i title="${nn} anotação(ões)">📝</i>`:''}</td>`;
   }).join('');
   const avg=cnt?Math.round(sum/cnt):null;
@@ -420,6 +433,9 @@ document.addEventListener('click',e=>{
  if(b=t.closest('[data-ask]')){b.dataset.ask==='nao'?askAnswer(b.dataset.rid,'nao'):askOpen(b.dataset.rid);return}
  if(b=t.closest('[data-ask-undo]')){askUndo(b.dataset.askUndo);return}
  if(b=t.closest('[data-rec-del]')){recDel(b.dataset.recDel);return}
+ if(b=t.closest('[data-tn-open]')){TN_OPEN=b.dataset.tnOpen;render(true);const ta=document.querySelector('[data-tn-in]');if(ta)ta.focus();return}
+ if(t.closest('[data-tn-cancel]')){TN_OPEN=null;render(true);return}
+ if(b=t.closest('[data-tn-save]')){tnSave(b.dataset.tnSave);return}
  if(b=t.closest('[data-note-add]')){noteAdd(b);return}
  if(b=t.closest('[data-note-del]')){noteDel(b.dataset.noteDel);return}
  if(b=t.closest('[data-rm]')){removePerson(b.dataset.rm,b.dataset.rmName);return}
@@ -429,7 +445,7 @@ document.addEventListener('click',e=>{
 });
 const setDay=x=>{const t0=today();if(x>t0)x=t0;if(x<MINDAY())x=MINDAY();S.day=x===t0?null:x;render(true)};
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.chk)toggleCheck(t.dataset.chk,t.checked);else if(t.id==='dayIn'&&/^\d{4}-\d{2}-\d{2}$/.test(t.value))setDay(t.value)});
-document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.noteIn!==undefined)DRAFT[t.dataset.noteIn]=t.value});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.noteIn!==undefined)DRAFT[t.dataset.noteIn]=t.value;if(t.dataset&&t.dataset.tnIn!==undefined)DRAFT['t:'+t.dataset.tnIn]=t.value});
 document.addEventListener('keydown',e=>{const w=e.target.closest&&e.target.closest('.wk[data-day]');if(w&&(e.key==='Enter'||e.key===' ')){e.preventDefault();setDay(w.dataset.day)}});
 async function noteAdd(b){
  const email=b.dataset.noteAdd,day=b.dataset.noteDay,mode=b.dataset.noteMode,key=email+'|'+day+'|'+mode,ta=document.querySelector('[data-note-in="'+CSS.escape(key)+'"]'),body=(ta?ta.value:DRAFT[key]||'').trim();
@@ -439,6 +455,15 @@ async function noteAdd(b){
  b.disabled=false;
  if(error){toast(/hoje|futuro|inválida|Data/i.test(error.message||'')?error.message:'Não foi possível salvar a anotação.');return}
  DRAFT[key]='';await load(true);toast('Anotação salva.');
+}
+async function tnSave(rid){
+ const ta=document.querySelector('[data-tn-in="'+CSS.escape(rid)+'"]'),body=(ta?ta.value:DRAFT['t:'+rid]||'').trim();
+ if(!body){toast('Escreva a anotação antes de salvar.');return}
+ const b=document.querySelector('[data-tn-save="'+CSS.escape(rid)+'"]');if(b)b.disabled=true;
+ const {error}=await CTX.client.rpc('boha_rnote_task_add',{p_routine:rid,p_unit:S.unit,p_body:body});
+ if(b)b.disabled=false;
+ if(error){toast(/Escreva|Limite/.test(error.message||'')?error.message:'Não foi possível salvar a anotação.');return}
+ DRAFT['t:'+rid]='';TN_OPEN=null;await load(true);toast('Anotação salva. O gerente foi avisado.');
 }
 async function noteDel(id){
  if(!confirm('Excluir esta anotação?'))return;
