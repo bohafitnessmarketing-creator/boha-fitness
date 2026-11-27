@@ -412,7 +412,7 @@ window.bohaAPI=async function(path,options={}){
  try{
  const method=(options.method||'GET').toUpperCase();
  if(path==='/api/employees'&&method==='GET'){
- const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return reply((data||[]).filter(e=>allowedUnits().includes(e.unit)));
+ const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return reply((data||[]).filter(e=>e.unit==='rede'||allowedUnits().includes(e.unit)));
  }
  if(path==='/api/state'&&method==='GET'){
  const {data,error}=await client.from('boha_members').select('id,data');if(error)throw error;
@@ -902,7 +902,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261218a';
+const VERSION='20261219a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1191,7 +1191,7 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit(),units:myUnits()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>allowedUnits().includes(e.unit))}};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit(),units:myUnits()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>e.unit==='rede'||allowedUnits().includes(e.unit))}};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
 function setPreview(role,unit){
@@ -1220,7 +1220,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
 const tidy=n=>{n=String(n||'').replace(/\s*\((cb|te|ma)\)\s*$/i,'').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
 const tidyTitle=t=>String(t||'').trim().toLocaleUpperCase('pt-BR');
-const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'};
+const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia',rede:'Todas as unidades'};
 let EMP=null,LOADING=null;
 const load=()=>LOADING||(LOADING=fetch('/api/employees').then(r=>r.json()).then(d=>{EMP=Array.isArray(d)?d:[]}).catch(()=>{EMP=[]}));
 const kindOf=t=>{t=norm(t);return /estagi/.test(t)?'estagiaria':/professor|zumba|pilates|jump|luta|boxe|fit ?dance|sertanej|danca|spinning/.test(t)?'professor':/recep/.test(t)?'recepcao':/limpez/.test(t)?'limpeza':''};
@@ -1233,7 +1233,7 @@ async function show(inp){
  const b=box(inp);await load();if(!EMP||!EMP.length){b.hidden=true;return}
  const q=norm(inp.value).split(/\s+/).filter(Boolean),form=inp.closest('#addForm'),g=form&&form.dataset.g,want=g==='recep'?'recepcao':g==='clean'?'limpeza':g==='muscle'?'muscle':'';
  const v=(typeof view==='string'?view:'rede');
- let list=EMP.filter(e=>(v==='rede'||e.unit===v)&&q.every(t=>norm(e.name).includes(t)));
+ let list=EMP.filter(e=>(v==='rede'||e.unit===v||e.unit==='rede')&&q.every(t=>norm(e.name).includes(t)));
  const score=e=>{const k=kindOf(e.title);return want?(want==='muscle'?(k==='professor'||k==='estagiaria'?0:1):(k===want?0:1)):0};
  list.sort((a,c)=>score(a)-score(c)||a.name.localeCompare(c.name,'pt-BR'));list=list.slice(0,8);
  const u=used();
