@@ -106,6 +106,7 @@ const LOCK=()=>CTX?.profile?.unit||null,MU=()=>{const l=CTX?.profile?.units||[];
 let PH={},EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),func:''},editS=null,sKind='manha';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+const fnText=e=>{const m=Array.isArray(e.modalities)&&e.modalities.length?' · '+e.modalities.join(', '):'';return (e.title||'')+m};
 const fnKey=e=>((e.title||'').trim().toLowerCase())||'__sem';
 const fnLabel=e=>((e.title||'').trim()||'Sem função').toLocaleUpperCase('pt-BR');
 function funcsOf(u){const m=new Map();empsOf(u).forEach(e=>{const k=fnKey(e);if(!m.has(k))m.set(k,{k,l:fnLabel(e),n:0});m.get(k).n++});return [...m.values()].sort((a,b)=>(a.k==='__sem')-(b.k==='__sem')||a.l.localeCompare(b.l,'pt-BR'))}
@@ -137,7 +138,7 @@ function tabHoje(){
  const d=today(),u=S.unit,emps=viewEmps(u),byKind=k=>emps.filter(e=>shiftOf(e.id,d)?.kind===k);
  const counts=UNITS().map(k=>({k,n:SHIFTS.filter(s=>s.work_date===d&&WORK.includes(s.kind)&&EMPS.find(e=>e.id===s.employee_id)?.unit===k).length}));
  const sched=emps.filter(e=>shiftOf(e.id,d)).length;
- const person=e=>{const s=shiftOf(e.id,d);return `<div class="person">${avatar(e)}<div><b>${esc(e.name)}</b><small>${esc(e.title||'')}${timeLabel(s)?(e.title?' · ':'')+timeLabel(s):''}${s.note?' · '+esc(s.note):''}</small></div></div>`};
+ const person=e=>{const s=shiftOf(e.id,d);return `<div class="person">${avatar(e)}<div><b>${esc(e.name)}</b><small>${esc(fnText(e))}${timeLabel(s)?(e.title?' · ':'')+timeLabel(s):''}${s.note?' · '+esc(s.note):''}</small></div></div>`};
  const cols=WORK.map(k=>{const l=byKind(k);return `<div class="col"><h3><i class="kdot" style="background:${KINDS[k].c}"></i>${KINDS[k].l} · ${l.length}</h3>${l.length?l.map(person).join(''):'<small style="color:var(--muted)">ninguém</small>'}</div>`}).join('');
  const off=['folga','ferias','ausente'].map(k=>[k,byKind(k)]).filter(x=>x[1].length).map(([k,l])=>`${KINDS[k].l}: ${l.map(e=>esc(e.name.split(' ')[0])).join(', ')}`).join(' · ');
  return `${counts.length>1?`<div class="units" role="group" aria-label="Quem trabalha hoje em cada unidade">${counts.map(c=>`<button data-unit="${c.k}" aria-pressed="${S.unit===c.k}">${UN[c.k]}<b>${c.n}</b> hoje</button>`).join('')}</div>`:''}
@@ -152,7 +153,7 @@ function tabEscala(){
  const mg=canManage();
  const rows=emps.map(e=>{
   const tot=days.reduce((a,d)=>a+hours(shiftOf(e.id,d)),0),allWork=days.every(d=>KINDS[shiftOf(e.id,d)?.kind]?.work);
-  return `<tr><td class="who"><div class="wh">${avatar(e)}<div><b>${esc(e.name)}</b><small>${esc(e.title||'')}</small></div></div></td>${days.map(d=>{const s=shiftOf(e.id,d),K=s&&KINDS[s.kind];
+  return `<tr><td class="who"><div class="wh">${avatar(e)}<div><b>${esc(e.name)}</b><small>${esc(fnText(e))}</small></div></div></td>${days.map(d=>{const s=shiftOf(e.id,d),K=s&&KINDS[s.kind];
    return `<td><button class="cell ${mg?'ed':''} ${K?'k '+(K.work?'':'off '+s.kind):''}" ${mg?`data-cell="${e.id}|${d}"`:'disabled'} ${K&&K.work?`style="background:${K.c}"`:''} aria-label="${esc(e.name)}, ${DOW[wd(d)]} ${dm(d)}: ${K?K.l:'sem escala'}">${K?`${K.l}${timeLabel(s)?`<small>${timeLabel(s)}</small>`:''}${s.note?'<small>✎ '+esc(s.note.slice(0,18))+'</small>':''}`:(mg?'+':'')}</button></td>`}).join('')}<td class="tot"><b>${tot?tot.toLocaleString('pt-BR',{maximumFractionDigits:1})+'h':'—'}</b>${tot>44?'<span class="warn">⚠ acima de 44h</span>':allWork?'<span class="warn">⚠ sem folga</span>':''}</td></tr>`}).join('');
  const cov=days.map(d=>{const sh=emps.map(e=>shiftOf(e.id,d)?.kind),any=sh.some(k=>WORK.includes(k)),c=k=>sh.filter(x=>x===k||x==='integral').length,wk=wd(d)>=1&&wd(d)<=5;
   return `<td>${any?['manha','tarde','noite'].map(k=>{const n=c(k);return `<span class="${n===0&&wk?'z':''}" title="${KINDS[k].l}">${KINDS[k].l[0]}${n}</span>`}).join(''):'—'}</td>`}).join('');

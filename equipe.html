@@ -916,7 +916,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261227a';
+const VERSION='20261228a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1255,9 +1255,9 @@ function overlay(){
   if(k==='gerente'){if(u==='rede'){place('geral',e)}else if(!place(u+'-gerente',e)){/* segundo gerente na mesma unidade: fica de fora */}continue}
   if(GROUP.includes(k)){
    if(!UNN[u])continue;
-   const id=u+'-e-'+e.id,lab=k==='professor'?(/coletiv|zumba|pilates|jump|luta|boxe|dance|sertanej|danca|spinning|aula/.test(norm(e.title))?'Professor de aulas coletivas':'Professor de sala'):LABEL[k];
+   const id=u+'-e-'+e.id,lab0=k==='professor'?(/coletiv|zumba|pilates|jump|luta|boxe|dance|sertanej|danca|spinning|aula/.test(norm(e.title))?'Professor de aulas coletivas':'Professor de sala'):LABEL[k],mods=Array.isArray(e.modalities)?e.modalities:[],lab=lab0==='Professor de aulas coletivas'&&mods.length?mods.join(' · '):lab0;
    const st=state[id]||{};state[id]={...st,name:nm};if(PH[e.id])state[id].photo=PH[e.id];
-   nodes.push({id,role:k,scope:u,boss:BOSS(u)[k],label:lab,name:nm,emp:true,col:lab==='Professor de aulas coletivas'});continue;
+   nodes.push({id,role:k,scope:u,boss:BOSS(u)[k],label:lab,name:nm,emp:true,col:lab0==='Professor de aulas coletivas'});continue;
   }
   // áreas da rede (manutenção, marketing, financeiro, RH): o primeiro ocupa a posição fixa, os demais viram cartões novos na mesma área
   const seedId=k;if(!node(seedId))continue;
