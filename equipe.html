@@ -524,7 +524,7 @@ const MODULES=[
 ];
 const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:'Marketing',recepcao:'Recepção',editor:'Editor (antigo)',viewer:'Visualizador (antigo)'};
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
-let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras','solicitacoes','acervo'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina','artes','solicitacoes','acervo','talentos'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina','solicitacoes','acervo','mapas'],recepcao:['hierarquia','checklist','manuais','rotina','solicitacoes','acervo','artes'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
+let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras','solicitacoes','acervo'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina','artes','solicitacoes','acervo','talentos','funcionarios'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina','solicitacoes','acervo','mapas'],recepcao:['hierarquia','checklist','manuais','rotina','solicitacoes','acervo','artes'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
 const UNIT_NAMES={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},SCOPED_ROLES=['gerente','recepcao'];
 let previewUnit='cb';
@@ -877,7 +877,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261210a';
+const VERSION='20261211a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
