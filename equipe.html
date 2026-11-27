@@ -916,7 +916,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261226a';
+const VERSION='20261227a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1205,7 +1205,7 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit(),units:myUnits()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>e.unit==='rede'||allowedUnits().includes(e.unit))}};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit(),units:myUnits()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployeePhotos:async()=>{try{const r=await window.bohaAPI('/api/employee-photos');return r.ok?await r.json():{}}catch{return {}}},loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>e.unit==='rede'||allowedUnits().includes(e.unit))}};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
 function setPreview(role,unit){
