@@ -163,14 +163,15 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 const ROLE_NOW=()=>CTX?.profile?.role||'';
 const ME=()=>String(CTX?.profile?.email||'').toLowerCase();
 const LOCK=()=>CTX?.profile?.unit||null;
-const UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
+const MU=()=>{const l=CTX?.profile?.units||[];return l.length>1?l:[]};
+const UNITS=()=>MU().length?MU():LOCK()?[LOCK()]:Object.keys(UN);
 const isRecep=()=>ROLE_NOW()==='recepcao';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(ROLE_NOW());
 const canNote=()=>['gerente','admin'].includes(ROLE_NOW());
 const canRemove=()=>['gerente','admin'].includes(ROLE_NOW());
 const MINDAY=()=>addDays(today(),-60);
 const notesOf=(email,d)=>NOTES.filter(n=>n.person_email===email&&n.note_date===d).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
-const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK());
+const canEditR=r=>canManage()&&(!LOCK()||r.unit===LOCK()||MU().includes(r.unit));
 let NOTES=[],DRAFT={},ROUTINES=[],CHECKS=[],TEAM=[],CK=new Map(),S={tab:'hoje',unit:LOCK()||'cb',day:null,hist:14},OPEN=new Set(),editR=null,updated=null,timer=null;
 const rebuild=()=>{CK=new Map(CHECKS.map(c=>[c.routine_id+'|'+c.check_date+'|'+c.done_by,c]))};
 const checkOf=(rid,d,who)=>CK.get(rid+'|'+d+'|'+who);
@@ -314,7 +315,7 @@ function render(force){
 function openRoutine(r){
  editR=r||null;$('rTitle').textContent=r?'Editar tarefa':'Nova tarefa';
  $('r_block').innerHTML=BLOCKS.map(b=>`<option value="${b.k}">${b.n}. ${esc(b.t)}</option>`).join('');
- const lock=LOCK();$('r_unit').innerHTML=(lock?'':'<option value="">Todas as unidades</option>')+UNITS().map(k=>`<option value="${k}">${UN[k]}</option>`).join('');$('r_unitrow').hidden=!!lock&&UNITS().length===1;
+ const lock=LOCK();$('r_unit').innerHTML=(lock?'':'<option value="">Todas as unidades</option>')+UNITS().map(k=>`<option value="${k}">${UN[k]}</option>`).join('');$('r_unitrow').hidden=!!lock&&UNITS().length===1;if(MU().length)$('r_unit').value=S.unit;
  $('r_title').value=r?.title||'';$('r_hint').value=r?.hint||'';$('r_block').value=r?.block||'atendimento';$('r_unit').value=r?(r.unit||''):S.unit;$('r_active').value=r&&!r.active?'0':'1';
  const set=new Set(r?.weekdays||[0,1,2,3,4,5,6]);$('r_days').innerHTML=ORDER.map(x=>`<button type="button" data-rday="${x}" aria-pressed="${set.has(x)}">${DOW[x]}</button>`).join('');
  $('r_err').textContent='';$('r_del').hidden=!r;$('rdlg').showModal();setTimeout(()=>$('r_title').focus(),30);
@@ -322,7 +323,7 @@ function openRoutine(r){
 $('rform').addEventListener('submit',async e=>{
  e.preventDefault();const err=t=>{$('r_err').textContent=t};const title=$('r_title').value.trim();if(!title)return err('Escreva a tarefa.');
  const days=[...$('r_days').querySelectorAll('[aria-pressed="true"]')].map(b=>+b.dataset.rday);if(!days.length)return err('Marque ao menos um dia da semana.');
- const row={title,hint:$('r_hint').value.trim()||null,role_name:ROLE,block:$('r_block').value,moment:null,unit:LOCK()||$('r_unit').value||null,active:$('r_active').value==='1',weekdays:days.length===7?null:days};
+ const row={title,hint:$('r_hint').value.trim()||null,role_name:ROLE,block:$('r_block').value,moment:null,unit:MU().length?$('r_unit').value:(LOCK()||$('r_unit').value||null),active:$('r_active').value==='1',weekdays:days.length===7?null:days};
  const out=editR?await CTX.client.from('boha_routines').update(row).eq('id',editR.id).select().single():await CTX.client.from('boha_routines').insert({...row,sort:Math.max(0,...ROUTINES.map(x=>x.sort))+1}).select().single();
  if(out.error)return err('Não foi possível salvar.');
  if(editR)ROUTINES=ROUTINES.map(x=>x.id===editR.id?out.data:x);else ROUTINES.push(out.data);$('rdlg').close();render();toast('Tarefa salva.');

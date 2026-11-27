@@ -102,7 +102,7 @@ const fmtLong=d=>cap(DOWF[wd(d)])+', '+(+d.slice(8,10))+' de '+MN[+d.slice(5,7)-
 const hhmm=t=>t?String(t).slice(0,5):'';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
-const LOCK=()=>CTX?.profile?.unit||null,UNITS=()=>LOCK()?[LOCK()]:Object.keys(UN);
+const LOCK=()=>CTX?.profile?.unit||null,MU=()=>{const l=CTX?.profile?.units||[];return l.length>1?l:[]},UNITS=()=>MU().length?MU():LOCK()?[LOCK()]:Object.keys(UN);
 let EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),func:''},editS=null,sKind='manha';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));

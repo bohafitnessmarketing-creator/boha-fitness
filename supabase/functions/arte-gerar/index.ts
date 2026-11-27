@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
   const asUser = createClient(url, anon, { global: { headers: { Authorization: auth } }, auth: { persistSession: false } });
   const { data: can } = await asUser.rpc('boha_can', { p_module: 'artes' });
   if (!can) return json({ error: 'Seu perfil não tem acesso a este módulo.' }, 403);
-  const { data: acc } = await admin.from('boha_access').select('role,unit,name').eq('email', email).maybeSingle();
+  const { data: acc } = await admin.from('boha_access').select('role,unit,extra_units,name').eq('email', email).maybeSingle();
   if (!acc || !['gerente', 'recepcao', 'admin'].includes(acc.role)) return json({ error: 'Seu perfil não tem acesso a este módulo.' }, 403);
   if (acc.role !== 'admin' && !acc.unit) return json({ error: 'Sua unidade ainda não foi definida. Peça ao administrador para definir a sua unidade em Gestão de acessos.' }, 403);
 
@@ -164,8 +164,10 @@ Deno.serve(async (req) => {
   if (!objective) return json({ error: 'Escolha o objetivo do post.' }, 400);
   if (!FORMATS[format]) return json({ error: 'Formato inválido.' }, 400);
   // Gerente e recepção só geram para a própria unidade; administrador escolhe (ou rede toda).
-  let unit: string | null = acc.unit || (UNITS[String(b.unit ?? '')] ? String(b.unit) : null);
-  if (acc.unit) unit = acc.unit;
+  // Gerente com várias unidades escolhe entre as dele; a principal é o padrão.
+  const mine: string[] = acc.unit ? [acc.unit, ...((acc.extra_units as string[] | null) ?? [])] : [];
+  const asked = String(b.unit ?? '');
+  let unit: string | null = acc.unit ? (mine.includes(asked) ? asked : acc.unit) : (UNITS[asked] ? asked : null);
 
   const key = Deno.env.get('OPENAI_API_KEY');
   if (!key) return json({ error: 'A chave da OpenAI ainda não foi configurada no servidor. Peça ao administrador.' }, 503);

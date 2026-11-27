@@ -194,6 +194,7 @@ html.mtile .card.is-active .stbadge .stt{margin-left:6px}
 #appbar .sep{width:1px;height:22px;background:var(--line2)}
 #moduleTitle{font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:18px;color:var(--y);letter-spacing:.4px}
 #appbar .spacer{flex:1}
+#appbar .unitpick{display:flex;align-items:center;gap:6px;margin-left:6px}#appbar .unitpick span{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}#appbar .unitpick select{background:#1b1b1b;color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px;font-weight:600;max-width:150px}
 #identity{color:var(--muted)}
 iframe{display:block;width:100%;height:calc(100vh - 56px);border:0}
 
@@ -270,7 +271,7 @@ button.np-item:hover .np-go{color:var(--y)}
 .acc-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto 340px auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .acc-row:first-child{border-top:0;padding-top:0}
 .acc-row .avatar{width:40px;height:40px}
-.acc-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px}.acc-sel select.nounit{border-color:var(--bad)}.acc-sel .nu{display:block}
+.acc-sel{display:grid;grid-template-columns:1fr 1fr;gap:8px}.acc-sel select.nounit{border-color:var(--bad)}.acc-sel .nu{display:block}.xu{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.xu>span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.xu button{padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}.xu button:hover{color:var(--text)}.xu button[aria-pressed="true"]{background:var(--y);border-color:var(--y);color:#111}
 .acc-who{min-width:0}
 .acc-who b{display:block;font-size:15px}
 .acc-who span{display:block;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
@@ -326,7 +327,7 @@ html.mtile .pv-empty h3{font-size:20px}
  .hub-wrap{padding:30px 16px 48px}
  .modules{grid-template-columns:1fr}
  .row-head{margin-top:32px}
- #appbar{padding:0 12px;gap:10px}#appbar .logo-img,#appbar .sep,#identity{display:none}
+ #appbar{padding:0 12px;gap:10px}#appbar .logo-img,#appbar .sep,#identity{display:none}#appbar .unitpick span{display:none}#appbar .unitpick{margin-left:0;min-width:0}#appbar .unitpick select{max-width:118px;padding:6px 4px;font-size:12px}
  .bar2{padding:0 12px;gap:10px}.bar2 .logo-img,.bar2 .sep{display:none}
  #moduleTitle,.bar2 .mtitle{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
  #appbar .ghost,.bar2 .ghost{white-space:nowrap}
@@ -368,7 +369,7 @@ html.mtile .pv-empty h3{font-size:20px}
  </div>
 </section>
 
-<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><span class="spacer"></span><button type="button" class="ghost" data-profile-menu aria-haspopup="menu" aria-expanded="false">Perfil ▾</button><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
+<section id="workspace" hidden><div id="appbar"><button type="button" class="ghost" id="back">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span id="moduleTitle"></span><label class="unitpick" id="unitPick" hidden><span>Unidade</span><select id="unitPickSel" aria-label="Unidade em que você está trabalhando"></select></label><span class="spacer"></span><button type="button" class="ghost" data-profile-menu aria-haspopup="menu" aria-expanded="false">Perfil ▾</button><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout2">Sair</button></div><iframe id="dashboard" title="Módulo do sistema interno BOHA" referrerpolicy="no-referrer"></iframe></section>
 <section id="accessView" hidden>
  <div class="bar2"><button type="button" class="ghost" id="back2">← Início</button><span class="sep"></span><img class="logo-img" src="assets/logo-boha.png" alt="Boha Fitness"><span class="mtitle">Acessos</span><span class="spacer"></span><button type="button" class="ghost" data-profile-menu aria-haspopup="menu" aria-expanded="false">Perfil ▾</button><button type="button" class="bell" data-bell aria-label="Notificações" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="bell-n" hidden></span></button><button type="button" class="ghost" id="logout3">Sair</button></div>
  <div class="acc-wrap">
@@ -526,10 +527,12 @@ const ROLE_LABEL={admin:'Administrador',dono:'Dono',gerente:'Gerente',marketing:
 const ROLES=[['gerente','Gerente','Permissões configuráveis'],['dono','Dono','Permissões configuráveis'],['marketing','Marketing','Permissões configuráveis'],['recepcao','Recepção','Permissões configuráveis'],['admin','Administrador','Todos os módulos e Gestão de acessos']];
 let ROLE_MODULES={admin:null,dono:['hierarquia','resultados','compras','solicitacoes','acervo'],gerente:['hierarquia','resultados','compras','checklist','mural','instagram','campanhas','escalas','rotina','artes','solicitacoes','acervo','talentos','funcionarios'],marketing:['marketing','mural','instagram','campanhas','compras','escalas','rotina','solicitacoes','acervo','mapas'],recepcao:['hierarquia','checklist','manuais','rotina','solicitacoes','acervo','artes'],editor:['hierarquia','compras','checklist'],viewer:['hierarquia','compras','checklist']};
 const effectiveRole=()=>previewRole||profile?.role;
-const UNIT_NAMES={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},SCOPED_ROLES=['gerente','recepcao'];
-let previewUnit='cb';
-const myUnit=()=>previewRole?(SCOPED_ROLES.includes(previewRole)?previewUnit:null):(profile?.unit||null);
-const allowedUnits=()=>myUnit()?[myUnit()]:Object.keys(UNIT_NAMES);
+const UNIT_NAMES={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia'},SCOPED_ROLES=['gerente','recepcao'],MULTI_ROLES=['gerente','dono','marketing'];
+let previewUnit='cb',activeUnit=null;
+// Unidades liberadas para a pessoa (gerente pode ter mais de uma). myUnit() é a unidade ativa: os módulos trabalham com ela.
+const myUnits=()=>previewRole?(SCOPED_ROLES.includes(previewRole)?[previewUnit]:[]):(profile?.units?.length?profile.units:(profile?.unit?[profile.unit]:[]));
+const myUnit=()=>{if(previewRole)return SCOPED_ROLES.includes(previewRole)?previewUnit:null;const l=myUnits();if(!l.length)return profile?.unit||null;return l.includes(activeUnit)?activeUnit:l[0]};
+const allowedUnits=()=>{const l=myUnits();return l.length?l:Object.keys(UNIT_NAMES)};
 const unitOptions=(sel,blank)=>(blank?`<option value="">${blank}</option>`:'')+Object.entries(UNIT_NAMES).map(([k,v])=>`<option value="${k}" ${k===sel?'selected':''}>${v}</option>`).join('');
 const canModule=key=>!!effectiveRole()&&(key==='acessos'?effectiveRole()==='admin':ROLE_MODULES[effectiveRole()]===null||ROLE_MODULES[effectiveRole()]?.includes(key));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -797,16 +800,27 @@ document.addEventListener('keydown',e=>{
  if(hit)tfSelect(hit,tfBuf);else tfPill(`Nenhum módulo começa com <b>“${esc(tfBuf.toUpperCase())}”</b>`,true);
 },true);
 function memberLabel(n){return `${n} ${n===1?'pessoa':'pessoas'} na equipe`}
+function renderUnitPick(){
+ const w=el('unitPick'),sel=el('unitPickSel');if(!w||!sel)return;
+ const ul=profile&&profile.role!=='admin'&&!previewRole?myUnits():[];
+ if(ul.length<2){w.hidden=true;return}
+ sel.innerHTML=ul.map(k=>`<option value="${k}" ${k===myUnit()?'selected':''}>${UNIT_NAMES[k]}</option>`).join('');w.hidden=false;
+}
+document.addEventListener('change',e=>{if(e.target.id==='unitPickSel')setActiveUnit(e.target.value)});
 function renderRoleSwitch(){
  const box=el('roleSwitch');if(!box)return;
- if(profile?.role!=='admin'){box.hidden=true;box.innerHTML='';return}
+ if(profile?.role!=='admin'){
+  const ul=myUnits();
+  if(ul.length>1){const cur=myUnit();box.innerHTML=`<span>Unidade</span><div class="seg" role="group" aria-label="Unidade em que você está trabalhando">${ul.map(k=>`<button type="button" data-active-unit="${k}" aria-pressed="${cur===k}">${UNIT_NAMES[k]}</button>`).join('')}</div>`;box.hidden=false}
+  else{box.hidden=true;box.innerHTML=''}
+  return}
  const hadFocus=box.contains(document.activeElement),cur=effectiveRole(),order=['admin','gerente','dono','marketing','recepcao'];
  box.innerHTML=`<span>Ver como</span><div class="seg">${order.map(k=>`<button type="button" data-preview="${k}" aria-pressed="${cur===k}">${k==='admin'?'Administrador':ROLE_LABEL[k]}</button>`).join('')}</div>${SCOPED_ROLES.includes(cur)?`<span>Unidade</span><div class="seg" role="group" aria-label="Unidade da prévia">${Object.entries(UNIT_NAMES).map(([k,v])=>`<button type="button" data-preview-unit="${k}" aria-pressed="${previewUnit===k}">${v}</button>`).join('')}</div>`:''}`;
  box.hidden=false;
  if(hadFocus)box.querySelector('[aria-pressed="true"]')?.focus();
 }
 function renderModules(){
- renderRoleSwitch();
+ renderRoleSwitch();renderUnitPick();
  const wrap=el('modules');wrap.innerHTML='';
  orderedModules().forEach((m,i)=>{
   const live=m.status==='live';
@@ -877,7 +891,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261211a';
+const VERSION='20261212a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1156,7 +1170,7 @@ window.addEventListener('scroll',hidePop,{passive:true});
 window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!document.documentElement.classList.contains('has-mouse')){document.documentElement.classList.add('has-mouse');updateMode()}},{passive:true});
 window.addEventListener('resize',updateMode);
 el('preview').addEventListener('click',e=>{const o=e.target.closest('[data-open-key]');if(!o)return;const m=MODULES.find(x=>x.key===o.dataset.openKey);if(m)openModule(m)});
-window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>allowedUnits().includes(e.unit))}};
+window.bohaCtx={client,get profile(){return profile?{...profile,role:effectiveRole(),unit:myUnit(),units:myUnits()}:null},canModule,refreshReminders:loadTasks,toast,loadEmployees:async()=>{const {data,error}=await client.rpc('boha_employee_options');if(error)throw error;return (data||[]).filter(e=>allowedUnits().includes(e.unit))}};
 function closeProfileMenu(){el('profileMenu').hidden=true;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','false'))}
 function openProfileMenu(){if(!profile)return;const box=el('profileMenu');if(profile.role==='admin'){box.innerHTML=`<h3>Testar perfil</h3><p>Prévia visual. Seu acesso real continua como administrador.</p>${ROLES.map(([key,name])=>`<button type="button" data-preview="${key}" aria-pressed="${effectiveRole()===key}">${key==='admin'?'Voltar ao meu acesso':'Ver como '+name}</button>`).join('')}`}else box.innerHTML=`<h3>Meu perfil</h3><p>${esc(ROLE_LABEL[profile.role]||'Equipe')}</p>`;box.hidden=false;document.querySelectorAll('[data-profile-menu]').forEach(b=>b.setAttribute('aria-expanded','true'));box.querySelector('button')?.focus()}
 function setPreview(role,unit){
@@ -1170,7 +1184,13 @@ function setPreview(role,unit){
  flag.innerHTML=previewRole?`<span>Prévia: ${label}</span>${SCOPED_ROLES.includes(previewRole)?Object.entries(UNIT_NAMES).map(([k,v])=>`<button type="button" data-preview-unit="${k}" aria-pressed="${previewUnit===k}" style="${previewUnit===k?'background:#111;color:#fff000':''}">${v}</button>`).join(''):''}<button type="button" data-preview="admin">Sair da prévia</button>`:'';
  cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};renderModules();route();updateBell();loadStats();
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]'),pu=e.target.closest('[data-preview-unit]');if(pu&&previewRole){setPreview(previewRole,pu.dataset.previewUnit);return}if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
+function setActiveUnit(u){
+ if(!profile||previewRole||!myUnits().includes(u)||u===myUnit())return;
+ activeUnit=u;try{localStorage.setItem('boha_active_unit:'+profile.uid,u)}catch{}
+ hidePop();closePanel();currentView=null;activeKey=null;el('preview').innerHTML=emptyPreview();cache={};stats={members:null,access:null,evo:null,tasks:null,req:null};
+ renderModules();route();updateBell();loadStats();toast('Agora você está em '+UNIT_NAMES[u]+'.');
+}
+document.addEventListener('click',e=>{const au=e.target.closest('[data-active-unit]');if(au){setActiveUnit(au.dataset.activeUnit);return}const b=e.target.closest('[data-profile-menu]'),p=e.target.closest('[data-preview]'),pu=e.target.closest('[data-preview-unit]');if(pu&&previewRole){setPreview(previewRole,pu.dataset.previewUnit);return}if(p){setPreview(p.dataset.preview);return}if(b){el('profileMenu').hidden?openProfileMenu():closeProfileMenu();return}if(!e.target.closest('#profileMenu'))closeProfileMenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').hidden)closeProfileMenu()});
 // Hierarquia para gerente/recepção: só a unidade da pessoa (some a "Visão da rede" e as outras unidades).
 function lockHierarchy(html){
@@ -1214,7 +1234,8 @@ async function route(){
 }
 function enterHub(me,session){
  const name=(me.name||session.user.email.split('@')[0]).trim();
- profile={uid:session.user.id,email:session.user.email,name,role:me.role,unit:me.unit||null};
+ profile={uid:session.user.id,email:session.user.email,name,role:me.role,unit:me.unit||null,units:(Array.isArray(me.units)&&me.units.length?me.units:(me.unit?[me.unit]:[])).filter(u=>UNIT_NAMES[u])};
+ activeUnit=null;try{const sv=localStorage.getItem('boha_active_unit:'+session.user.id);if(sv&&profile.units.includes(sv))activeUnit=sv}catch{}
  el('userName').textContent=name;
  el('userRole').textContent=ROLE_LABEL[me.role]||'Equipe';
  el('avatar').textContent=name.charAt(0).toUpperCase();
@@ -1296,7 +1317,7 @@ function renderAccess(){
  el('accList').innerHTML=people.length?people.map(r=>{
   const isMe=r.email===me,nm=label(r);
   const sub=r.confirmed?(r.last_sign_in?`Último acesso em ${dateBR(r.last_sign_in)}`:'Conta ativa'):r.has_account?'Criou a conta, falta confirmar pelo link do e-mail':'Ainda não criou a conta';
-  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<div class="acc-sel"><select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${r.role!=='admin'?`<select data-unit-of="${esc(r.email)}" class="${!r.unit&&SCOPED_ROLES.includes(r.role)?'nounit':''}" aria-label="Unidade de ${esc(nm)}" title="${r.unit?'Só vê e edita dados desta unidade':SCOPED_ROLES.includes(r.role)?'Sem unidade: não enxerga dados de nenhuma unidade':'Sem restrição: vê a rede toda'}">${unitOptions(r.unit,SCOPED_ROLES.includes(r.role)?'Escolha a unidade':'Rede toda')}</select>`:`<span class="nu" style="font-size:13px;color:var(--muted);align-self:center">Todas as unidades</span>`}</div>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
+  return `<div class="acc-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}${isMe?' (você)':''}</b><span>${esc(r.email)}</span><small>${sub}</small></div>${statusChip(r)}<div class="acc-sel"><select data-role="${esc(r.email)}" ${isMe?'disabled title="Você não pode mudar o seu próprio perfil"':''} aria-label="Perfil de ${esc(nm)}">${roleOptions(r.role)}</select>${r.role!=='admin'?`<select data-unit-of="${esc(r.email)}" class="${!r.unit&&SCOPED_ROLES.includes(r.role)?'nounit':''}" aria-label="Unidade de ${esc(nm)}" title="${r.unit?'Só vê e edita dados desta unidade':SCOPED_ROLES.includes(r.role)?'Sem unidade: não enxerga dados de nenhuma unidade':'Sem restrição: vê a rede toda'}">${unitOptions(r.unit,SCOPED_ROLES.includes(r.role)?'Escolha a unidade':'Rede toda')}</select>`:`<span class="nu" style="font-size:13px;color:var(--muted);align-self:center">Todas as unidades</span>`}${MULTI_ROLES.includes(r.role)&&r.unit?`<div class="xu" role="group" aria-label="Unidades extras de ${esc(nm)}"><span>Também vê:</span>${Object.entries(UNIT_NAMES).filter(([k])=>k!==r.unit).map(([k,v])=>`<button type="button" data-xunit="${k}" data-xemail="${esc(r.email)}" aria-pressed="${(r.extra_units||[]).includes(k)}">${v}</button>`).join('')}</div>`:''}</div>${isMe?'<span class="you">Seu acesso</span>':`<div class="acc-actions">${r.confirmed?'':`<button type="button" class="ghost sm" data-act="invite" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Convite</button>`}<button type="button" class="ghost sm danger" data-act="remove" data-email="${esc(r.email)}" data-name="${esc(nm)}">Remover</button></div>`}</div>`;
  }).join(''):'<p class="acc-empty">Ninguém com acesso ainda.</p>';
  el('accRequests').innerHTML=reqs.length?`<div class="acc-card req"><div class="acc-top"><h2 class="display">Pediram acesso</h2><span>Criaram conta, mas ainda não foram liberados</span></div>${reqs.map(r=>{const nm=label(r);return `<div class="acc-row req-row"><span class="avatar">${esc(nm.charAt(0).toUpperCase())}</span><div class="acc-who"><b>${esc(nm)}</b><span>${esc(r.email)}</span><small>Conta criada em ${dateBR(r.created_at)}</small></div><div class="acc-actions"><button type="button" class="btn-y" data-act="prefill" data-email="${esc(r.email)}" data-name="${esc(r.name||'')}">Liberar</button></div></div>`}).join('')}</div>`:'';
 }
@@ -1342,12 +1363,22 @@ el('accessView').addEventListener('click',async e=>{
   el('accInvite').innerHTML='';toast(`Acesso de ${name} removido.`);loadAccess();
  }
 });
+el('accessView').addEventListener('click',async e=>{
+ const b=e.target.closest('[data-xunit]');if(!b)return;
+ const r=accData.find(x=>x.email===b.dataset.xemail);if(!r||!r.unit)return;
+ const cur=new Set(r.extra_units||[]);cur.has(b.dataset.xunit)?cur.delete(b.dataset.xunit):cur.add(b.dataset.xunit);
+ const list=[r.unit,...Object.keys(UNIT_NAMES).filter(k=>cur.has(k))];b.disabled=true;
+ const {error}=await client.rpc('boha_access_set_units',{p_email:r.email,p_units:list});b.disabled=false;
+ if(error){toast(error.message||'Não foi possível alterar as unidades.');return}
+ r.extra_units=list.slice(1);renderAccess();
+ toast(list.length>1?`${r.name||r.email} agora vê: ${list.map(k=>UNIT_NAMES[k]).join(' e ')}.`:`${r.name||r.email} voltou a ver só ${UNIT_NAMES[r.unit]}.`);
+});
 el('accessView').addEventListener('change',async e=>{
  const u=e.target.closest('select[data-unit-of]');
  if(u){const r=accData.find(x=>x.email===u.dataset.unitOf);if(!r)return;const prev=r.unit||'';u.disabled=true;
   const {error}=await client.rpc('boha_access_set_unit',{p_email:r.email,p_unit:u.value||null});u.disabled=false;
   if(error){toast(error.message||'Não foi possível alterar a unidade.');u.value=prev;return}
-  r.unit=u.value||null;u.classList.toggle('nounit',!r.unit&&SCOPED_ROLES.includes(r.role));toast(r.unit?`${r.name||r.email} agora só vê dados de ${UNIT_NAMES[r.unit]}.`:SCOPED_ROLES.includes(r.role)?`${r.name||r.email} está sem unidade e não vê dados de nenhuma.`:`${r.name||r.email} agora vê a rede toda.`);return}
+  r.unit=u.value||null;r.extra_units=[];u.classList.toggle('nounit',!r.unit&&SCOPED_ROLES.includes(r.role));toast(r.unit?`${r.name||r.email} agora só vê dados de ${UNIT_NAMES[r.unit]}.`:SCOPED_ROLES.includes(r.role)?`${r.name||r.email} está sem unidade e não vê dados de nenhuma.`:`${r.name||r.email} agora vê a rede toda.`);return}
  const s=e.target.closest('select[data-role]');if(!s)return;
  const r=accData.find(x=>x.email===s.dataset.role);if(!r)return;
  const prev=r.role;s.disabled=true;
