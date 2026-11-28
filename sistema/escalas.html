@@ -65,6 +65,9 @@ dialog{width:min(560px,calc(100% - 20px));max-height:calc(100dvh - 24px);border:
  table.esc{min-width:0;font-size:11px}.esc th,.esc td{border-color:#999;color:#000}.esc td.who{position:static;background:#fff}.esc th small{color:#000}.esc td.who small,.esc td.tot,.esc td.tot b{color:#000}
  .cell{border-color:#bbb;color:#000}.cell:not(.k){color:transparent}.cell.k{-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.cov td,tr.cov td:first-child,tr.cov td small{background:#eee;color:#000!important}.esc th.today{color:#000}.panel h2,.panel .ph p{display:none!important}.panel .ph{margin:0}
 }
+.esc.mes{min-width:980px;font-size:11.5px}.esc.mes th,.esc.mes td{padding:3px 2px;text-align:center}.esc.mes th small{display:block;font-weight:600;font-size:11px;color:var(--text)}.esc.mes td.who{text-align:left;min-width:180px;padding:4px 8px}.esc.mes th:first-child{text-align:left}
+.cell.mini{min-height:30px;min-width:26px;padding:3px 0;font-size:11px;border-radius:7px}.esc .we{background:rgba(255,255,255,.025)}.esc.mes tr.cov td{font-weight:700;color:var(--muted)}
+@media print{.esc.mes{font-size:9px}.cell.mini{min-height:20px;min-width:0}@page{size:landscape}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style></head><body>
 <div class="page" id="page"><div class="state">Carregando…</div></div>
@@ -103,7 +106,7 @@ const hhmm=t=>t?String(t).slice(0,5):'';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),3200)}
 
 const LOCK=()=>CTX?.profile?.unit||null,MU=()=>{const l=CTX?.profile?.units||[];return l.length>1?l:[]},UNITS=()=>MU().length?MU():LOCK()?[LOCK()]:Object.keys(UN);
-let PH={},EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),func:''},editS=null,sKind='manha';
+let PH={},EMPS=[],SHIFTS=[],S={tab:'hoje',unit:'cb',week:mondayOf(today()),month:today().slice(0,7)+'-01',func:''},editS=null,sKind='manha';
 const canManage=()=>['admin','dono','gerente','marketing'].includes(CTX?.profile?.role);
 const empsOf=u=>EMPS.filter(e=>e.unit===u).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
 const fnText=e=>{const m=Array.isArray(e.modalities)&&e.modalities.length?' · '+e.modalities.join(', '):'';return (e.title||'')+m};
@@ -126,10 +129,11 @@ function hours(s){
 const timeLabel=s=>s.start_time&&s.end_time?`${hhmm(s.start_time).replace(':00','h').replace(':','h')}–${hhmm(s.end_time).replace(':00','h').replace(':','h')}`:'';
 /* ---------- cabeçalho ---------- */
 function head(){
- const tabs=[['hoje','Hoje'],['escala','Escala da semana']];
+ const tabs=[['hoje','Hoje'],['escala','Escala da semana'],['mes','Escala do mês']];
  let nav='';
  if(S.tab==='escala'){const e=addDays(S.week,6);nav=`<div class="nav"><button class="arrow" data-wk="-1" aria-label="Semana anterior">‹</button><b>${+S.week.slice(8)} ${S.week.slice(5,7)!==e.slice(5,7)?MN[+S.week.slice(5,7)-1].slice(0,3)+' ':''}– ${+e.slice(8)} ${MN[+e.slice(5,7)-1].slice(0,3)} ${e.slice(0,4)}</b><button class="arrow" data-wk="1" aria-label="Próxima semana">›</button></div>`}
- return `<header class="hd"><p class="eyebrow">Equipe · dia a dia</p><h1 class="display">Escalas</h1><p class="sub">Quem trabalha em cada turno, as horas da semana e a cobertura de cada unidade.</p></header>
+ if(S.tab==='mes'){nav=`<div class="nav"><button class="arrow" data-mo="-1" aria-label="Mês anterior">‹</button><b>${cap(MN[+S.month.slice(5,7)-1])} ${S.month.slice(0,4)}</b><button class="arrow" data-mo="1" aria-label="Próximo mês">›</button></div>`}
+ return `<header class="hd"><p class="eyebrow">Equipe · dia a dia</p><h1 class="display">Escalas</h1><p class="sub">Quem trabalha em cada turno, as horas da semana e do mês e a cobertura de cada unidade. Dá para exportar em Excel.</p></header>
  <div class="bar"><div class="seg" role="tablist" aria-label="Seções">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join('')}</div>${UNITS().length>1?`<div class="seg" role="group" aria-label="Unidade">${UNITS().map(k=>`<button data-unit="${k}" aria-pressed="${S.unit===k}">${UN[k]}</button>`).join('')}</div>`:`<span class="chip" style="padding:7px 14px">${UN[UNITS()[0]]}</span>`}${nav}</div>${funcBar()}`;
 }
 
@@ -157,13 +161,62 @@ function tabEscala(){
    return `<td><button class="cell ${mg?'ed':''} ${K?'k '+(K.work?'':'off '+s.kind):''}" ${mg?`data-cell="${e.id}|${d}"`:'disabled'} ${K&&K.work?`style="background:${K.c}"`:''} aria-label="${esc(e.name)}, ${DOW[wd(d)]} ${dm(d)}: ${K?K.l:'sem escala'}">${K?`${K.l}${timeLabel(s)?`<small>${timeLabel(s)}</small>`:''}${s.note?'<small>✎ '+esc(s.note.slice(0,18))+'</small>':''}`:(mg?'+':'')}</button></td>`}).join('')}<td class="tot"><b>${tot?tot.toLocaleString('pt-BR',{maximumFractionDigits:1})+'h':'—'}</b>${tot>44?'<span class="warn">⚠ acima de 44h</span>':allWork?'<span class="warn">⚠ sem folga</span>':''}</td></tr>`}).join('');
  const cov=days.map(d=>{const sh=emps.map(e=>shiftOf(e.id,d)?.kind),any=sh.some(k=>WORK.includes(k)),c=k=>sh.filter(x=>x===k||x==='integral').length,wk=wd(d)>=1&&wd(d)<=5;
   return `<td>${any?['manha','tarde','noite'].map(k=>{const n=c(k);return `<span class="${n===0&&wk?'z':''}" title="${KINDS[k].l}">${KINDS[k].l[0]}${n}</span>`}).join(''):'—'}</td>`}).join('');
- return `<section class="panel"><p class="pr-title">Escala · ${UN[u]}${funcName(u)} · ${dm(S.week)} a ${dm(addDays(S.week,6))}/${addDays(S.week,6).slice(0,4)}</p><div class="ph"><div><h2 class="display">Escala · ${UN[u]}${funcName(u)}</h2><p>${mg?'Toque numa célula para escalar. ':''}Sai o total de horas da semana por pessoa e a cobertura de cada dia.</p></div><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">${mg?'<button class="btn-g" data-copyprev>Copiar semana anterior</button>':''}<button class="btn-g" data-print>Imprimir</button></div></div>
+ return `<section class="panel"><p class="pr-title">Escala · ${UN[u]}${funcName(u)} · ${dm(S.week)} a ${dm(addDays(S.week,6))}/${addDays(S.week,6).slice(0,4)}</p><div class="ph"><div><h2 class="display">Escala · ${UN[u]}${funcName(u)}</h2><p>${mg?'Toque numa célula para escalar. ':''}Sai o total de horas da semana por pessoa e a cobertura de cada dia.</p></div><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">${mg?'<button class="btn-g" data-copyprev>Copiar semana anterior</button>':''}<button class="btn-g" data-export="semana">Exportar Excel</button><button class="btn-g" data-print>Imprimir</button></div></div>
  <div class="gridw"><table class="esc"><thead><tr><th style="text-align:left">Funcionário</th>${days.map(d=>`<th class="${d===t?'today':''}">${DOW[wd(d)]}<small>${+d.slice(8)}</small></th>`).join('')}<th>Semana</th></tr></thead><tbody>${rows}<tr class="cov"><td>Cobertura${curFunc(u)?' da função':''}<br><small style="font-weight:400">M manhã · T tarde · N noite</small></td>${cov}<td></td></tr></tbody></table></div>
  <div class="legend">${Object.entries(KINDS).map(([k,v])=>`<span><i class="kdot" style="background:${v.c}"></i>${v.l}${v.t?' ('+v.t[0].slice(0,2)+'–'+v.t[1].slice(0,2)+'h)':''}</span>`).join('')}</div>
  <p class="note-print-hide" style="margin:10px 2px 0;color:var(--muted);font-size:12.5px">Os horários entre parênteses são o padrão do turno e só servem para somar as horas. Mude entrada e saída em cada célula quando for diferente. O aviso de 44h é um lembrete do limite semanal comum na CLT, não substitui a conferência do contador.</p></section>`;
 }
 
-function render(){$('page').innerHTML=head()+(S.tab==='hoje'?tabHoje():tabEscala())}
+/* ---------- mês ---------- */
+const SHORT={manha:'M',tarde:'T',noite:'N',integral:'D',folga:'F',ferias:'FÉ',ausente:'A'};
+const monthDays=m=>{const n=new Date(Date.UTC(+m.slice(0,4),+m.slice(5,7),0)).getUTCDate();return Array.from({length:n},(_,i)=>m.slice(0,8)+String(i+1).padStart(2,'0'))};
+function tabMes(){
+ const u=S.unit,emps=viewEmps(u),days=monthDays(S.month),t=today(),mg=canManage();
+ if(!emps.length)return `<section class="panel"><div class="empty">Nenhum funcionário ativo em ${UN[u]}. Cadastre a equipe no Banco de funcionários.</div></section>`;
+ const rows=emps.map(e=>{
+  let h=0,dw=0,fo=0;
+  const cells=days.map(d=>{const sh=shiftOf(e.id,d),K=sh&&KINDS[sh.kind];if(K&&K.work){h+=hours(sh);dw++}else if(sh&&sh.kind==='folga')fo++;
+   return `<td class="${wd(d)===0||wd(d)===6?'we':''}"><button class="cell mini ${mg?'ed':''} ${K?'k '+(K.work?'':'off '+sh.kind):''}" ${mg?`data-cell="${e.id}|${d}"`:'disabled'} ${K&&K.work?`style="background:${K.c}"`:''} title="${esc(e.name)} · ${DOW[wd(d)]} ${dm(d)}: ${K?K.l+(timeLabel(sh)?' '+timeLabel(sh):''):'sem escala'}" aria-label="${esc(e.name)}, ${dm(d)}: ${K?K.l:'sem escala'}">${K?SHORT[sh.kind]:(mg?'·':'')}</button></td>`}).join('');
+  return `<tr><td class="who"><div class="wh">${avatar(e)}<div><b>${esc(e.name)}</b><small>${esc(fnText(e))}</small></div></div></td>${cells}<td class="tot"><b>${h?h.toLocaleString('pt-BR',{maximumFractionDigits:1})+'h':'—'}</b><small>${dw} dia${dw===1?'':'s'} · ${fo} folga${fo===1?'':'s'}</small></td></tr>`;
+ }).join('');
+ const cov=days.map(d=>{const n=emps.filter(e=>WORK.includes(shiftOf(e.id,d)?.kind)).length;return `<td class="${wd(d)===0||wd(d)===6?'we':''}">${n||'·'}</td>`}).join('');
+ return `<section class="panel"><p class="pr-title">Escala do mês · ${UN[u]}${funcName(u)} · ${cap(MN[+S.month.slice(5,7)-1])} ${S.month.slice(0,4)}</p><div class="ph"><div><h2 class="display">Escala do mês · ${UN[u]}${funcName(u)}</h2><p>${mg?'Toque numa célula para escalar. ':''}M manhã · T tarde · N noite · D dia todo · F folga · FÉ férias · A atestado/falta. Passe o mouse para ver o horário.</p></div><div class="actions" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-g" data-export="mes">Exportar Excel</button><button class="btn-g" data-print>Imprimir</button></div></div>
+ <div class="gridw"><table class="esc mes"><thead><tr><th style="text-align:left">Funcionário</th>${days.map(d=>`<th class="${d===t?'today':''} ${wd(d)===0||wd(d)===6?'we':''}">${DOW[wd(d)].slice(0,1)}<small>${+d.slice(8)}</small></th>`).join('')}<th>Mês</th></tr></thead><tbody>${rows}<tr class="cov"><td>Trabalham no dia<br><small style="font-weight:400">pessoas escaladas</small></td>${cov}<td></td></tr></tbody></table></div>
+ <div class="legend">${Object.entries(KINDS).map(([k,v])=>`<span><i class="kdot" style="background:${v.c}"></i>${SHORT[k]} · ${v.l}</span>`).join('')}</div></section>`;
+}
+/* ---------- exportar (Excel) ---------- */
+function shiftText(sh){const K=sh&&KINDS[sh.kind];if(!K)return '';return K.l+(K.work&&timeLabel(sh)?' '+timeLabel(sh):'')}
+function exportData(kind){
+ const u=S.unit,emps=viewEmps(u),days=kind==='mes'?monthDays(S.month):Array.from({length:7},(_,i)=>addDays(S.week,i));
+ const period=kind==='mes'?cap(MN[+S.month.slice(5,7)-1])+' '+S.month.slice(0,4):dm(days[0])+' a '+dm(days[6])+'/'+days[6].slice(0,4);
+ const head=['Funcionário','Função',...days.map(d=>DOW[wd(d)]+' '+dm(d)),'Horas','Dias trabalhados','Folgas'];
+ const grid=[[`Escala · ${UN[u]}${S.func&&emps[0]?' · '+fnLabel(emps[0]):''} · ${period}`],[],head];
+ const det=[['Funcionário','Função','Unidade','Data','Dia','Turno','Entrada','Saída','Horas','Observação']];
+ emps.forEach(e=>{let h=0,dw=0,fo=0;
+  const cells=days.map(d=>{const sh=shiftOf(e.id,d);if(sh){const K=KINDS[sh.kind];if(K&&K.work){h+=hours(sh);dw++}if(sh.kind==='folga')fo++;
+    det.push([e.name,e.title||'',UN[u],d.slice(8)+'/'+d.slice(5,7)+'/'+d.slice(0,4),DOW[wd(d)],K?K.l:sh.kind,hhmm(sh.start_time)||(K&&K.t?K.t[0]:''),hhmm(sh.end_time)||(K&&K.t?K.t[1]:''),K&&K.work?hours(sh):0,sh.note||''])}
+   return shiftText(sh)});
+  grid.push([e.name,fnText(e),...cells,Math.round(h*10)/10,dw,fo])});
+ grid.push([]);grid.push(['Trabalham no dia','',...days.map(d=>emps.filter(e=>WORK.includes(shiftOf(e.id,d)?.kind)).length),'','','']);
+ return {grid,det,name:`escala-${UN[u].toLowerCase().replace(/\s+/g,'-')}-${kind==='mes'?S.month.slice(0,7):'semana-'+days[0]}`};
+}
+function loadXlsx(){return window.XLSX?Promise.resolve(window.XLSX):new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';sc.onload=()=>window.XLSX?ok(window.XLSX):no();sc.onerror=no;document.head.appendChild(sc)})}
+function saveBlob(blob,fname){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function toCsv(rows){return '\ufeff'+rows.map(r=>r.map(c=>{c=String(c??'');return /[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(';')).join('\r\n')}
+async function exportXlsx(kind){
+ const d=exportData(kind);
+ try{
+  const X=await loadXlsx(),wb=X.utils.book_new(),ws=X.utils.aoa_to_sheet(d.grid),wd2=X.utils.aoa_to_sheet(d.det);
+  ws['!cols']=[{wch:30},{wch:26},...d.grid[2].slice(2,-3).map(()=>({wch:kind==='mes'?10:16})),{wch:8},{wch:16},{wch:8}];
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:Math.min(8,d.grid[2].length-1)}}];
+  wd2['!cols']=[{wch:30},{wch:26},{wch:14},{wch:12},{wch:6},{wch:16},{wch:8},{wch:8},{wch:7},{wch:32}];
+  X.utils.book_append_sheet(wb,ws,kind==='mes'?'Mês':'Semana');X.utils.book_append_sheet(wb,wd2,'Detalhes');
+  X.writeFile(wb,d.name+'.xlsx');toast('Planilha Excel gerada.');
+ }catch(e){
+  saveBlob(new Blob([toCsv(d.grid)],{type:'text/csv;charset=utf-8'}),d.name+'.csv');toast('Não foi possível gerar o .xlsx agora; baixei em CSV, que o Excel também abre.');
+ }
+}
+function render(){$('page').innerHTML=head()+(S.tab==='hoje'?tabHoje():S.tab==='mes'?tabMes():tabEscala())}
 
 /* ---------- escala: diálogo ---------- */
 function openShift(eid,d){
@@ -213,6 +266,8 @@ document.addEventListener('click',e=>{
  if(b=t.closest('[data-tab]')){S.tab=b.dataset.tab;render();return}
  if(b=t.closest('[data-unit]')){S.unit=b.dataset.unit;render();return}
  if(b=t.closest('[data-func]')){S.func=b.dataset.func;render();return}
+ if(b=t.closest('[data-export]')){exportXlsx(b.dataset.export);return}
+ if(b=t.closest('[data-mo]')){const y=+S.month.slice(0,4),m=+S.month.slice(5,7)-1+ +b.dataset.mo,d=new Date(Date.UTC(y,m,1));S.month=d.toISOString().slice(0,7)+'-01';load().catch(()=>render());return}
  if(b=t.closest('[data-wk]')){S.week=addDays(S.week,7*+b.dataset.wk);render();return}
  if(b=t.closest('[data-cell]')){const [eid,d]=b.dataset.cell.split('|');openShift(eid,d);return}
  if(b=t.closest('[data-skind]')){sKind=b.dataset.skind;drawKinds();return}
@@ -222,10 +277,15 @@ document.addEventListener('click',e=>{
 });
 ['sdlg'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id))$(id).close()}));
 
+let LOADED_FROM=null;
+async function fetchShifts(c,from,to){
+ let all=[];for(let i=0;i<20;i++){const r=await c.from('boha_shifts').select('*').gte('work_date',from).lte('work_date',to).order('work_date').range(i*1000,i*1000+999);if(r.error)throw r.error;all=all.concat(r.data||[]);if((r.data||[]).length<1000)break}
+ return all;
+}
 async function load(){
- const c=CTX.client,from=addDays(today(),-70);
- const [emps,sh]=await Promise.all([CTX.loadEmployees?CTX.loadEmployees():Promise.resolve([]),c.from('boha_shifts').select('*').gte('work_date',from).order('work_date').limit(6000)]);
- if(sh.error)throw sh.error;EMPS=emps||[];SHIFTS=sh.data||[];render();
+ const c=CTX.client,from=[addDays(today(),-70),S.month].sort()[0],mEnd=monthDays(S.month).slice(-1)[0],to=[addDays(today(),200),mEnd].sort().slice(-1)[0];
+ const [emps,sh]=await Promise.all([CTX.loadEmployees?CTX.loadEmployees():Promise.resolve([]),fetchShifts(c,from,to)]);
+ EMPS=emps||[];SHIFTS=sh;LOADED_FROM=from;render();
  if(CTX.loadEmployeePhotos&&!load.ph){load.ph=true;CTX.loadEmployeePhotos().then(m=>{PH=m||{};render()}).catch(()=>{load.ph=false})}
 }
 window.bohaReload=()=>{if(!document.querySelector('dialog[open]'))load().catch(()=>{})};
