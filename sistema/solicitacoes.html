@@ -111,7 +111,7 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 
 const ME=()=>String(CTX?.profile?.email||'').toLowerCase();
 const isTeam=()=>['marketing','admin'].includes(CTX?.profile?.role);
-let REQS=[],TEAM=[],S={view:'board',f:{kind:'all',unit:'all',q:'',focus:'all'},mine:'abertas'},CUR=null,TH={comments:[],files:[],urls:{}},PEND={n:[],c:[]},timer=null,dragId=null;
+let DEFAULT_ASSIGNEE=null,REQS=[],TEAM=[],S={view:'board',f:{kind:'all',unit:'all',q:'',focus:'all'},mine:'abertas'},CUR=null,TH={comments:[],files:[],urls:{}},PEND={n:[],c:[]},timer=null,dragId=null;
 
 /* ---------- regras de exibição ---------- */
 const isOpen=r=>OPEN.includes(r.status);
@@ -158,6 +158,7 @@ function teamView(){
  const colHTML=cols.map(([k,l])=>{let list=vis.filter(r=>r.status===k);if(k==='concluida')list=list.filter(r=>r.completed_at&&r.completed_at.slice(0,10)>=wk).sort((a,b)=>b.completed_at.localeCompare(a.completed_at));else list.sort(order);return `<section class="col" data-col="${k}" aria-label="${l}"><h2><span style="display:flex;align-items:center"><i style="--c:${ST[k][1]}"></i>${l}</span><span>${list.length}</span></h2>${list.map(cardHTML).join('')||'<div class="empty">Nada aqui</div>'}</section>`}).join('');
  const listHTML=()=>{const rows=vis.slice().sort((a,b)=>(isOpen(b)-isOpen(a))||order(a,b));return `<div class="list">${rows.map(r=>{const K=KINDS[r.kind];return `<article class="row" style="--c:${ST[r.status][1]}" data-open="${r.id}" tabindex="0"><span class="ic">${K[1]}</span><div class="m"><b>#${r.num} · ${esc(r.title)} ${r.urgent&&isOpen(r)?'<span class="urg">URGENTE</span>':''} ${unread(r)?'<span class="dotn"></span>':''}</b><small>${K[0]} · ${esc(r.requester_name)}${r.unit?' · '+UN[r.unit]:''} · ${ago(r.created_at)}${r.assignee_name?' · com '+esc(first(r.assignee_name)):''}</small></div><div class="r">${pz(r)}<span class="st" style="--c:${ST[r.status][1]}">${ST[r.status][0]}</span></div></article>`}).join('')||'<div class="empty">Nenhuma solicitação com esses filtros.</div>'}</div>`};
  return `${kpiHTML()}
+ ${isTeam()&&DEFAULT_ASSIGNEE!==null?(CTX?.profile?.role==='admin'?`<div class="bar" style="margin-top:6px"><label style="font-size:12.5px;color:var(--muted)">Pedidos novos vão automaticamente para</label><select class="inp" id="f_def" aria-label="Responsável padrão" style="min-width:200px"><option value="">Ninguém (a equipe distribui)</option>${TEAM.map(x=>`<option value="${esc(x.email)}" ${x.email===DEFAULT_ASSIGNEE?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>`:`<p style="margin:6px 0 0;font-size:12.5px;color:var(--muted)">Pedidos novos vão automaticamente para <b style="color:var(--text)">${esc((TEAM.find(x=>x.email===DEFAULT_ASSIGNEE)||{}).name||'ninguém (a equipe distribui)')}</b>.</p>`):''}
  <div class="bar"><div class="seg" role="group" aria-label="Foco">${foc.map(([k,l])=>`<button data-focus="${k}" aria-pressed="${f.focus===k}">${l}</button>`).join('')}</div>
  <select class="inp" id="f_kind" aria-label="Tipo"><option value="all">Todos os tipos</option>${Object.entries(KINDS).map(([k,v])=>`<option value="${k}" ${f.kind===k?'selected':''}>${v[1]} ${v[0]}</option>`).join('')}</select>
  <select class="inp" id="f_unit" aria-label="Unidade"><option value="all">Todas as unidades</option>${Object.entries(UN).map(([k,v])=>`<option value="${k}" ${f.unit===k?'selected':''}>${v}</option>`).join('')}</select>
@@ -313,6 +314,7 @@ document.addEventListener('change',e=>{
  const t=e.target;
  if(t.id==='f_kind'){S.f.kind=t.value;render()}else if(t.id==='f_unit'){S.f.unit=t.value;render()}
  else if(t.id==='d_assign'){assign(CUR,t.value)}
+ else if(t.id==='f_def'){CTX.client.rpc('boha_mkt_default_set',{p_email:t.value||null}).then(({error})=>{if(error){toast(error.message);load(true).catch(()=>{});return}DEFAULT_ASSIGNEE=t.value;toast(t.value?'Pedidos novos agora vão para '+(TEAM.find(x=>x.email===t.value)||{}).name+'.':'Pedidos novos voltam a ser distribuídos pela equipe.')})}
  else if(t.id==='f_in'){addFiles([...t.files],t.dataset.w||'n',6);t.value=''}
 });
 let qT;document.addEventListener('input',e=>{if(e.target.id==='f_q'){S.f.q=e.target.value;clearTimeout(qT);qT=setTimeout(()=>{const p=e.target.selectionStart;render();const i=$('f_q');if(i){i.focus();i.setSelectionRange(p,p)}},250)}});
@@ -340,6 +342,7 @@ async function load(force){
  const c=CTX.client;
  const r=await c.from('boha_mkt_requests').select('*').order('created_at',{ascending:false}).limit(600);
  if(r.error)throw r.error;REQS=r.data||[];
+ if(isTeam()){const d=await c.rpc('boha_mkt_default_get');if(!d.error)DEFAULT_ASSIGNEE=d.data?String(d.data).toLowerCase():''}
  if(isTeam()&&!TEAM.length){const t=await c.rpc('boha_mkt_team');TEAM=t.error?[]:(t.data||[]).map(x=>({...x,email:String(x.email).toLowerCase()}))}
  if(!document.querySelector('dialog[open]'))render();
 }
