@@ -43,8 +43,17 @@ function sum(rows){const r={pessimo:0,ruim:0,regular:0,bom:0,otimo:0};rows.forEa
 function dist(r){const n=count(r);return `<div class="dist" role="img" aria-label="${CATS.map(([k,l])=>`${l}: ${Number(r[k]||0)}`).join(', ')}">${CATS.map(([k,l,c])=>`<span title="${l}: ${Number(r[k]||0)}" style="width:${n?Number(r[k]||0)/n*100:0}%;background:${c}"></span>`).join('')}</div>`}
 function legend(r){return `<div class="legend">${CATS.map(([k,l,c])=>`<span><i style="background:${c}"></i>${l} <b>${Number(r[k]||0)}</b></span>`).join('')}</div>`}
 const avatar=r=>PHOTO_URLS[r.id]?`<img class="avatar-photo" src="${esc(PHOTO_URLS[r.id])}" alt="Foto de ${esc(r.professor)}">`:`<span class="avatar-photo avatar-fallback" aria-hidden="true">${esc(r.professor.charAt(0))}</span>`;
-const normalizeName=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocaleLowerCase('pt-BR');
-const employeeFor=r=>EMPLOYEES.find(e=>e.id===r.employee_id)||EMPLOYEES.find(e=>e.unit===r.unit&&normalizeName(e.name)===normalizeName(r.professor));
+const normalizeName=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/\s+/g,' ').trim().toLocaleLowerCase('pt-BR');
+const nameTokens=s=>normalizeName(s).split(' ').filter(Boolean);
+const pickBest=l=>l.slice().sort((a,b)=>(!!b.photo_path-!!a.photo_path))[0];
+function employeeFor(r){
+ const byId=EMPLOYEES.find(e=>e.id===r.employee_id);if(byId)return pickBest(EMPLOYEES.filter(e=>e.id===byId.id||(normalizeName(e.name)===normalizeName(byId.name)&&e.unit===byId.unit)));
+ const nm=normalizeName(r.professor),same=EMPLOYEES.filter(e=>normalizeName(e.name)===nm);
+ const here=same.filter(e=>e.unit===r.unit);if(here.length)return pickBest(here);if(same.length)return pickBest(same);
+ const t=nameTokens(r.professor);if(t.length<2)return null;
+ const near=EMPLOYEES.filter(e=>e.unit===r.unit&&nameTokens(e.name).length>=2&&(t.every(w=>nameTokens(e.name).includes(w))||nameTokens(e.name).every(w=>t.includes(w))));
+ return new Set(near.map(e=>normalizeName(e.name))).size===1?pickBest(near):null;
+}
 const W={pessimo:0,ruim:25,regular:50,bom:75,otimo:100},K=10,MIN=10,ALERT=.10;
 const raw=r=>count(r)?CATS.reduce((a,[k])=>a+Number(r[k]||0)*W[k],0)/count(r):0,ym=r=>String(r.survey_month||'').slice(0,7);
 const netMean=m=>{const rs=ROWS.filter(x=>ym(x)===m),n=rs.reduce((a,x)=>a+count(x),0);return n?rs.reduce((a,x)=>a+raw(x)*count(x),0)/n:0};
@@ -98,5 +107,5 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-how],[data-how-
 document.addEventListener('input',e=>{if(e.target.id==='search'){S.search=e.target.value;clearTimeout(render.timer);render.timer=setTimeout(render,120)}});
 document.addEventListener('change',e=>{if(e.target.id==='surveyMonth'){S.month=e.target.value||'2026-11';render()}else if(e.target.id==='sort'){S.sort=e.target.value;render()}else if(e.target.id==='min10'){S.min10=e.target.checked;render()}else if(e.target.id==='teacherPhoto'){savePhoto(e.target.files[0]);e.target.value=''}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('howDialog').open&&$('overlay').classList.contains('open'))closeDetail()});
-(async()=>{if(!CTX?.client||!CTX.canModule?.('qualidade')){$('page').innerHTML='<div class="empty">Este painel não está liberado para o seu perfil.</div>';return}if(LKU())S.unit=LKU();try{const [ratings,people]=await Promise.all([CTX.client.from('boha_professor_ratings').select('id,unit,professor,pessimo,ruim,regular,bom,otimo,photo,employee_id,survey_month').order('professor'),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([])]);if(ratings.error)throw ratings.error;ROWS=ratings.data||[];EMPLOYEES=people||[];render();await Promise.all(ROWS.map(async r=>{if(r.photo){const {data}=await CTX.client.storage.from('boha-professores').createSignedUrl(r.id+'.jpg',3600);if(data?.signedUrl)PHOTO_URLS[r.id]=data.signedUrl}else{const person=employeeFor(r);if(person?.photo_path){const {data}=await CTX.client.storage.from('boha-employees').createSignedUrl(person.photo_path,3600);if(data?.signedUrl)PHOTO_URLS[r.id]=data.signedUrl}}}));render()}catch{$('page').innerHTML='<div class="empty">Não foi possível carregar as avaliações. Atualize a página.</div>'}})();
+(async()=>{if(!CTX?.client||!CTX.canModule?.('qualidade')){$('page').innerHTML='<div class="empty">Este painel não está liberado para o seu perfil.</div>';return}if(LKU())S.unit=LKU();try{const [ratings,people]=await Promise.all([CTX.client.from('boha_professor_ratings').select('id,unit,professor,pessimo,ruim,regular,bom,otimo,photo,employee_id,survey_month').order('professor'),CTX.loadEmployees?CTX.loadEmployees().catch(()=>[]):Promise.resolve([])]);if(ratings.error)throw ratings.error;ROWS=ratings.data||[];EMPLOYEES=people||[];render();await Promise.all(ROWS.map(async r=>{const person=employeeFor(r);if(person?.photo_path){const {data}=await CTX.client.storage.from('boha-employees').createSignedUrl(person.photo_path,3600);if(data?.signedUrl){PHOTO_URLS[r.id]=data.signedUrl;return}}if(r.photo){const {data}=await CTX.client.storage.from('boha-professores').createSignedUrl(r.id+'.jpg',3600);if(data?.signedUrl)PHOTO_URLS[r.id]=data.signedUrl}}));render()}catch{$('page').innerHTML='<div class="empty">Não foi possível carregar as avaliações. Atualize a página.</div>'}})();
 </script></body></html>

@@ -916,7 +916,7 @@ async function loadStats(){
   if(!error&&Array.isArray(data)){accData=data;stats.access=accessSummary(data);refreshMeta('acessos')}
  }catch{}
 }
-const VERSION='20261229a';
+const VERSION='20261230a';
 function setFrame(o={}){const f=el('dashboard');if(o.html){f.removeAttribute('src');f.srcdoc=o.html}else{f.removeAttribute('srcdoc');f.src=o.src||'about:blank'}}
 const localISO=d=>d.toLocaleDateString('sv-SE');
 let openTasks=[],firing=new Set(),remTimer=null,swReg=null;
@@ -1231,7 +1231,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('profileMenu').
 // Roda DENTRO da Hierarquia: a equipe de cada unidade vem do Banco de funcionários (nome, função, unidade e foto).
 function hierEmployeesRuntime(){
 const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-const tidy=n=>{n=String(n||'').replace(/\s*\((cb|te|ma)\)\s*$/i,'').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
+const tidy=n=>{n=String(n||'').replace(/\s*\([^)]*\)\s*$/,'').replace(/\s+/g,' ').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
 const cls=e=>{const t=norm(e.title);if(!t)return null;
  if(/gerente/.test(t))return 'gerente';if(/recep/.test(t))return 'recepcao';if(/estagi/.test(t))return 'estagiaria';if(/limpez/.test(t))return 'limpeza';
  if(/manuten/.test(t))return 'manutencao';if(/market/.test(t))return 'conteudo';if(/financ/.test(t))return 'financeiro';if(/administr|\brh\b/.test(t))return 'rh';
@@ -1286,7 +1286,7 @@ boot();
 function hierSearchRuntime(){
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-const tidy=n=>{n=String(n||'').replace(/\s*\((cb|te|ma)\)\s*$/i,'').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
+const tidy=n=>{n=String(n||'').replace(/\s*\([^)]*\)\s*$/,'').replace(/\s+/g,' ').trim();if(n&&n===n.toUpperCase()){const low=['da','de','do','das','dos','e'];n=n.toLowerCase().split(/\s+/).map((w,i)=>i&&low.includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}return n.slice(0,60)};
 const tidyTitle=t=>String(t||'').trim().toLocaleUpperCase('pt-BR');
 const UN={cb:'Casa Branca',te:'Santa Tereza',ma:'Macedônia',rede:'Todas as unidades'};
 let EMP=null,LOADING=null;
